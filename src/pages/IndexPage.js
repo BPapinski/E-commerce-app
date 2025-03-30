@@ -1,50 +1,19 @@
 import "./styles/style.css";
 import "./styles/reset.css";
-import shoppingCartIcon from "../icons/shopping_cart.svg";
-import messageIcon from "../icons/message.svg";
-import bellIcon from "../icons/bell.svg";
-import heartIcon from "../icons/heart.svg";
-import logoutIcon from "../icons/logout.svg";
-
-import logo from "../icons/logo.png"
-
+import Header from "../Components/Header";
+import Subheader from "../Components/Subheader";
+import Sidebar from "../Components/Sidebar";
 
 export default function IndexPage() {
   return (
     <div className="container">
-      {/* Header */}
-      <div className="header">
-        <div className="header-element">
-          <img src={logo} alt="Logo" />
-        </div>
-        <div className="header-element" style={{ flex: 2 }}>
-          <div className="search-bar">
-            <input type="text" placeholder="Search..." />
-            <button className="search-button">Search</button>
-          </div>
-        </div>
-        <div className="header-element icons" style={{ flex: 2 }}>
-          {[shoppingCartIcon, messageIcon, bellIcon, heartIcon, logoutIcon].map((icon, index) => (
-            <img key={index} src={icon} alt="icon" className="filter-pink" style={icon === heartIcon || icon === logoutIcon ? { height: "48px" } : {}} />
-          ))}
-        </div>
-        <div className="header-element">
-          <h1>Profile</h1>
-        </div>
-      </div>
+      <Header />
       
-      {/* Subheader */}
-      <div className="subheader">
-        {["Wyprzedaże i Promocje", "Ekskluzywne Oferty", "Darmowa Dostawa", "Gwarancja Najniższej Ceny", "Bezpieczne Transakcje", "Polityka Prywatności", "Ochrona Kupujących"].map((text, index) => (
-          <div key={index} className="subheader-element">
-            <h2>{text}</h2>
-          </div>
-        ))}
-      </div>
+      <Subheader/>
       
       {/* Main content */}
       <div className="main">
-        <div className="sidebar"></div>
+        <Sidebar/>
         <div className="content">
           {[
             { name: "Nazwa produktu", category: "Kategoria", price: "100.00zł", img: "graphics/image-placeholder.jpg", condition: "Używane" },

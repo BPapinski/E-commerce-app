@@ -29,6 +29,7 @@
     height: inherit;
     background-color: inherit;
 
+    height: 100%;
     width: auto;
     flex: 1;
     display: flex;
@@ -36,10 +37,21 @@
     align-items: center; /* Wycentrowanie pionowe */
 }
 
-.header-element img{
-    height: auto;
-    
+.header-element a {
+    display: flex;
+    align-items: center;
+    height: 100%;
+  }
+
+
+  
+.header-element img {
+max-height: 100%;
+width: auto;
+display: block;
 }
+
+
 
 .icons{
     justify-content: space-around;
