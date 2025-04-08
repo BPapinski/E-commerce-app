@@ -1,8 +1,12 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "../pages/styles/sidebar.css";
 import toggleSidebar from "../scripts/toggleSidebar";
+import $ from "jquery";
+import Slider from "./Slider";
 
 export default function Sidebar() {
+
+
 
     const [activeCategory, setActiveCategory] = useState();
     const [activeSubcategory, setActiveSubcategory] = useState();
@@ -26,6 +30,7 @@ export default function Sidebar() {
         setActiveCategory(category);
         setActiveSubcategory(subcategory); // Ustawiamy aktywną podkategorię
     };
+    
 
     // Funkcja do sprawdzania, czy kategoria jest aktywna
     const isCategoryActive = (category) => activeCategory === category ? 'active' : '';
@@ -34,10 +39,16 @@ export default function Sidebar() {
 
     return (
         <div className="sidebar">
+            <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
             <div className="sidebar-header">
-                <h2>Kategorie</h2>
-                <h2>{activeCategory}</h2>
+                
             </div>
+            
+            <div class="sidebar-element" >
+                <h1 > cena</h1>
+                    <Slider/>
+            </div>
+            <br></br>
 
             {/* Elektronika */}
             <div className={`sidebar-element ${isCategoryActive("Elektronika")}`} id="electronics" onClick={(e) => { toggleSidebar("electronics", e); handleCategoryClick("Elektronika"); }}>
