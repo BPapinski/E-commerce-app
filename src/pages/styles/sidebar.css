@@ -45,7 +45,7 @@
     color: var(--headercolor);
     margin-left: 0.3rem;
     overflow: hidden;
-    transition: height 0.8s linear, opacity 0.8s linear, padding-bottom 0.8s linear; /* Animacja dla height i opacity */
+    transition: height 0.8s linear, opacity 0.8s linear, padding-bottom 0.8s ease; /* Animacja dla height i opacity */
     height: 0px;  /* Domyślnie element jest zwinięty */
     opacity: 0;   /* Tekst jest początkowo niewidoczny */
     /* Padding */
