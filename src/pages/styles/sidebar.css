@@ -74,3 +74,12 @@
 .sidebar-subelement.hidden {
     display: none;
 }
+
+/* Dodaj do pliku sidebar.css */
+.sidebar-element.active h2 {
+    color: var(--subheadercolor);
+}
+
+.sidebar-subelement a.active {
+    color: var(--subheadercolor);
+}
