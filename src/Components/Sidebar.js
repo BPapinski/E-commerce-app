@@ -1,5 +1,6 @@
 import "../pages/styles/sidebar.css";
 import toggleSidebar from "../scripts/toggleSidebar";
+import SidebarElement from "./SidebarElement";
 
 export default function Sidebar() {
     return (
@@ -7,6 +8,8 @@ export default function Sidebar() {
             <div className="sidebar-header">
                 <h2>Categories</h2>
             </div>
+            
+
             <div className="sidebar-element" id="electronics" onClick={(e) => toggleSidebar("electronics", e)}>
                 <h2>Electronics</h2>
                 <div className="sidebar-subelement">
@@ -22,6 +25,7 @@ export default function Sidebar() {
                     <a href="#" onClick={(e) => e.stopPropagation()}>Subcategory</a>
                 </div>
             </div>
+            
             <div className="sidebar-element" id="clothing" onClick={(e) => toggleSidebar("clothing", e)}>
                 <h2>Clothing</h2>
                 <div className="sidebar-subelement">
