@@ -1,22 +1,37 @@
-// SidebarElement.js
-import React, { useState } from 'react';
+import React from "react";
 
-const SidebarElement = ({ id, title, subcategories, toggleSidebar }) => {
-  const [isOpen, setIsOpen] = useState(false); // stan, który będzie kontrolował rozwinięcie
-  const handleToggle = (e) => {
-    // Zatrzymanie propagacji kliknięcia, by nie wywołać toggleSidebar
-    e.stopPropagation();
-    // Zmiana stanu isOpen
-    setIsOpen(!isOpen);
-    toggleSidebar(id, e); // Obsługuje toggle dla całego sidebaru
-  };
-
+const SidebarElement = ({
+  category,
+  id,
+  subcategories,
+  isCategoryActive,
+  isSubcategoryActive,
+  toggleSidebar,
+  handleCategoryClick,
+  handleSubcategoryClick,
+}) => {
   return (
-    <div className="sidebar-element" id={id} onClick={handleToggle}>
-      <h2>{title}</h2>
-      {subcategories.map((subcategory, index) => (
-        <div key={index} className={`sidebar-subelement ${isOpen ? 'open' : 'hidden'}`}>
-          <a href="#" onClick={(e) => e.stopPropagation()}>{subcategory}</a>
+    <div
+      className={`sidebar-element ${isCategoryActive(category)}`}
+      id={id}
+      onClick={(e) => {
+        toggleSidebar(id, e);
+        handleCategoryClick(category);
+      }}
+    >
+      <h2>{category}</h2>
+      {subcategories.map((sub) => (
+        <div className="sidebar-subelement" key={sub}>
+          <a
+            href="#"
+            className={isSubcategoryActive(sub)}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleSubcategoryClick(category, sub);
+            }}
+          >
+            {sub}
+          </a>
         </div>
       ))}
     </div>

@@ -3,6 +3,7 @@ import "../pages/styles/sidebar.css";
 import toggleSidebar from "../scripts/toggleSidebar";
 import $ from "jquery";
 import Slider from "./Slider";
+import SidebarElement from "./SidebarElement";
 
 export default function Sidebar() {
 
@@ -37,6 +38,33 @@ export default function Sidebar() {
     // Funkcja do sprawdzania, czy podkategoria jest aktywna
     const isSubcategoryActive = (subcategory) => activeSubcategory === subcategory ? 'active' : '';
 
+
+
+
+    const categories = [
+    {
+        category: "Elektronika",
+        id: "electronics",
+        subcategories: ["Telewizory", "Smartfony", "Laptopy", "Aparaty fotograficzne"]
+    },
+    {
+        category: "Odzież",
+        id: "clothing",
+        subcategories: ["Kurtki", "Spodnie", "T-shirty", "Bluzy"]
+    },
+    {
+        category: "Książki",
+        id: "books",
+        subcategories: ["Powieści", "Poradniki", "Kryminały", "Literatura dziecięca"]
+    },
+    {
+        category: "Akcesoria",
+        id: "accessories",
+        subcategories: ["Biżuteria", "Zegarki", "Torby", "Okulary"]
+    }
+    ];
+
+
     return (
         <div className="sidebar">
             <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
@@ -44,79 +72,54 @@ export default function Sidebar() {
                 
             </div>
             
-            <div class="sidebar-element" >
+            <div class="sidebar-element slider-element" >
                 <h1 > cena</h1>
                     <Slider/>
             </div>
+
+            <div className="product-condition">
+                <div>
+                    <h2>stan produktu</h2>
+                </div>
+                <div className="product-condition-choose">
+                    <div className="product-condition-option">
+                        <label className="product-condition-checkbox-container">Nowy
+                            <input type="checkbox"/>
+                            <span className="checkmark"></span>
+                        </label>
+                    </div>
+                    
+                    <div className="product-condition-option">
+                        <label class="product-condition-checkbox-container">Używany
+                            <input type="checkbox"/>
+                            <span className="checkmark"></span>
+                        </label>
+                    </div>
+                    
+                </div>
+
+                
+
+            </div>
+
             <br></br>
 
-            {/* Elektronika */}
-            <div className={`sidebar-element ${isCategoryActive("Elektronika")}`} id="electronics" onClick={(e) => { toggleSidebar("electronics", e); handleCategoryClick("Elektronika"); }}>
-                <h2>Elektronika</h2>
-                <div className="sidebar-subelement">
-                    <a href="#" className={isSubcategoryActive("Telewizory")} onClick={(e) => { e.stopPropagation(); handleSubcategoryClick("Elektronika", "Telewizory"); }}>Telewizory</a>
-                </div>
-                <div className="sidebar-subelement">
-                    <a href="#" className={isSubcategoryActive("Smartfony")} onClick={(e) => { e.stopPropagation(); handleSubcategoryClick("Elektronika", "Smartfony"); }}>Smartfony</a>
-                </div>
-                <div className="sidebar-subelement">
-                    <a href="#" className={isSubcategoryActive("Laptopy")} onClick={(e) => { e.stopPropagation(); handleSubcategoryClick("Elektronika", "Laptopy"); }}>Laptopy</a>
-                </div>
-                <div className="sidebar-subelement">
-                    <a href="#" className={isSubcategoryActive("Aparaty fotograficzne")} onClick={(e) => { e.stopPropagation(); handleSubcategoryClick("Elektronika", "Aparaty fotograficzne"); }}>Aparaty fotograficzne</a>
-                </div>
+            <div className="categories">
+                {categories.map(({ category, id, subcategories }) => (
+                    <SidebarElement
+                        key={id}
+                        category={category}
+                        id={id}
+                        subcategories={subcategories}
+                        isCategoryActive={isCategoryActive}
+                        isSubcategoryActive={isSubcategoryActive}
+                        toggleSidebar={toggleSidebar}
+                        handleCategoryClick={handleCategoryClick}
+                        handleSubcategoryClick={handleSubcategoryClick}
+                    />
+                ))}
             </div>
-
-            {/* Odzież */}
-            <div className={`sidebar-element ${isCategoryActive("Odzież")}`} id="clothing" onClick={(e) => { toggleSidebar("clothing", e); handleCategoryClick("Odzież"); }}>
-                <h2>Odzież</h2>
-                <div className="sidebar-subelement">
-                    <a href="#" className={isSubcategoryActive("Kurtki")} onClick={(e) => { e.stopPropagation(); handleSubcategoryClick("Odzież", "Kurtki"); }}>Kurtki</a>
-                </div>
-                <div className="sidebar-subelement">
-                    <a href="#" className={isSubcategoryActive("Spodnie")} onClick={(e) => { e.stopPropagation(); handleSubcategoryClick("Odzież", "Spodnie"); }}>Spodnie</a>
-                </div>
-                <div className="sidebar-subelement">
-                    <a href="#" className={isSubcategoryActive("T-shirty")} onClick={(e) => { e.stopPropagation(); handleSubcategoryClick("Odzież", "T-shirty"); }}>T-shirty</a>
-                </div>
-                <div className="sidebar-subelement">
-                    <a href="#" className={isSubcategoryActive("Bluzy")} onClick={(e) => { e.stopPropagation(); handleSubcategoryClick("Odzież", "Bluzy"); }}>Bluzy</a>
-                </div>
-            </div>
-
-            {/* Książki */}
-            <div className={`sidebar-element ${isCategoryActive("Książki")}`} id="books" onClick={(e) => { toggleSidebar("books", e); handleCategoryClick("Książki"); }}>
-                <h2>Książki</h2>
-                <div className="sidebar-subelement">
-                    <a href="#" className={isSubcategoryActive("Powieści")} onClick={(e) => { e.stopPropagation(); handleSubcategoryClick("Książki", "Powieści"); }}>Powieści</a>
-                </div>
-                <div className="sidebar-subelement">
-                    <a href="#" className={isSubcategoryActive("Poradniki")} onClick={(e) => { e.stopPropagation(); handleSubcategoryClick("Książki", "Poradniki"); }}>Poradniki</a>
-                </div>
-                <div className="sidebar-subelement">
-                    <a href="#" className={isSubcategoryActive("Kryminały")} onClick={(e) => { e.stopPropagation(); handleSubcategoryClick("Książki", "Kryminały"); }}>Kryminały</a>
-                </div>
-                <div className="sidebar-subelement">
-                    <a href="#" className={isSubcategoryActive("Literatura dziecięca")} onClick={(e) => { e.stopPropagation(); handleSubcategoryClick("Książki", "Literatura dziecięca"); }}>Literatura dziecięca</a>
-                </div>
-            </div>
-
-            {/* Akcesoria */}
-            <div className={`sidebar-element ${isCategoryActive("Akcesoria")}`} id="accessories" onClick={(e) => { toggleSidebar("accessories", e); handleCategoryClick("Akcesoria"); }}>
-                <h2>Akcesoria</h2>
-                <div className="sidebar-subelement">
-                    <a href="#" className={isSubcategoryActive("Biżuteria")} onClick={(e) => { e.stopPropagation(); handleSubcategoryClick("Akcesoria", "Biżuteria"); }}>Biżuteria</a>
-                </div>
-                <div className="sidebar-subelement">
-                    <a href="#" className={isSubcategoryActive("Zegarki")} onClick={(e) => { e.stopPropagation(); handleSubcategoryClick("Akcesoria", "Zegarki"); }}>Zegarki</a>
-                </div>
-                <div className="sidebar-subelement">
-                    <a href="#" className={isSubcategoryActive("Torby")} onClick={(e) => { e.stopPropagation(); handleSubcategoryClick("Akcesoria", "Torby"); }}>Torby</a>
-                </div>
-                <div className="sidebar-subelement">
-                    <a href="#" className={isSubcategoryActive("Okulary")} onClick={(e) => { e.stopPropagation(); handleSubcategoryClick("Akcesoria", "Okulary"); }}>Okulary</a>
-                </div>
-            </div>
+            
         </div>
     );
 }
