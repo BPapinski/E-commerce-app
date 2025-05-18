@@ -1,11 +1,21 @@
+import { useEffect, useState } from "react";
 import shoppingCartIcon from "../icons/shopping_cart.svg";
 import messageIcon from "../icons/message.svg";
 import bellIcon from "../icons/bell.svg";
 import heartIcon from "../icons/heart.svg";
 import logoutIcon from "../icons/logout.svg";
+import loginIcon from "../icons/login.svg";
 import logoIcon from "../icons/logo.png"
 
 export default function Header() {
+
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const logged = localStorage.getItem("loggedIn") === "true";
+    setIsLoggedIn(logged);
+  }, []);
+
   return (
     <div className="header">
         
@@ -33,9 +43,16 @@ export default function Header() {
         <a href="/favorites">
             <img src={heartIcon} alt="Favourites" className="filter-pink" style={{ height: "48px" }} />
         </a>
-        <a href="/logout">
+        {/* 🔐 Zależność od logowania */}
+        {isLoggedIn ? (
+          <a href="/logout">
             <img src={logoutIcon} alt="Logout" className="filter-pink" style={{ height: "48px" }} />
-        </a>
+          </a>
+        ) : (
+          <a href="/login">
+            <img src={loginIcon} alt="Login" className="filter-pink" style={{ height: "48px" }} />
+          </a>
+        )}
         </div>
       <div className="header-element">
         <h1>Profile</h1>

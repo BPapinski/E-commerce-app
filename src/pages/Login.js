@@ -4,11 +4,55 @@ import "./styles/login.css";
 import Header from "../Components/Header";
 import Subheader from "../Components/Subheader";
 import Sidebar from "../Components/Sidebar";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+
 
 
 
 
 export default function Login() {
+  const navigate = useNavigate();
+
+  const [loggedIn, setLoggedIn] = useState()
+  const [login, setLogin] = useState("");
+  const [password, setPassword] = useState("");
+
+  function submitLogin(e){
+    e.preventDefault();
+    fetch("http://127.0.0.1:8000/api/login/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        email: login,
+        password: password
+      })
+    })
+    .then((res) => {
+      if (res.ok) {
+        setLoggedIn(true);
+        return res.json();
+      } else {
+        throw new Error("Nieprawidłowe dane logowania");
+      }
+    })
+    .then((data) => {
+      localStorage.setItem("loggedIn", "true");
+      if (data.token) {
+        localStorage.setItem("token", data.token);
+      }
+      console.log("Zalogowano:", data);
+      setLoggedIn(true)
+      navigate("/");
+    })
+    .catch((err) => {
+      console.error("Błąd logowania:", err);
+    });
+  } 
+
+
   return (
     <div className="container">
       <Header />
@@ -17,9 +61,21 @@ export default function Login() {
         <div className="login-flex-item"></div>
         <div className="login-box">
           <h2>Logowanie</h2>
-          <form className="login-form">
-            <input type="text" placeholder="Login" className="input-field" />
-            <input type="password" placeholder="Hasło" className="input-field" />
+          <form onSubmit={submitLogin} className="login-form">
+            <input
+              type="text"
+              placeholder="Login"
+              className="input-field"
+              value={login}
+              onChange={(e) => setLogin(e.target.value)}
+            />
+            <input 
+              type="password" 
+              placeholder="Hasło" 
+              className="input-field" 
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              />
             <button type="submit" className="login-button">Zaloguj się</button>
           </form>
           <div className="social-login">

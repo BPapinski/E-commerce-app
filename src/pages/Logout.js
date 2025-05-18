@@ -5,9 +5,16 @@ export default function Logout() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Tutaj możesz dodać dodatkową logikę np. usuwanie tokena z localStorage
-    navigate("/login"); // Przekierowanie do strony logowania
+    // 🧹 Czyszczenie danych logowania z localStorage
+    localStorage.removeItem("loggedIn");
+    localStorage.removeItem("token"); // jeśli token był zapisywany
+
+    // Można też całkowicie wyczyścić localStorage:
+    // localStorage.clear();
+
+    // 🔁 Przekierowanie do logowania
+    navigate("/login");
   }, [navigate]);
 
-  return null; // Komponent nie renderuje nic, ponieważ użytkownik jest przekierowywany
+  return null; // Komponent nie renderuje nic — tylko efekt
 }
