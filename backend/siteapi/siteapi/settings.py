@@ -33,7 +33,8 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     "authuser",  # <-- musi być przed admin i auth
 
-    
+
+
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -43,6 +44,9 @@ INSTALLED_APPS = [
 
     "corsheaders",
     "mssql",
+    'rest_framework',
+    'rest_framework_simplejwt',
+
 ]
 
 
@@ -153,3 +157,13 @@ STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 CORS_ALLOW_ALL_ORIGINS = True
+
+
+
+# REST
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+}
