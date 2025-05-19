@@ -7,7 +7,7 @@ import logoutIcon from "../icons/logout.svg";
 import loginIcon from "../icons/login.svg";
 import logoIcon from "../icons/logo.png"
 
-export default function Header() {
+export default function Header({user}) {
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
@@ -55,7 +55,7 @@ export default function Header() {
         )}
         </div>
       <div className="header-element">
-        <h1>Profile</h1>
+        <h1>{user ? <h1>{user.email}</h1> : <h1>Gość</h1>}</h1>
       </div>
     </div>
   );

@@ -40,8 +40,9 @@ export default function Login() {
     })
     .then((data) => {
       localStorage.setItem("loggedIn", "true");
-      if (data.token) {
-        localStorage.setItem("token", data.token);
+      console.log(data)
+      if (data.access) {
+        localStorage.setItem("token", data.access);
       }
       console.log("Zalogowano:", data);
       setLoggedIn(true)

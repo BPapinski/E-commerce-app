@@ -9,42 +9,72 @@ export default function IndexPage() {
 
   const [products, setProducts] = useState([]);
   const [error, setError] = useState(null);
-
-  const token = localStorage.getItem('access');
+  const [user, setUser] = useState(null);
+  const [token, setToken] = useState(null);
 
   useEffect(() => {
-    fetch('http://127.0.0.1:8000/api/store/', {
-      method: 'GET',
+    const storedToken = localStorage.getItem("token");
+    setToken(storedToken);
+  }, []); // tylko raz przy montowaniu
+
+  useEffect(() => {
+    if (!token) return;
+
+    // Pobieranie danych użytkownika
+    fetch("http://127.0.0.1:8000/api/profile/", {
+      method: "GET",
       headers: {
-        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
       },
     })
-      .then(res => {
-        if (!res.ok) throw new Error('Błąd podczas pobierania produktów');
+      .then((res) => {
+        if (!res.ok) throw new Error("Nie udało się pobrać danych użytkownika");
         return res.json();
       })
-      .then(data => {
-        // Jeśli używasz paginacji DRF, dane będą w `data.results`
+      .then((userData) => {
+        setUser(userData);
+      })
+      .catch((error) => {
+        console.error("Błąd użytkownika:", error);
+      });
+  }, [token]); // reaguje na zmianę tokena
+
+
+
+
+
+  useEffect(() => {
+    // Pobieranie produktów (niezależnie od tokenu)
+    fetch("http://127.0.0.1:8000/api/store/", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error("Błąd podczas pobierania produktów");
+        return res.json();
+      })
+      .then((data) => {
         setProducts(data.results || data);
       })
-      .catch(err => {
+      .catch((err) => {
         console.error(err);
         setError("Nie udało się pobrać produktów.");
       });
-  }, [token]);
+  }, []); // tylko raz
 
 
   return (
     <div className="container">
-      <Header />
+      <Header user={user} />
       <Subheader />
-
       <div className="main">
         <Sidebar />
-        <div className="content">
-          
+        <div className="content">          
           {error && <div className="error">{error}</div>}
-
+          
           {products.map((product, index) => (
             <div key={index} className="product">
               <div className="product-image">
