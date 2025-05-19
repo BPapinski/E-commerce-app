@@ -87,10 +87,18 @@ export default function Login() {
           <button class="login-with-apple-btn">
             <img src="https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg" alt="Apple Logo" class="apple-logo"/>
             <span class="apple-text">Zaloguj się przez Apple</span>
-             
           </button>
           </div>
-          
+          <div className="register-section">
+            <span>Nie masz konta?</span>
+            <button
+              type="button"
+              className="register-button"
+              onClick={() => window.location.href = "/register"}
+            >
+              Zarejestruj się
+            </button>
+          </div>
         </div>
         <div className="login-flex-item"></div>
       </div>

@@ -167,3 +167,10 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
 }
+
+AUTH_PASSWORD_VALIDATORS = [
+    {
+        'NAME': 'authuser.validators.CustomPasswordValidator',
+    },
+    # możesz dodać inne domyślne walidatory Django, jeśli chcesz
+]
