@@ -14,10 +14,9 @@ Nowoczesna aplikacja e-commerce zbudowana w oparciu o **Django** oraz **React**.
 
 ### Frontend – React
 - Dynamiczny interfejs użytkownika z wykorzystaniem React Hooks
-- Zarządzanie stanem z React Context / Redux (opcjonalnie)
 - Integracja z backendem przez REST API
 - System routingowy (React Router)
-- Responsywny design (Tailwind / Bootstrap / własny CSS)
+- Responsywny design (własny CSS)
 
 ---
 
@@ -25,12 +24,11 @@ Nowoczesna aplikacja e-commerce zbudowana w oparciu o **Django** oraz **React**.
 
 - ✅ Rejestracja i logowanie użytkownika
 - ✅ Przeglądanie produktów i kategorii
-- ✅ Koszyk zakupowy
-- ✅ Proces składania zamówienia
-- ✅ Integracja z systemem płatności (np. Stripe)
+- ✅ Koszyk zakupowy (w trakcie tworzenia)
+- ✅ Proces składania zamówienia (w trakcie tworzenia)
 - ✅ Panel administratora do zarządzania sklepem
-- ✅ System ocen i recenzji produktów
-- ✅ Filtry i wyszukiwarka
+- ✅ System ocen i recenzji produktów (w trakcie tworzenia)
+- ✅ Filtry i wyszukiwarka (w trakcie tworzenia)
 
 ---
 
