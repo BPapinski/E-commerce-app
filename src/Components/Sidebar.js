@@ -14,12 +14,11 @@ export default function Sidebar() {
 
     const handleCategoryClick = (category) => {
         // Zmieniamy URL, dodając kategorię do parametrów
-        const url = new URL(window.location);
-        url.searchParams.set('category', category); // Dodajemy parametr 'category'
+        const url = new URL(window.location); // Dodajemy parametr 'category'
         url.searchParams.delete('subcategory');
         window.history.pushState({}, '', url); // Zmieniamy URL bez przeładowania strony
         setActiveCategory(category);
-        setActiveSubcategory(null); // Resetujemy aktywną podkategorię przy zmianie kategorii
+        //setActiveSubcategory(null); // Resetujemy aktywną podkategorię przy zmianie kategorii
     };
 
     const handleSubcategoryClick = (category, subcategory) => {
@@ -45,7 +44,7 @@ export default function Sidebar() {
     {
         category: "Elektronika",
         id: "electronics",
-        subcategories: ["Telewizory", "Smartfony", "Laptopy", "Aparaty fotograficzne"]
+        subcategories: ["Telewizory", "Smartfony", "Laptopy", "Aparaty fotograficzne", "konsole"]
     },
     {
         category: "Odzież",

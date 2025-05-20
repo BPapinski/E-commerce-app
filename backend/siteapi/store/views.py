@@ -9,16 +9,21 @@ class StandardResultsSetPagination(PageNumberPagination):
     page_size = 10
     page_size_query_param = 'page_size'
 
-# 🔽 Lista i tworzenie produktów (POST)
+
 class ProductListCreateView(generics.ListCreateAPIView):
     queryset = Product.objects.all().order_by('-created_at')
     serializer_class = ProductSerializer
     pagination_class = StandardResultsSetPagination
 
-    def get_permissions(self):
-        if self.request.method == 'POST':
-            return [permissions.IsAuthenticated()]
-        return [permissions.AllowAny()]
+    def get_queryset(self):
+        queryset = Product.objects.all()
+
+        subcategory = self.request.query_params.get('subcategory')
+
+        if subcategory:
+            queryset = queryset.filter(category__name__iexact=subcategory)
+        return queryset
+
 
 # 🔽 Szczegóły pojedynczego produktu
 class ProductDetailView(generics.RetrieveAPIView):

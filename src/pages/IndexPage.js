@@ -4,23 +4,25 @@ import Header from "../Components/Header";
 import Subheader from "../Components/Subheader";
 import Sidebar from "../Components/Sidebar";
 import React, { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 
 export default function IndexPage() {
-
+  const location = useLocation();
   const [products, setProducts] = useState([]);
   const [error, setError] = useState(null);
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(null);
 
+  // Ustaw token z localStorage
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
     setToken(storedToken);
-  }, []); // tylko raz przy montowaniu
+  }, []);
 
+  // Pobierz dane użytkownika, jeśli token jest
   useEffect(() => {
     if (!token) return;
 
-    // Pobieranie danych użytkownika
     fetch("http://127.0.0.1:8000/api/profile/", {
       method: "GET",
       headers: {
@@ -38,15 +40,22 @@ export default function IndexPage() {
       .catch((error) => {
         console.error("Błąd użytkownika:", error);
       });
-  }, [token]); // reaguje na zmianę tokena
+  }, [token]);
 
-
-
-
-
+  // Dynamiczne filtrowanie produktów na podstawie URL
   useEffect(() => {
-    // Pobieranie produktów (niezależnie od tokenu)
-    fetch("http://127.0.0.1:8000/api/store/", {
+    const params = new URLSearchParams(location.search);
+    const category = params.get("category");
+    const subcategory = params.get("subcategory");
+
+    let apiUrl = "http://127.0.0.1:8000/api/store/";
+    const queryParams = new URLSearchParams();
+    if (subcategory) queryParams.append("subcategory", subcategory);
+    if ([...queryParams].length > 0) {
+      apiUrl += "?" + queryParams.toString();
+    }
+
+    fetch(apiUrl, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -58,13 +67,13 @@ export default function IndexPage() {
       })
       .then((data) => {
         setProducts(data.results || data);
+        setError(null);
       })
       .catch((err) => {
         console.error(err);
         setError("Nie udało się pobrać produktów.");
       });
-  }, []); // tylko raz
-
+  }, [location.search]); // <- reaguje na zmiany w URL
 
   return (
     <div className="container">
@@ -72,9 +81,9 @@ export default function IndexPage() {
       <Subheader />
       <div className="main">
         <Sidebar />
-        <div className="content">          
+        <div className="content">
           {error && <div className="error">{error}</div>}
-          
+
           {products.map((product, index) => (
             <div key={index} className="product">
               <div className="product-image">
@@ -86,7 +95,9 @@ export default function IndexPage() {
                     <a href="#">{product.name}</a>
                   </h2>
                   <h2 className="category" style={{ fontSize: "1rem" }}>{product.category}</h2>
-                  <h2 style={{ color: "white", fontSize: "1rem", paddingTop: "1em" }}>{product.condition}</h2>
+                  <h2 style={{ color: "white", fontSize: "1rem", paddingTop: "1em" }}>
+                    {product.condition}
+                  </h2>
                 </div>
                 <div className="product-placeholder"></div>
                 <div className="product-price">
