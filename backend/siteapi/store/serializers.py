@@ -6,7 +6,7 @@ from django.conf import settings
 
 
 from rest_framework import serializers
-from .models import Product
+from .models import Product, Category
 
 class ProductSerializer(serializers.ModelSerializer):
     category = serializers.SerializerMethodField()
@@ -45,3 +45,9 @@ class ProductSerializer(serializers.ModelSerializer):
             product.save()
 
         return product
+
+class CategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = '__all__'
+

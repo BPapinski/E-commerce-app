@@ -2,8 +2,8 @@
 
 from rest_framework import generics, permissions
 from rest_framework.pagination import PageNumberPagination
-from .models import Product
-from .serializers import ProductSerializer
+from .models import Product, Category
+from .serializers import ProductSerializer, CategorySerializer
 
 class StandardResultsSetPagination(PageNumberPagination):
     page_size = 10
@@ -31,3 +31,9 @@ class ProductDetailView(generics.RetrieveAPIView):
     serializer_class = ProductSerializer
     permission_classes = [permissions.AllowAny]
     lookup_field = 'id'
+
+
+class CategoryListView(generics.ListAPIView):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+    permission_classes = [permissions.AllowAny]

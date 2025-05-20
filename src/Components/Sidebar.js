@@ -7,7 +7,7 @@ import SidebarElement from "./SidebarElement";
 
 export default function Sidebar() {
 
-
+    const [categories_NEW, setCategories] = useState();
 
     const [activeCategory, setActiveCategory] = useState();
     const [activeSubcategory, setActiveSubcategory] = useState();
@@ -39,29 +39,52 @@ export default function Sidebar() {
 
 
 
+     const categories = [
+        {
+            category: "Elektronika",
+            id: "electronics",
+            subcategories: ["Telewizory", "Smartfony", "Laptopy", "Aparaty fotograficzne", "konsole"]
+        },
+        {
+            category: "Odzież",
+            id: "clothing",
+            subcategories: ["Kurtki", "Spodnie", "T-shirty", "Bluzy"]
+        },
+        {
+            category: "Książki",
+            id: "books",
+            subcategories: ["Powieści", "Poradniki", "Kryminały", "Literatura dziecięca"]
+        },
+        {
+            category: "Akcesoria",
+            id: "accessories",
+            subcategories: ["Biżuteria", "Zegarki", "Torby", "Okulary"]
+        }
+        ];
 
-    const categories = [
-    {
-        category: "Elektronika",
-        id: "electronics",
-        subcategories: ["Telewizory", "Smartfony", "Laptopy", "Aparaty fotograficzne", "konsole"]
-    },
-    {
-        category: "Odzież",
-        id: "clothing",
-        subcategories: ["Kurtki", "Spodnie", "T-shirty", "Bluzy"]
-    },
-    {
-        category: "Książki",
-        id: "books",
-        subcategories: ["Powieści", "Poradniki", "Kryminały", "Literatura dziecięca"]
-    },
-    {
-        category: "Akcesoria",
-        id: "accessories",
-        subcategories: ["Biżuteria", "Zegarki", "Torby", "Okulary"]
-    }
-    ];
+
+    useEffect(() => {    
+        fetch("http://127.0.0.1:8000/api/store/category", {
+          method: "GET",
+          headers: {
+            /*Authorization: `Bearer ${token}`,*/
+            "Content-Type": "application/json",
+          },
+        })
+          .then((res) => {
+            if (!res.ok) throw new Error("Nie udało się pobrać kategorii");
+            return res.json();
+          })
+          .then((categories) => {
+            setCategories(categories);
+            console.log(categories);
+            })
+          .catch((error) => {
+            console.error("Błąd:", error);
+          });
+      }, []);
+
+    // http://127.0.0.1:8000/api/store/category
 
 
     return (
@@ -71,7 +94,7 @@ export default function Sidebar() {
                 
             </div>
             
-            <div class="sidebar-element slider-element" >
+            <div className="sidebar-element slider-element" >
                 <h1 > cena</h1>
                     <Slider/>
             </div>
@@ -104,21 +127,27 @@ export default function Sidebar() {
             <br></br>
 
             <div className="categories">
+                {categories?.map((category) => (
+                    <h1 key={category.name}>{category.name}</h1>    
+                ))}
+
+
                 {categories.map(({ category, id, subcategories }) => (
-                    <SidebarElement
-                        key={id}
-                        category={category}
-                        id={id}
-                        subcategories={subcategories}
-                        isCategoryActive={isCategoryActive}
-                        isSubcategoryActive={isSubcategoryActive}
-                        toggleSidebar={toggleSidebar}
-                        handleCategoryClick={handleCategoryClick}
-                        handleSubcategoryClick={handleSubcategoryClick}
-                    />
+                        <SidebarElement
+                            key={id}
+                            category={category}
+                            id={id}
+                            subcategories={subcategories}
+                            isCategoryActive={isCategoryActive}
+                            isSubcategoryActive={isSubcategoryActive}
+                            toggleSidebar={toggleSidebar}
+                            handleCategoryClick={handleCategoryClick}
+                            handleSubcategoryClick={handleSubcategoryClick}
+                        />
                 ))}
             </div>
-            
+
+
         </div>
     );
 }
