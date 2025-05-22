@@ -37,6 +37,50 @@ export default function Sidebar() {
     // Funkcja do sprawdzania, czy podkategoria jest aktywna
     const isSubcategoryActive = (subcategory) => activeSubcategory === subcategory ? 'active' : '';
 
+    const [joinedData, setJoinedData] = useState([]);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const [categoriesRes, groupsRes] = await Promise.all([
+          fetch("http://127.0.0.1:8000/api/store/category/"),
+          fetch("http://127.0.0.1:8000/api/store/categorygroup/")
+        ]);
+
+        const categoriesData = await categoriesRes.json();
+        const groupsData = await groupsRes.json();
+
+        const categories = categoriesData.results || categoriesData;
+        const groups = groupsData.results || groupsData;
+
+        console.log("Groups:", groups);
+        console.log("Categories:", categories);
+
+        // Utwórz mapę: group_id → group_name (upewnij się, że klucze to stringi)
+        const groupMap = new Map(
+        groups.map(group => [String(group.id), group.name])
+        );
+
+        // Wykonaj "LEFT JOIN": dołącz group_name do każdej kategorii
+        const result = categories.map(category => {
+        const rawGroupId = category.group_id ?? category.group?.id ?? category.group;
+        const groupId = String(rawGroupId);
+        const groupName = groupMap.get(groupId) || "Brak grupy";
+
+        return {
+            category_name: category.name,
+            group_name: groupName
+        };
+});
+        console.log("JOIN result:", result);
+        setJoinedData(result);
+      } catch (error) {
+        console.error("Błąd podczas pobierania danych:", error);
+      }
+    }
+
+    fetchData();
+  }, []);
 
 
      const categories = [
@@ -62,29 +106,6 @@ export default function Sidebar() {
         }
     ];
 
-
-    useEffect(() => {    
-        fetch("http://127.0.0.1:8000/api/store/category", {
-          method: "GET",
-          headers: {
-            /*Authorization: `Bearer ${token}`,*/
-            "Content-Type": "application/json",
-          },
-        })
-          .then((res) => {
-            if (!res.ok) throw new Error("Nie udało się pobrać kategorii");
-            return res.json();
-          })
-          .then((categories) => {
-            setCategories(categories);
-            console.log(categories);
-            })
-          .catch((error) => {
-            console.error("Błąd:", error);
-          });
-      }, []);
-
-    // http://127.0.0.1:8000/api/store/category
 
 
     return (
