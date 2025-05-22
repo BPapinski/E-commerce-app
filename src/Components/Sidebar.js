@@ -53,8 +53,8 @@ export default function Sidebar() {
         const categories = categoriesData.results || categoriesData;
         const groups = groupsData.results || groupsData;
 
-        console.log("Groups:", groups);
-        console.log("Categories:", categories);
+        //console.log("Groups:", groups);
+        //console.log("Categories:", categories);
 
         // Utwórz mapę: group_id → group_name (upewnij się, że klucze to stringi)
         const groupMap = new Map(
@@ -63,17 +63,39 @@ export default function Sidebar() {
 
         // Wykonaj "LEFT JOIN": dołącz group_name do każdej kategorii
         const result = categories.map(category => {
-        const rawGroupId = category.group_id ?? category.group?.id ?? category.group;
-        const groupId = String(rawGroupId);
-        const groupName = groupMap.get(groupId) || "Brak grupy";
+            const rawGroupId = category.group_id ?? category.group?.id ?? category.group;
+            const groupId = String(rawGroupId);
+            const groupName = groupMap.get(groupId) || "Brak grupy";
 
-        return {
-            category_name: category.name,
-            group_name: groupName
-        };
-});
-        console.log("JOIN result:", result);
-        setJoinedData(result);
+            return {
+                category_name: category.name,
+                group_name: groupName
+            };
+        });
+
+        //console.log("JOIN result:", result);
+
+
+        const groupedData = result.reduce((acc, item) => {
+        const { group_name } = item;
+
+        if (!acc[group_name]) {
+            acc[group_name] = [];
+        }
+
+        acc[group_name].push(item); // cały obiekt kategorii
+        return acc;
+        }, {});
+
+        const groupedArray = Object.entries(groupedData).map(([group_name, categories]) => ({
+        group_name,
+        categories
+        }));
+
+        console.log(groupedArray)
+
+
+        setJoinedData(groupedArray);
       } catch (error) {
         console.error("Błąd podczas pobierania danych:", error);
       }
@@ -81,32 +103,6 @@ export default function Sidebar() {
 
     fetchData();
   }, []);
-
-
-     const categories = [
-        {
-            category: "Elektronika",
-            id: "electronics",
-            subcategories: ["Telewizory", "Smartfony", "Laptopy", "Aparaty fotograficzne", "konsole"]
-        },
-        {
-            category: "Odzież",
-            id: "clothing",
-            subcategories: ["Kurtki", "Spodnie", "T-shirty", "Bluzy"]
-        },
-        {
-            category: "Książki",
-            id: "books",
-            subcategories: ["Powieści", "Poradniki", "Kryminały", "Literatura dziecięca"]
-        },
-        {
-            category: "Akcesoria",
-            id: "accessories",
-            subcategories: ["Biżuteria", "Zegarki", "Torby", "Okulary"]
-        }
-    ];
-
-
 
     return (
         <div className="sidebar">
@@ -146,25 +142,27 @@ export default function Sidebar() {
             </div>
 
             <br></br>
+            
 
             <div className="categories">
-                {categories?.map((category) => (
-                    <h1 key={category.name}>{category.name}</h1>    
-                ))}
+                {joinedData.map(({ group_name, categories }) => (
+                <div key={group_name} className="sidebar-element">
+                    <h2 className="group-title">{group_name}</h2>
 
-
-                {categories.map(({ category, id, subcategories }) => (
-                        <SidebarElement
-                            key={id}
-                            category={category}
-                            id={id}
-                            subcategories={subcategories}
-                            isCategoryActive={isCategoryActive}
-                            isSubcategoryActive={isSubcategoryActive}
-                            toggleSidebar={toggleSidebar}
-                            handleCategoryClick={handleCategoryClick}
-                            handleSubcategoryClick={handleSubcategoryClick}
-                        />
+                    {categories.map(({ category_name, id, subcategories }) => (
+                    <SidebarElement
+                        key={id}
+                        category={category_name}
+                        id={id}
+                        subcategories={subcategories || []}
+                        isCategoryActive={isCategoryActive}
+                        isSubcategoryActive={isSubcategoryActive}
+                        toggleSidebar={toggleSidebar}
+                        handleCategoryClick={handleCategoryClick}
+                        handleSubcategoryClick={handleSubcategoryClick}
+                    />
+                    ))}
+                </div>
                 ))}
             </div>
 
