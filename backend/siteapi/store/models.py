@@ -2,9 +2,15 @@ from django.db import models
 from django.conf import settings
 
 
+class CategoryGroup(models.Model):
+    name = models.CharField(max_length=256)
+    def __str__(self):
+        return self.name
+
 class Category(models.Model):
     name = models.CharField(max_length=100)
     slug = models.SlugField(unique=True)
+    group = models.ForeignKey(CategoryGroup, on_delete=models.CASCADE, null=True, blank=True, default=None)
 
     def __str__(self):
         return self.name

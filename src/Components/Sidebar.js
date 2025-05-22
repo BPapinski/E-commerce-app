@@ -60,7 +60,7 @@ export default function Sidebar() {
             id: "accessories",
             subcategories: ["Biżuteria", "Zegarki", "Torby", "Okulary"]
         }
-        ];
+    ];
 
 
     useEffect(() => {    

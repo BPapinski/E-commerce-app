@@ -34,9 +34,6 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     "authuser",  # <-- musi być przed admin i auth
     "store",
-
-
-
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
