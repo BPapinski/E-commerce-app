@@ -23,6 +23,22 @@
 
 }
 
+
+.alert-box {
+    flex: 3;
+    background-color: rgba(223, 118, 118, 0.1); /* półprzezroczysty róż */
+
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);   /* bardzo łagodny cień */
+    color: #5a1a1a;                              /* stonowany ciemny czerwony */
+    text-align: left;
+    margin: 0.5em 0 1em 0;
+    padding: 0.75em 1em;
+    font-size: 0.95rem;
+    background-blend-mode: lighten;
+}
+
+
 .login-box{
     flex:3;
 }
