@@ -55,7 +55,7 @@ export default function Header({user}) {
         )}
         </div>
       <div className="header-element">
-        <h1>{user ? <h1>{user.email}</h1> : <h1>Gość</h1>}</h1>
+        <h1>{user ? <h1>Profil</h1> : <h1>Gość</h1>}</h1>
       </div>
     </div>
   );

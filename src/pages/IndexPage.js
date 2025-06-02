@@ -5,7 +5,7 @@ import Subheader from "../Components/Subheader";
 import Sidebar from "../Components/Sidebar";
 import PaginationBar from "../Components/PaginationBar";
 import React, { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 export default function IndexPage() {
   const location = useLocation();
@@ -16,6 +16,7 @@ export default function IndexPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(10);
 
+  const navigate = useNavigate();
   // Ustaw token z localStorage
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
@@ -95,6 +96,17 @@ export default function IndexPage() {
     return
   }
 
+  function setCategory(category) {
+  const params = new URLSearchParams(location.search);
+  if (category) {
+    params.set("category", category);
+    params.set("page", 1); // resetuj stronę na 1 przy zmianie kategorii
+  } else {
+    params.delete("category");
+  }
+  navigate({ search: params.toString() });
+  }
+
   return (
     <div className="container">
       <Header user={user} />
@@ -106,6 +118,7 @@ export default function IndexPage() {
           
       
           {error && <div className="error">{error}</div>}
+
           {products.map((product, index) => (
             <div key={index} className="product">
               <div className="product-image">
@@ -116,7 +129,7 @@ export default function IndexPage() {
                   <h2 className="product-name" style={{ fontSize: "1.8rem" }}>
                     <a href="#">{product.name}</a>
                   </h2>
-                  <h2 className="category" style={{ fontSize: "1rem" }}>{product.category}</h2>
+                  <h2 className="category" style={{ fontSize: "1rem" }}onClick={() => setCategory(product.category)}>{product.category}</h2>
                   <h2 style={{ color: "white", fontSize: "1rem", paddingTop: "1em" }}>
                     {product.condition}
                   </h2>
@@ -129,19 +142,15 @@ export default function IndexPage() {
               </div>
             </div>
           ))}
+
           <PaginationBar
-          currentPage={currentPage}
-          totalPages={totalPages}
-          nextPage={nextPage}
-          prevPage={prevPage}
-          goToPage={goToPage}
-        />
+            currentPage={currentPage}
+            totalPages={totalPages}
+            nextPage={nextPage}
+            prevPage={prevPage}
+            goToPage={goToPage}
+          />
         </div>
-
-
-
-        
-        
       </div>
     </div>
   );
