@@ -3,6 +3,7 @@ import "./styles/reset.css";
 import Header from "../Components/Header";
 import Subheader from "../Components/Subheader";
 import Sidebar from "../Components/Sidebar";
+import PaginationBar from "../Components/PaginationBar";
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 
@@ -12,6 +13,8 @@ export default function IndexPage() {
   const [error, setError] = useState(null);
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(10);
 
   // Ustaw token z localStorage
   useEffect(() => {
@@ -50,10 +53,10 @@ export default function IndexPage() {
     let apiUrl = "http://127.0.0.1:8000/api/store/";
     const queryParams = new URLSearchParams();
     if (category) queryParams.append("category", category);
+    queryParams.append("page", currentPage)
     if ([...queryParams].length > 0) {
       apiUrl += "?" + queryParams.toString();
     }
-
     fetch(apiUrl, {
       method: "GET",
       headers: {
@@ -66,13 +69,31 @@ export default function IndexPage() {
       })
       .then((data) => {
         setProducts(data.results || data);
+        const pages = Math.ceil(data.count / 10); // 10 = page_size z Django
+      setTotalPages(pages);
         setError(null);
       })
       .catch((err) => {
         console.error(err);
         setError("Nie udało się pobrać produktów.");
       });
-  }, [location.search]); // <- reaguje na zmiany w URL
+  }, [location.search, currentPage]); // <- reaguje na zmiany w URL/numerze stronie
+
+
+  function nextPage(){
+    setCurrentPage(currentPage+1)
+    return
+  }
+
+  function prevPage(){
+    setCurrentPage(currentPage-1)
+    return
+  }
+
+  function goToPage(pageNumber){
+    setCurrentPage(pageNumber)
+    return
+  }
 
   return (
     <div className="container">
@@ -81,8 +102,10 @@ export default function IndexPage() {
       <div className="main">
         <Sidebar />
         <div className="content">
-          {error && <div className="error">{error}</div>}
 
+          
+      
+          {error && <div className="error">{error}</div>}
           {products.map((product, index) => (
             <div key={index} className="product">
               <div className="product-image">
@@ -106,7 +129,19 @@ export default function IndexPage() {
               </div>
             </div>
           ))}
+          <PaginationBar
+          currentPage={currentPage}
+          totalPages={totalPages}
+          nextPage={nextPage}
+          prevPage={prevPage}
+          goToPage={goToPage}
+        />
         </div>
+
+
+
+        
+        
       </div>
     </div>
   );
