@@ -3,6 +3,13 @@ import React, { useState } from "react";
 
 function handleCategoryChoice(categoryName){
   console.log("wybrano kategorie " + categoryName)
+  
+  const params = new URLSearchParams(window.location.search);
+  params.set("category", categoryName);
+
+  // Aktualizuj URL bez przeładowania strony
+  const newUrl = `${window.location.pathname}?${params.toString()}`;
+  window.history.pushState({}, "", newUrl);
 }
 
 const SidebarElement = ({ groupName, categories }) => {
