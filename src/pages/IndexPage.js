@@ -46,11 +46,10 @@ export default function IndexPage() {
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const category = params.get("category");
-    const subcategory = params.get("subcategory");
 
     let apiUrl = "http://127.0.0.1:8000/api/store/";
     const queryParams = new URLSearchParams();
-    if (subcategory) queryParams.append("subcategory", subcategory);
+    if (category) queryParams.append("category", category);
     if ([...queryParams].length > 0) {
       apiUrl += "?" + queryParams.toString();
     }

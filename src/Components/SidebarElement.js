@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-
+import { useNavigate } from "react-router-dom";
 
 function handleCategoryChoice(categoryName){
   console.log("wybrano kategorie " + categoryName)
-  
+
   const params = new URLSearchParams(window.location.search);
   params.set("category", categoryName);
 

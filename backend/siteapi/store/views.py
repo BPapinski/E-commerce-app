@@ -18,10 +18,10 @@ class ProductListCreateView(generics.ListCreateAPIView):
     def get_queryset(self):
         queryset = Product.objects.all()
 
-        subcategory = self.request.query_params.get('subcategory')
+        category = self.request.query_params.get('category')
 
-        if subcategory:
-            queryset = queryset.filter(category__name__iexact=subcategory)
+        if category:
+            queryset = queryset.filter(category__name__iexact=category)
         return queryset
 
 
