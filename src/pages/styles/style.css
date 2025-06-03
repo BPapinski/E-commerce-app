@@ -79,6 +79,18 @@ display: block;
     background-color: #DBDBDB; 
 }
 
+
+
+.search-bar form{
+    display: flex;
+    align-items: center;
+    width: 100%;
+    border-radius: 5px;
+    overflow: hidden; /* Zapobiega wystawaniu elementów */
+    background-color: #DBDBDB; /* Kolor tła */
+}
+
+
 .search-button {
     padding: 0 10px 0 10px;
     height: 40px;

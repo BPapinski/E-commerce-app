@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import shoppingCartIcon from "../icons/shopping_cart.svg";
 import messageIcon from "../icons/message.svg";
 import bellIcon from "../icons/bell.svg";
@@ -10,11 +11,28 @@ import logoIcon from "../icons/logo.png"
 export default function Header({user}) {
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [searchValue, setSearchValue] = useState('')
+
+  const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     const logged = localStorage.getItem("loggedIn") === "true";
     setIsLoggedIn(logged);
   }, []);
+
+  function submitSearch(e){
+    e.preventDefault();
+    const params = new URLSearchParams(location.search);
+    if(searchValue){
+      params.set("search", searchValue)
+    }
+    else{
+      params.delete("search")
+    }
+    navigate({ search: params.toString() });
+  }
+
 
   return (
     <div className="header">
@@ -26,8 +44,16 @@ export default function Header({user}) {
       </div>
       <div className="header-element" style={{ flex: 2 }}>
         <div className="search-bar">
-          <input type="text" placeholder="Search..." />
-          <button className="search-button">Search</button>
+          <form action="" onSubmit={submitSearch}>
+            <input 
+              type="text" 
+              placeholder="Search..." 
+              value={searchValue}
+              onChange={(e) => setSearchValue(e.target.value)}
+            />
+            <button className="search-button">Search</button>
+          </form>
+          
         </div>
       </div>
       <div className="header-element icons" style={{ flex: 2 }}>

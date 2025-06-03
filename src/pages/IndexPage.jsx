@@ -50,10 +50,14 @@ export default function IndexPage() {
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const category = params.get("category");
+    const search = params.get("search");
 
     let apiUrl = "http://127.0.0.1:8000/api/store/";
     const queryParams = new URLSearchParams();
+
     if (category) queryParams.append("category", category);
+    if (search) queryParams.append("search", search);
+
     queryParams.append("page", currentPage)
     if ([...queryParams].length > 0) {
       apiUrl += "?" + queryParams.toString();
@@ -97,14 +101,14 @@ export default function IndexPage() {
   }
 
   function setCategory(category) {
-  const params = new URLSearchParams(location.search);
-  if (category) {
-    params.set("category", category);
-    params.set("page", 1); // resetuj stronę na 1 przy zmianie kategorii
-  } else {
-    params.delete("category");
-  }
-  navigate({ search: params.toString() });
+    const params = new URLSearchParams(location.search);
+    if (category) {
+      params.set("category", category);
+      params.set("page", 1); // resetuj stronę na 1 przy zmianie kategorii
+    } else {
+      params.delete("category");
+    }
+    navigate({ search: params.toString() });
   }
 
   return (

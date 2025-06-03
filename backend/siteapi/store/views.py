@@ -1,6 +1,6 @@
 # products/views.py
 
-from rest_framework import generics, permissions
+from rest_framework import generics, permissions, filters
 from rest_framework.pagination import PageNumberPagination
 from .models import Product, Category, CategoryGroup
 from .serializers import ProductSerializer, CategorySerializer, CategoryGroupSerializer
@@ -15,13 +15,18 @@ class ProductListCreateView(generics.ListCreateAPIView):
     serializer_class = ProductSerializer
     pagination_class = StandardResultsSetPagination
 
+    # Dodaj SearchFilter do filter_backends
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['name', 'description']  # 🔍 pola, po których można wyszukiwać
+
     def get_queryset(self):
-        queryset = Product.objects.all()
+        queryset = super().get_queryset()
 
+        # Obsługa filtrowania po kategorii
         category = self.request.query_params.get('category')
-
         if category:
             queryset = queryset.filter(category__name__iexact=category)
+
         return queryset
 
 
