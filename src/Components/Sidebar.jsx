@@ -4,9 +4,13 @@ import toggleSidebar from "../scripts/toggleSidebar";
 import $ from "jquery";
 import Slider from "./Slider";
 import SidebarElement from "./SidebarElement";
+import { useLocation, useNavigate } from "react-router-dom";
 
 export default function Sidebar() {
     const [joinedData, setJoinedData] = useState([]);
+    const [range, setRange] = useState([0, 100]);
+    const location = useLocation();
+    const navigate = useNavigate();
 
     useEffect(() => {
         async function fetchData() {
@@ -22,10 +26,6 @@ export default function Sidebar() {
             const categories = categoriesData.results || categoriesData;
             const groups = groupsData.results || groupsData;
 
-            //console.log("Groups:", groups);
-            //console.log("Categories:", categories);
-
-            // Utwórz mapę: group_id → group_name (upewnij się, że klucze to stringi)
             const groupMap = new Map(
             groups.map(group => [String(group.id), group.name])
             );
@@ -41,9 +41,6 @@ export default function Sidebar() {
                     group_name: groupName
                 };
             });
-
-            //console.log("JOIN result:", result);
-
 
             const groupedData = result.reduce((acc, item) => {
             const { group_name } = item;
@@ -75,16 +72,23 @@ export default function Sidebar() {
         fetchData();
     }, []);
 
+    function Apply(){
+        const [min, max] = range;
+        const params = new URLSearchParams(location.search);
+        params.set("min_price", min);
+        params.set("max_price", max);
+        navigate({ search: params.toString() });
+    }
+
     return (
         <div className="sidebar">
             <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
             <div className="sidebar-header">
                 
             </div>
-            
             <div className="slider-element" >
                 <h1 > cena</h1>
-                    <Slider/>
+                    <Slider range={range} setRange={setRange}/>
             </div>
 
             <div className="product-condition">
@@ -106,15 +110,14 @@ export default function Sidebar() {
                         </label>
                     </div>
                     
-                </div>
-
-                
-
+                </div>              
+            </div>
+            <div>
+                <button onClick={Apply}>zastosuj</button>
             </div>
 
             <br></br>
             
-
             <div className="categories">
             {joinedData.map((group, index) => (
                 <SidebarElement
@@ -124,9 +127,6 @@ export default function Sidebar() {
                 />
             ))}
             </div>
-
-
-
         </div>
     );
 }
