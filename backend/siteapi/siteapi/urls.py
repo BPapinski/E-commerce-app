@@ -7,6 +7,7 @@ from django.conf.urls.static import static
 
 
 urlpatterns = [
+    path('grappelli/', include('grappelli.urls')),
     path('nested_admin/', include('nested_admin.urls')),
     path('admin/', admin.site.urls),
     path('', include('authuser.urls')),  # <- to musi być!

@@ -34,7 +34,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     "authuser",  # <-- musi być przed admin i auth
     "store",
-    "django.contrib.admin",
+    
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
@@ -45,8 +45,15 @@ INSTALLED_APPS = [
     "mssql",
     'rest_framework',
     'rest_framework_simplejwt',
-    'nested_admin',
 
+    'grappelli',                      # ← zawsze nad 'django.contrib.admin'
+    'nested_admin',                   # ← powinno być nad 'django.contrib.admin' również
+    'dal',                            # ← django-autocomplete-light core
+    'dal_select2',                    # ← domyślny widget
+    'imagekit',                       # ← generowanie miniatur
+    'import_export',                  # ← obsługa eksportu/importu w adminie
+
+    "django.contrib.admin",
 ]
 
 
