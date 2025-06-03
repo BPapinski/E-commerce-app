@@ -51,12 +51,16 @@ export default function IndexPage() {
     const params = new URLSearchParams(location.search);
     const category = params.get("category");
     const search = params.get("search");
+    const minPrice = params.get("min_price");
+    const maxPrice = params.get("max_price");
 
     let apiUrl = "http://127.0.0.1:8000/api/store/";
     const queryParams = new URLSearchParams();
 
     if (category) queryParams.append("category", category);
     if (search) queryParams.append("search", search);
+    if (minPrice) queryParams.append("min_price", minPrice);
+    if (maxPrice) queryParams.append("max_price", maxPrice);
 
     queryParams.append("page", currentPage)
     if ([...queryParams].length > 0) {
