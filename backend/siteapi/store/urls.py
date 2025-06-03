@@ -5,7 +5,7 @@ from .views import ProductListCreateView, ProductDetailView, CategoryListView, C
 
 urlpatterns = [
     path('', ProductListCreateView.as_view(), name='product-list'),
-    path('<int:id>/', ProductDetailView.as_view(), name='product-detail'),
+    path('product/<int:id>/', ProductDetailView.as_view(), name='product-detail'),
     path('category/', CategoryListView.as_view(), name="categories"),
     path('categorygroup/', CategoryGroupListView.as_view(), name='category-groups')
 ]

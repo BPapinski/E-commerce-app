@@ -3,7 +3,7 @@ import $ from 'jquery';
 import 'jquery-ui/ui/widgets/slider';
 import 'jquery-ui/themes/base/all.css';
 
-export default function Slider({range, setRange}) {
+export default function Slider({range, setRange}) { 
   const sliderRef = useRef(null); // Referencja do suwaka
 
   useEffect(() => {

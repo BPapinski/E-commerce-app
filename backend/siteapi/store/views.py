@@ -43,7 +43,6 @@ class ProductListCreateView(generics.ListCreateAPIView):
 
         return queryset
 
-
 # 🔽 Szczegóły pojedynczego produktu
 class ProductDetailView(generics.RetrieveAPIView):
     queryset = Product.objects.all()
