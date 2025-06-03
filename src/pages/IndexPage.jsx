@@ -13,8 +13,11 @@ export default function IndexPage() {
   const [error, setError] = useState(null);
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(null);
-  const [currentPage, setCurrentPage] = useState(1);
+  
   const [totalPages, setTotalPages] = useState(10);
+
+  const params = new URLSearchParams(location.search);
+  const currentPage = parseInt(params.get("page")) || 1;
 
   const navigate = useNavigate();
   // Ustaw token z localStorage
@@ -88,21 +91,27 @@ export default function IndexPage() {
       });
   }, [location.search, currentPage]); // <- reaguje na zmiany w URL/numerze stronie
 
-
-  function nextPage(){
-    setCurrentPage(currentPage+1)
-    return
+  function nextPage() {
+    const page = currentPage + 1;
+    const params = new URLSearchParams(location.search);
+    params.set("page", page);
+    navigate({ search: params.toString() });
   }
 
-  function prevPage(){
-    setCurrentPage(currentPage-1)
-    return
+  function prevPage() {
+    const page = Math.max(currentPage - 1, 1);
+    const params = new URLSearchParams(location.search);
+    params.set("page", page);
+    navigate({ search: params.toString() });
   }
 
-  function goToPage(pageNumber){
-    setCurrentPage(pageNumber)
-    return
+  function goToPage(pageNumber) {
+    const params = new URLSearchParams(location.search);
+    params.set("page", pageNumber);
+    navigate({ search: params.toString() });
   }
+
+
 
   function setCategory(category) {
     const params = new URLSearchParams(location.search);
