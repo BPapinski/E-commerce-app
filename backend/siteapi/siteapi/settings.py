@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     "mssql",
     'rest_framework',
     'rest_framework_simplejwt',
+    'nested_admin',
 
 ]
 
