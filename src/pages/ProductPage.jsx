@@ -44,22 +44,29 @@ export default function ProductPage(){
             <Subheader />
             <div className="showcase-container">
                 <div className="product-left">
-                    <img src={productData.image} alt={productData.name} className="product-img" />
+                <div className="image-wrapper">
+                    <img
+                    src={productData.image}
+                    alt={productData.name}
+                    className="product-img"
+                    />
+                </div>
                 </div>
 
                 <div className="product-right">
-                    <h1 className="product-title">{productData.name}</h1>
-                    <p className="product-category">{productData.category}</p>
-                    <p className="product-description">{productData.description}</p>
-                    <p className="product-price">{productData.price} zł</p>
-                    {productData.available ? (
-                        <button className="buy-button">Dodaj do koszyka</button>
-                    ) : (
-                        <span className="product-unavailable">Produkt niedostępny</span>
-                    )}
+                <h1 className="product-title">{productData.name}</h1>
+                <p className="product-category">{productData.category}</p>
+                <p className="product-description">{productData.description}</p>
+                <p className="product-price">{productData.price} zł</p>
+                {productData.available ? (
+                    <button className="buy-button">Dodaj do koszyka</button>
+                ) : (
+                    <span className="product-unavailable">Produkt niedostępny</span>
+                )}
                 </div>
             </div>
         </div>
+
     );
 
 }

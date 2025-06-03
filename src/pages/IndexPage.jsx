@@ -87,7 +87,15 @@ export default function IndexPage() {
       })
       .catch((err) => {
         console.error(err);
-        setError("Nie udało się pobrać produktów.");
+
+        // Jeśli aktualna strona > 1, spróbuj ponownie z pierwszą stroną
+        if (currentPage > 1) {
+          const params = new URLSearchParams(location.search);
+          params.set("page", 1);
+          navigate({ search: params.toString() });
+        } else {
+          setError("Nie udało się pobrać produktów.");
+        }
       });
   }, [location.search, currentPage]); // <- reaguje na zmiany w URL/numerze stronie
 
@@ -116,8 +124,8 @@ export default function IndexPage() {
   function setCategory(category) {
     const params = new URLSearchParams(location.search);
     if (category) {
-      params.set("category", category);
       params.set("page", 1); // resetuj stronę na 1 przy zmianie kategorii
+      params.set("category", category);
     } else {
       params.delete("category");
     }
