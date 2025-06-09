@@ -32,8 +32,7 @@ export default function Header({user}) {
     }
     navigate({ search: params.toString() });
   }
-
-
+    
   return (
     <div className="header">
         

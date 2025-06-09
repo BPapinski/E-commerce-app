@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from authuser.models import User
 
 
 class CategoryGroup(models.Model):
@@ -20,6 +21,12 @@ def product_image_upload_path(instance, filename):
     return f"products/{instance.pk or 'temp'}/{filename}"
 
 class Product(models.Model):
+
+    CONDITION_CHOICES = [
+        ('new', 'New'),
+        ('used', 'Used'),
+    ]
+
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True)
     price = models.DecimalField(max_digits=10, decimal_places=2)
@@ -27,6 +34,9 @@ class Product(models.Model):
     available = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True)
+
+    seller = models.ForeignKey(User, on_delete=models.SET_DEFAULT, default=1)
+    condition = models.CharField(max_length=10, choices=CONDITION_CHOICES, default='new')
 
     def __str__(self):
         return self.name

@@ -158,6 +158,9 @@ export default function IndexPage() {
                   <h2 style={{ color: "white", fontSize: "1rem", paddingTop: "1em" }}>
                     {product.condition}
                   </h2>
+                  <h2>
+                    sellerid: {product.seller}
+                  </h2>
                 </div>
                 <div className="product-placeholder"></div>
                 <div className="product-price">
