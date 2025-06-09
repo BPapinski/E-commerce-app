@@ -41,6 +41,14 @@ class ProductListCreateView(generics.ListCreateAPIView):
             except ValueError:
                 pass
 
+        seller_id = params.get('sellerId')
+        if seller_id is not None:
+            try:
+                seller_id = int(seller_id)
+                queryset = queryset.filter(seller_id=seller_id)
+            except ValueError:
+                pass
+
         return queryset
 
 # 🔽 Szczegóły pojedynczego produktu

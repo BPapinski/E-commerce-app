@@ -10,10 +10,11 @@ from .models import Product, Category, CategoryGroup
 
 class ProductSerializer(serializers.ModelSerializer):
     category = serializers.SerializerMethodField()
+    seller_email = serializers.EmailField(source='seller.email', read_only=True)
 
     class Meta:
         model = Product
-        fields = ['id', 'name', 'description', 'price', 'image', 'available', 'created_at', 'category', 'seller', 'condition']
+        fields = ['id', 'name', 'description', 'price', 'image', 'available', 'created_at', 'category', 'seller', 'seller_email', 'condition']
 
     def get_category(self, obj):
         return obj.category.name if obj.category else None

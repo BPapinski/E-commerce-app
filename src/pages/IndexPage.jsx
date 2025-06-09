@@ -56,6 +56,7 @@ export default function IndexPage() {
     const search = params.get("search");
     const minPrice = params.get("min_price");
     const maxPrice = params.get("max_price");
+    const sellerId = params.get("sellerId");
 
     let apiUrl = "http://127.0.0.1:8000/api/store/";
     const queryParams = new URLSearchParams();
@@ -64,8 +65,10 @@ export default function IndexPage() {
     if (search) queryParams.append("search", search);
     if (minPrice) queryParams.append("min_price", minPrice);
     if (maxPrice) queryParams.append("max_price", maxPrice);
+    if (sellerId) queryParams.append("sellerId", sellerId);
 
     queryParams.append("page", currentPage)
+    
     if ([...queryParams].length > 0) {
       apiUrl += "?" + queryParams.toString();
     }
@@ -132,6 +135,17 @@ export default function IndexPage() {
     navigate({ search: params.toString() });
   }
 
+  function setAuthor(sellerId){
+    const params = new URLSearchParams(location.search);
+    if(sellerId){
+      params.set("sellerId", sellerId)
+    }
+    else{
+      params.delete("sellerId")
+    }
+    navigate({ search: params.toString() });
+  }
+
   return (
     <div className="container">
       <Header user={user} />
@@ -158,8 +172,8 @@ export default function IndexPage() {
                   <h2 style={{ color: "white", fontSize: "1rem", paddingTop: "1em" }}>
                     {product.condition}
                   </h2>
-                  <h2>
-                    sellerid: {product.seller}
+                  <h2 className="product-author" style={{}} onClick={()=> setAuthor(product.seller)}> 
+                    sprzedawca: {product.seller_email}
                   </h2>
                 </div>
                 <div className="product-placeholder"></div>

@@ -171,7 +171,6 @@ display: block;
 
 .product:hover{
     background-color: var(--sidebarcolor-hover);
-
     transition: 0.4s ;
 }
 
@@ -291,4 +290,16 @@ a{
 
 .hidden{
     display: none;
+}
+
+.product-author{
+    width: fit-content;
+    fontSize: "1rem";
+     paddingTop: "1em" ;
+}
+
+.product-author:hover{
+    cursor: pointer;
+    color: var(--hovercolor);
+    transition: 0.2s;
 }
