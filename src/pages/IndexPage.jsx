@@ -14,7 +14,7 @@ export default function IndexPage() {
   const [error, setError] = useState(null);
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(null);
-  
+
   const [totalPages, setTotalPages] = useState(10);
 
   const params = new URLSearchParams(location.search);
@@ -30,7 +30,6 @@ export default function IndexPage() {
   // Pobierz dane użytkownika, jeśli token jest
   useEffect(() => {
     if (!token) return;
-
     fetch("http://127.0.0.1:8000/api/user/", {
       method: "GET",
       headers: {
@@ -44,7 +43,7 @@ export default function IndexPage() {
       })
       .then((userData) => {
         setUser(userData);
-        console.log(userData)
+        console.log(userData);
       })
       .catch((error) => {
         console.error("Błąd użytkownika:", error);
@@ -69,8 +68,8 @@ export default function IndexPage() {
     if (maxPrice) queryParams.append("max_price", maxPrice);
     if (sellerId) queryParams.append("sellerId", sellerId);
 
-    queryParams.append("page", currentPage)
-    
+    queryParams.append("page", currentPage);
+
     if ([...queryParams].length > 0) {
       apiUrl += "?" + queryParams.toString();
     }
@@ -87,7 +86,7 @@ export default function IndexPage() {
       .then((data) => {
         setProducts(data.results || data);
         const pages = Math.ceil(data.count / 10); // 10 = page_size z Django
-      setTotalPages(pages);
+        setTotalPages(pages);
         setError(null);
       })
       .catch((err) => {
@@ -124,8 +123,6 @@ export default function IndexPage() {
     navigate({ search: params.toString() });
   }
 
-
-
   function setCategory(category) {
     const params = new URLSearchParams(location.search);
     if (category) {
@@ -137,13 +134,12 @@ export default function IndexPage() {
     navigate({ search: params.toString() });
   }
 
-  function setAuthor(sellerId){
+  function setAuthor(sellerId) {
     const params = new URLSearchParams(location.search);
-    if(sellerId){
-      params.set("sellerId", sellerId)
-    }
-    else{
-      params.delete("sellerId")
+    if (sellerId) {
+      params.set("sellerId", sellerId);
+    } else {
+      params.delete("sellerId");
     }
     navigate({ search: params.toString() });
   }
@@ -155,17 +151,14 @@ export default function IndexPage() {
       <div className="main">
         <Sidebar />
         <div className="content">
-
-          
           {user?.is_admin ? (
-            <AddNewProduct/>
+            <AddNewProduct />
           ) : user ? (
             <></>
           ) : (
             <h3>niezalogowany</h3>
           )}
 
-          
           {error && <div className="error">{error}</div>}
 
           {products.map((product, index) => (
@@ -178,17 +171,35 @@ export default function IndexPage() {
                   <h2 className="product-name" style={{ fontSize: "1.8rem" }}>
                     <a href={`/product/${product.id}`}>{product.name}</a>
                   </h2>
-                  <h2 className="category" style={{ fontSize: "1rem" }}onClick={() => setCategory(product.category_name)}>{product.category_name}</h2>
-                  <h2 style={{ color: "white", fontSize: "1rem", paddingTop: "1em" }}>
+                  <h2
+                    className="category"
+                    style={{ fontSize: "1rem" }}
+                    onClick={() => setCategory(product.category_name)}
+                  >
+                    {product.category_name}
+                  </h2>
+                  <h2
+                    style={{
+                      color: "white",
+                      fontSize: "1rem",
+                      paddingTop: "1em",
+                    }}
+                  >
                     {product.condition}
                   </h2>
-                  <h2 className="product-author" style={{}} onClick={()=> setAuthor(product.seller)}> 
+                  <h2
+                    className="product-author"
+                    style={{}}
+                    onClick={() => setAuthor(product.seller)}
+                  >
                     sprzedawca: {product.seller_email}
                   </h2>
                 </div>
                 <div className="product-placeholder"></div>
                 <div className="product-price">
-                  <h2 style={{ color: "white", fontSize: "1.2rem" }}>{product.price}zł</h2>
+                  <h2 style={{ color: "white", fontSize: "1.2rem" }}>
+                    {product.price}zł
+                  </h2>
                   <button style={{ marginTop: "0.5em" }}>Kup</button>
                 </div>
               </div>

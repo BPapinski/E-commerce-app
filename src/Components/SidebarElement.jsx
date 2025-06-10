@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-function handleCategoryChoice(categoryName){
-  console.log("wybrano kategorie " + categoryName)
+function handleCategoryChoice(categoryName) {
+  console.log("wybrano kategorie " + categoryName);
 
   const params = new URLSearchParams(window.location.search);
   params.set("category", categoryName);
@@ -27,7 +27,7 @@ const SidebarElement = ({ groupName, categories }) => {
           cursor: "pointer",
           fontWeight: "bold",
           userSelect: "none",
-          padding: "5px 0"
+          padding: "5px 0",
         }}
       >
         {groupName} {expanded ? "▲" : "▼"}
@@ -36,7 +36,12 @@ const SidebarElement = ({ groupName, categories }) => {
         {categories.map((cat, index) => (
           <div>
             <li key={index}>
-              <a href="#" onClick={() => handleCategoryChoice(cat.category_name)}>{cat.category_name}</a>
+              <a
+                href="#"
+                onClick={() => handleCategoryChoice(cat.category_name)}
+              >
+                {cat.category_name}
+              </a>
             </li>
           </div>
         ))}

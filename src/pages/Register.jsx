@@ -5,7 +5,6 @@ import Header from "../Components/Header";
 import Subheader from "../Components/Subheader";
 import { useState } from "react";
 
-
 export default function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -67,11 +66,7 @@ export default function Register() {
         <div className="register-box">
           <h2>Rejestracja</h2>
 
-          {error && (
-            <div className="register-alert">
-              {error}
-            </div>
-          )}
+          {error && <div className="register-alert">{error}</div>}
 
           <form className="register-form" onSubmit={handleSubmit}>
             <input
@@ -108,5 +103,3 @@ export default function Register() {
     </div>
   );
 }
-
-

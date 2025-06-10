@@ -1,63 +1,57 @@
-:root{
-    --subheadercolor: #dd3e4a;
-    --headercolor: #EEEEEE;
+:root {
     --subheadercolor: #8E1616;
+    --headercolor: #EEEEEE;
     --contentcolor: #EEEEEE;
     --sidebarcolor: #1D1616;
     --sidebarcolor-hover: #2e2525;
     --hovercolor: rgb(223, 118, 118);
+    --buy-button-accent: #8E1616;
+    --buy-button-hover: #A72828;
 }
 
-.container{
+.container {
     display: flex;
     flex-direction: column;
     min-height: calc(100vh);
-
 }
 
-.header{
+.header {
     position: sticky;
-    top:0px;
+    top: 0px;
     height: 75px;
     background-color: var(--headercolor);
-
     display: flex;
     flex-direction: row;
 }
 
-.header-element{
+.header-element {
     height: inherit;
     background-color: inherit;
-
     height: 100%;
     width: auto;
     flex: 1;
     display: flex;
-    justify-content: center; /* Wycentrowanie poziome */
-    align-items: center; /* Wycentrowanie pionowe */
+    justify-content: center;
+    align-items: center;
 }
 
 .header-element a {
     display: flex;
     align-items: center;
     height: 100%;
-  }
-
-
-  
-.header-element img {
-max-height: 100%;
-width: auto;
-display: block;
 }
 
+.header-element img {
+    max-height: 100%;
+    width: auto;
+    display: block;
+}
 
-
-.icons{
+.icons {
     justify-content: space-around;
 }
 
-.icons img:hover{
+.icons img:hover {
     cursor: pointer;
 }
 
@@ -66,8 +60,8 @@ display: block;
     align-items: center;
     width: 100%;
     border-radius: 5px;
-    overflow: hidden; /* Zapobiega wystawaniu elementów */
-    background-color: #DBDBDB; /* Kolor tła */
+    overflow: hidden;
+    background-color: #DBDBDB;
 }
 
 .search-bar input {
@@ -76,20 +70,17 @@ display: block;
     height: 40px;
     border: none;
     outline: none;
-    background-color: #DBDBDB; 
+    background-color: #DBDBDB;
 }
 
-
-
-.search-bar form{
+.search-bar form {
     display: flex;
     align-items: center;
     width: 100%;
     border-radius: 5px;
-    overflow: hidden; /* Zapobiega wystawaniu elementów */
-    background-color: #DBDBDB; /* Kolor tła */
+    overflow: hidden;
+    background-color: #DBDBDB;
 }
-
 
 .search-button {
     padding: 0 10px 0 10px;
@@ -102,15 +93,14 @@ display: block;
     cursor: pointer;
 }
 
-.search-button:hover{
+.search-button:hover {
     color: var(--hovercolor);
     cursor: pointer;
 }
 
-
-.subheader{
+.subheader {
     position: sticky;
-    top:75px;
+    top: 75px;
     height: 50px;
     background-color: var(--subheadercolor);
     z-index: 9;
@@ -118,7 +108,7 @@ display: block;
     flex-direction: row;
 }
 
-.subheader-element{
+.subheader-element {
     height: inherit;
     background-color: inherit;
     font-size: 0.6rem;
@@ -129,49 +119,40 @@ display: block;
     align-items: center;
 }
 
-.subheader-element h2{
+.subheader-element h2 {
     color: white;
 }
 
-.subheader-element h2:hover{
+.subheader-element h2:hover {
     color: var(--hovercolor);
     cursor: pointer;
 }
 
-
-
-.main{
+.main {
     display: grid;
     grid-template-columns: 1fr 5fr;
     min-height: calc(100vh - 125px);
 }
 
-.content{
+.content {
     background-color: var(--contentcolor);
     display: flex;
     flex-direction: column;
     align-items: center;
-
-    
 }
-
-
-
-
-
 
 .product {
     display: flex;
     align-items: stretch;
-    width: 100%; /* Dostosuj w zależności od układu */
-    max-width: 100%; /* Możesz dostosować */
+    width: 100%;
+    max-width: 100%;
     border: 1px solid #ccc;
     background-color: var(--sidebarcolor);
 }
 
-.product:hover{
+.product:hover {
     background-color: var(--sidebarcolor-hover);
-    transition: 0.4s ;
+    transition: 0.4s;
 }
 
 .product-image {
@@ -192,11 +173,11 @@ display: block;
 
 .product-data {
     display: grid;
-    grid-template-columns: 2fr 2fr 1fr; /* Poprawiona siatka */
+    grid-template-columns: 2fr 2fr 1fr;
     align-items: center;
     justify-content: space-between;
-    width: calc(100% - 200px); /* Stała szerokość */
-    height: 200px; /* Dopasowanie do obrazka */
+    width: calc(100% - 200px);
+    height: 200px;
     padding: 0.5em;
     box-sizing: border-box;
 }
@@ -204,6 +185,12 @@ display: block;
 .product-info {
     grid-column: 1 / 2;
     padding: 0.5em;
+    display: flex;
+    /* Zmieniamy na flexbox, aby łatwiej kontrolować odstępy */
+    flex-direction: column;
+    /* Ustawiamy na kolumnę */
+    justify-content: center;
+    /* Wyśrodkowanie pionowe */
 }
 
 .product-placeholder {
@@ -215,57 +202,138 @@ display: block;
     text-align: center;
 }
 
+.product-price h2 {
+    color: white;
+    font-size: 1.5rem;
+    /* Zwiększono rozmiar ceny */
+    margin-bottom: 0.2em;
+    /* Dodano mały margines pod ceną */
+}
+
 .product-price button {
     width: 80%;
-    background-color: var(--subheadercolor);
+    padding: 0.7em 1em;
+    font-size: 1rem;
+    font-weight: bold;
+    background-color: var(--buy-button-accent);
     color: white;
     border: none;
-    font-weight: bold;
+    border-radius: 8px;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
     cursor: pointer;
-    border-radius: 10px;
-    padding: 0.5em;
+    box-sizing: border-box;
+    margin-top: 0.5em;
 }
 
 .product-price button:hover {
-    background-color: color-mix(in oklch, var(--subheadercolor) 80%, black 20%);
+    background-color: var(--buy-button-hover);
+    transform: translateY(-2px) scale(1.01);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
 }
 
+.product-price button:focus {
+    outline: 2px solid var(--buy-button-hover);
+    outline-offset: 2px;
+}
 
 h2 {
     margin: 0;
     padding: 0;
 }
 
-.category{
-    display: inline; /*zeby napis nie rozciagal sie na cala szerokosc*/
+.category {
+    display: inline;
 }
 
-.product-info h2{
-    color : white;
+.product-info h2 {
+    color: white;
+    margin-bottom: 0;
+    /* Usuwamy domyślne marginesy h2 */
+    padding-bottom: 0;
 }
 
-.product-info h2:hover{
+/* Specyficzne style dla elementów w .product-info */
+.product-name {
+    font-size: 1.8rem;
+    /* Większa czcionka dla nazwy produktu (jak sugerowałeś w JSX) */
+    font-weight: bold;
+    /* Pogrubienie nazwy produktu */
+    margin-bottom: 0.2em;
+    /* Mały odstęp od kategorii */
+    line-height: 1.2;
+    /* Lepszy odstęp między liniami dla dłuższych nazw */
+}
+
+.product-info .category {
+    font-size: 1.1rem;
+    /* Ujednolicony rozmiar dla kategorii */
+    font-weight: normal;
+    /* Normalna waga czcionki */
+    opacity: 0.8;
+    /* Lekko przyciemniona */
+    margin-bottom: 0.5em;
+    /* Odstęp od stanu */
+}
+
+.product-info h2:not(.product-name):not(.category) {
+    /* Dotyczy stanu produktu */
+    font-size: 1rem;
+    /* Rozmiar dla stanu */
+    opacity: 0.9;
+    /* Nieco jaśniejszy niż kategoria */
+    margin-bottom: 0.5em;
+    /* Odstęp od sprzedawcy */
+    color: white;
+    /* Upewniamy się, że kolor jest biały */
+}
+
+.product-author {
+    font-size: 1rem;
+    /* Rozmiar dla sprzedawcy */
+    opacity: 0.7;
+    /* Lekko przyciemniony */
+    margin-top: 0;
+    /* Usuwamy domyślny margines */
+    color: white;
+    /* Upewniamy się, że kolor jest biały */
+}
+
+
+.product-info h2:hover {
     color: var(--hovercolor);
     transition: 0.2s;
 }
 
-.product-name{
+.product-name a {
+    color: inherit;
+    /* Zachowujemy biały kolor linku */
+    text-decoration: none;
+    /* Usuwamy podkreślenie */
+}
+
+.product-name a:hover {
+    color: var(--hovercolor);
+    /* Kolor hover dla linku */
+    transition: 0.2s;
+}
+
+.product-name {
     width: fit-content;
 }
 
-.category:hover{
-    cursor: pointer;    
+.category:hover {
+    cursor: pointer;
 }
 
-a{
+a {
     color: inherit;
     text-decoration: none;
 }
 
-.filter-pink:hover{
+.filter-pink:hover {
     filter: invert(82%) sepia(26%) saturate(7430%) hue-rotate(310deg) brightness(92%) contrast(89%);
 }
-
 
 .suggestions-box {
     position: absolute;
@@ -274,32 +342,29 @@ a{
     list-style: none;
     padding: 5px;
     margin: 0;
-    width:  200px;
+    width: 200px;
     height: fit-content;
     top: 57px;
     z-index: 1000;
 }
+
 .suggestions-box li {
     padding: 5px;
     cursor: pointer;
     height: inherit;
 }
+
 .suggestions-box li:hover {
     background: #f0f0f0;
 }
 
-.hidden{
+.hidden {
     display: none;
 }
 
-.product-author{
-    width: fit-content;
-    fontSize: "1rem";
-     paddingTop: "1em" ;
-}
-
-.product-author:hover{
-    cursor: pointer;
-    color: var(--hovercolor);
-    transition: 0.2s;
-}
+/* Usunięto inline style z JSX, dodano do CSS */
+/* .product-author {
+    width: fit-content;
+    fontSize: "1rem";
+    paddingTop: "1em" ;
+} */

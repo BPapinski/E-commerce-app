@@ -1,9 +1,9 @@
-import { useEffect, useState, useRef } from 'react';
-import $ from 'jquery';
-import 'jquery-ui/ui/widgets/slider';
-import 'jquery-ui/themes/base/all.css';
+import { useEffect, useState, useRef } from "react";
+import $ from "jquery";
+import "jquery-ui/ui/widgets/slider";
+import "jquery-ui/themes/base/all.css";
 
-export default function Slider({range, setRange}) { 
+export default function Slider({ range, setRange }) {
   const sliderRef = useRef(null); // Referencja do suwaka
 
   useEffect(() => {
@@ -14,7 +14,7 @@ export default function Slider({range, setRange}) {
       values: range,
       slide: (event, ui) => {
         setRange(ui.values); // Aktualizacja stanu przy przesuwaniu
-      }
+      },
     });
   }, []);
 
@@ -32,26 +32,26 @@ export default function Slider({range, setRange}) {
 
   return (
     <div className="slider-container">
-      <div ref={sliderRef} style={{ marginBottom: '10px' }}></div>
+      <div ref={sliderRef} style={{ marginBottom: "10px" }}></div>
 
-      <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+      <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
         <label>
           <label>min</label>
           <input
             type="number"
             value={range[0]}
             onChange={(e) => handleInputChange(0, e.target.value)}
-            style={{ width: '60px', marginLeft: '5px' }}
+            style={{ width: "60px", marginLeft: "5px" }}
           />
         </label>
 
         <label>
-        <label>max</label>
+          <label>max</label>
           <input
             type="number"
             value={range[1]}
             onChange={(e) => handleInputChange(1, e.target.value)}
-            style={{ width: '60px', marginLeft: '5px' }}
+            style={{ width: "60px", marginLeft: "5px" }}
           />
         </label>
       </div>

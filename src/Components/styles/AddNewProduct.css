@@ -1,23 +1,126 @@
-.add-product-button-container {
-  width: 100%;
+:root {
+  --primary-bg: var(--sidebarcolor, #1D1616);
+  /* Ciemne tło karty (jak pierwotnie) */
+  --primary-bg-hover: var(--sidebarcolor-hover, #2e2525);
+  /* Ciemniejszy hover karty */
+  --accent: var(--subheadercolor, #8E1616);
+  /* Akcent (jak pierwotnie) */
+  --text-light: #ffffff;
+  /* Biały tekst dla kontrastu */
+  --hover-accent: var(--hovercolor, #A72828);
+  /* Nowy, nieco intensywniejszy hover dla przycisku */
+}
+
+.add-product-card {
   display: flex;
-  justify-content: flex-end;
-  padding: 1em;
+  align-items: center;
+  gap: 1.5em;
+  background-color: var(--primary-bg);
+  border-radius: 12px;
+  padding: 1.5em 2em;
+  /* Zwiększony padding dla lepszego "oddechu" */
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+  /* Wyraźny, ale elegancki cień */
+  width: 100%;
+  height: auto;
+  /* Elastyczna wysokość */
+  min-height: 140px;
+  /* Minimalna wysokość, aby karta nie była zbyt mała */
+}
+
+.add-product-card:hover {
+  background-color: var(--primary-bg-hover);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+  /* Zwiększony cień przy najechaniu */
+}
+
+/* Przywróć styl dla ikony, ale z subtelniejszym cieniem */
+.add-product-icon {
+  flex-shrink: 0;
+  width: 80px;
+  height: 80px;
+  background-color: var(--accent);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  /* Subtelniejszy cień dla ikony */
+}
+
+.add-product-icon img {
+  width: 50%;
+  height: 50%;
+  object-fit: contain;
+  filter: invert(100%);
+  /* Jak pierwotnie */
+}
+
+.add-product-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  color: var(--text-light);
+  /* Biały tekst (jak pierwotnie) */
+  flex: 1;
+}
+
+.add-product-content h2 {
+  font-size: 1.5rem;
+  /* Nieco większa czcionka dla nagłówka, dla lepszej czytelności */
+  margin: 0;
+  color: var(--text-light);
+}
+
+.admin-note {
+  font-size: 0.95rem;
+  /* Nieco większa czcionka dla notki */
+  color: var(--text-light);
+  opacity: 0.8;
+  /* Lekko zwiększona widoczność notki */
+  margin-top: 0.2em;
+  margin-bottom: 0.8em;
+  /* Lekko większy margines przed przyciskiem */
 }
 
 .add-product-button {
-  background-color: var(--subheadercolor);
-  color: white;
-  border: none;
-  font-weight: bold;
-  padding: 0.8em 1.5em;
-  border-radius: 10px;
+  margin-top: 0.8em;
+  /* Jak pierwotnie */
+  padding: 0.7em 1.2em;
+  /* Jak pierwotnie */
   font-size: 1rem;
+  /* Jak pierwotnie */
+  font-weight: bold;
+  /* Jak pierwotnie */
+  background-color: var(--accent);
+  /* Jak pierwotnie */
+  color: white;
+  /* Jak pierwotnie */
+  border: none;
+  /* Jak pierwotnie */
+  border-radius: 8px;
+  /* Jak pierwotnie */
+  transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+  box-sizing: border-box;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+  /* Cień dla przycisku (jak pierwotnie) */
   cursor: pointer;
-  transition: background-color 0.3s;
+  align-self: flex-start;
+  /* Przyczepiamy przycisk do lewej krawędzi */
 }
 
 .add-product-button:hover {
-  background-color: color-mix(in oklch, var(--subheadercolor) 80%, black 20%);
+  background-color: var(--hover-accent);
+  /* Nowy, intensywniejszy kolor hover */
+  transform: translateY(-2px) scale(1.01);
+  /* Ruch w górę i lekkie powiększenie (jak pierwotnie) */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+  /* Większy cień przy najechaniu (jak pierwotnie) */
 }
 
+.add-product-button:focus {
+  outline: 2px solid var(--hover-accent);
+  /* Focus state (jak pierwotnie) */
+  outline-offset: 2px;
+}

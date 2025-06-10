@@ -1,7 +1,13 @@
-import React from 'react';
-import './styles/PaginationBar.css'; // lub style module jeśli wolisz
+import React from "react";
+import "./styles/PaginationBar.css"; // lub style module jeśli wolisz
 
-const PaginationBar = ({ currentPage, totalPages, nextPage, prevPage, goToPage }) => {
+const PaginationBar = ({
+  currentPage,
+  totalPages,
+  nextPage,
+  prevPage,
+  goToPage,
+}) => {
   const getVisiblePages = () => {
     const pages = [];
 
@@ -28,7 +34,7 @@ const PaginationBar = ({ currentPage, totalPages, nextPage, prevPage, goToPage }
       {visiblePages.map((page) => (
         <button
           key={page}
-          className={currentPage === page ? 'active' : ''}
+          className={currentPage === page ? "active" : ""}
           onClick={() => goToPage(page)}
         >
           {page}
@@ -38,7 +44,10 @@ const PaginationBar = ({ currentPage, totalPages, nextPage, prevPage, goToPage }
       <button onClick={nextPage} disabled={currentPage === totalPages}>
         ▶
       </button>
-      <button onClick={() => goToPage(totalPages)} disabled={currentPage === totalPages}>
+      <button
+        onClick={() => goToPage(totalPages)}
+        disabled={currentPage === totalPages}
+      >
         ⏭
       </button>
     </div>

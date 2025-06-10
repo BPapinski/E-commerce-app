@@ -5,11 +5,11 @@
 }
 
 .register-flex-item {
-  flex:1;
+  flex: 1;
   display: flex;
   justify-content: start;
   align-items: start;
-  text-align: center; 
+  text-align: center;
 }
 
 .register-box {
@@ -56,7 +56,8 @@
   text-align: center;
   margin: auto;
   margin-top: 5%;
-  flex: 3; /* To jest kluczowe! */
+  flex: 3;
+  /* To jest kluczowe! */
 }
 
 .main-register {
@@ -70,5 +71,5 @@
   display: flex;
   justify-content: start;
   align-items: start;
-  text-align: center; 
+  text-align: center;
 }

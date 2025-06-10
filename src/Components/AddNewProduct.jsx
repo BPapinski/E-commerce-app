@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-
+import "./styles/AddNewProduct.css";
 
 export default function AddNewProduct() {
   const navigate = useNavigate();
@@ -10,19 +10,13 @@ export default function AddNewProduct() {
   };
 
   return (
-    <div className="product add-new-product">
-      <div className="product-image">
-        <img src="/icons/add-product.svg" alt="Dodaj produkt" />
-      </div>
-      <div className="product-data">
-        <div className="product-info">
-          <h2 className="product-name">Dodaj nowy produkt</h2>
-          <h2 style={{ fontSize: "1rem", color: "white" }}>Tylko dla administratorów</h2>
-        </div>
-        <div className="product-placeholder"></div>
-        <div className="product-price">
-          <button onClick={handleClick}>Przejdź do formularza</button>
-        </div>
+    <div className="add-product-card">
+      <div className="add-product-content">
+        <h2>Dodaj nowy produkt</h2>
+        <p className="admin-note">Tylko dla administratorów</p>
+        <button className="add-product-button" onClick={handleClick}>
+          + Dodaj produkt
+        </button>
       </div>
     </div>
   );
