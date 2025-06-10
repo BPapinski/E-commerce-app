@@ -4,6 +4,7 @@ from rest_framework import generics, permissions, filters
 from rest_framework.pagination import PageNumberPagination
 from .models import Product, Category, CategoryGroup
 from .serializers import ProductSerializer, CategorySerializer, CategoryGroupSerializer
+from rest_framework.permissions import IsAuthenticated
 
 class StandardResultsSetPagination(PageNumberPagination):
     page_size = 10
@@ -57,6 +58,15 @@ class ProductDetailView(generics.RetrieveAPIView):
     serializer_class = ProductSerializer
     permission_classes = [permissions.AllowAny]
     lookup_field = 'id'
+
+class ProductCreateAPIView(generics.CreateAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+    permission_classes = [IsAuthenticated]
+
+    def perform_create(self, serializer):
+        # To jest miejsce, gdzie przypisujesz zalogowanego użytkownika jako sprzedawcę.
+        serializer.save(seller=self.request.user)
 
 
 class CategoryListView(generics.ListAPIView):
