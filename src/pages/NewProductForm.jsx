@@ -1,6 +1,5 @@
 import { useState, useCallback, useEffect } from "react";
 import Cropper from "react-easy-crop";
-// Teraz getCroppedImg zwraca obiekt File (Blob)
 import { getCroppedImg } from "./utils/cropImage";
 import "./styles/newProductForm.css";
 import { Link, useNavigate } from "react-router-dom";
@@ -12,10 +11,10 @@ export default function NewProductForm() {
   const [category, setCategory] = useState("");
   const [condition, setCondition] = useState("new");
 
-  const [imageSrcForCropper, setImageSrcForCropper] = useState(null); // URL dla Croppera (z `URL.createObjectURL`)
+  const [imageSrcForCropper, setImageSrcForCropper] = useState(null);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
-  const [croppedFileToSend, setCroppedFileToSend] = useState(null); // <-- NOWY STAN: przycięty plik do wysłania
-  const [croppedImagePreviewUrl, setCroppedImagePreviewUrl] = useState(null); // URL Base64 dla podglądu (opcjonalny, jeśli chcesz podgląd)
+  const [croppedFileToSend, setCroppedFileToSend] = useState(null);
+  const [croppedImagePreviewUrl, setCroppedImagePreviewUrl] = useState(null);
 
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
@@ -24,19 +23,30 @@ export default function NewProductForm() {
   const [allCategories, setAllCategories] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
 
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(null); // Początkowo null
   const [token, setToken] = useState(null);
+  const [loadingUser, setLoadingUser] = useState(true); // Dodany stan ładowania użytkownika
+  const [userError, setUserError] = useState(null); // Dodany stan błędu użytkownika
 
   const navigate = useNavigate();
 
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
     setToken(storedToken);
-  }, []);
+    if (!storedToken) {
+      navigate("/");
+    }
+  }, [navigate]);
 
   // Pobierz dane użytkownika, jeśli token jest
   useEffect(() => {
-    if (!token) return;
+    if (!token) {
+      setLoadingUser(false); // Jeśli brak tokena, zakończ ładowanie
+      return;
+    }
+
+    setLoadingUser(true); // Rozpocznij ładowanie
+    setUserError(null); // Resetuj błąd
     fetch("http://127.0.0.1:8000/api/user/", {
       method: "GET",
       headers: {
@@ -45,19 +55,32 @@ export default function NewProductForm() {
       },
     })
       .then((res) => {
-        if (!res.ok) throw new Error("Nie udało się pobrać danych użytkownika");
+        if (res.status === 401) {
+          localStorage.removeItem("token");
+          navigate("/"); // Przekieruj na stronę główną lub logowania
+          throw new Error("Nieautoryzowany dostęp. Zaloguj się ponownie.");
+        }
+        if (!res.ok) {
+          throw new Error("Nie udało się pobrać danych użytkownika");
+        }
         return res.json();
       })
       .then((userData) => {
         setUser(userData);
-        console.log(userData);
+        console.log("Dane użytkownika załadowane:", userData);
       })
       .catch((error) => {
         console.error("Błąd użytkownika:", error);
+        setUserError(error.message); // Ustaw wiadomość błędu
+        // Opcjonalnie przekieruj, jeśli błąd jest krytyczny (np. brak dostępu)
+        // navigate("/");
+      })
+      .finally(() => {
+        setLoadingUser(false); // Zawsze zakończ ładowanie po fetchu
       });
-  }, [token]);
+  }, [token, navigate]); // navigate jest potrzebne w zależnościach!
 
-  // laoding categories
+  // laoding categories (bez zmian)
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -94,30 +117,26 @@ export default function NewProductForm() {
     setCroppedAreaPixels(newCroppedAreaPixels);
   }, []);
 
-  // Obsługa wyboru pliku: ustawia tylko URL dla Croppera
   const handleImageFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
       setImageSrcForCropper(URL.createObjectURL(file));
-      setCroppedFileToSend(null); // Resetuj przycięty plik do wysłania
-      setCroppedImagePreviewUrl(null); // Resetuj podgląd
+      setCroppedFileToSend(null);
+      setCroppedImagePreviewUrl(null);
       setCrop({ x: 0, y: 0 });
       setZoom(1);
     }
   };
 
-  // Funkcja do generowania PRZYCIĘTEGO PLIKU I PODGLĄDU
   const generateCroppedFileAndPreview = useCallback(async () => {
     try {
       if (imageSrcForCropper && croppedAreaPixels) {
-        // getCroppedImg teraz zwraca obiekt File (Blob)
         const croppedFile = await getCroppedImg(
           imageSrcForCropper,
           croppedAreaPixels
         );
-        setCroppedFileToSend(croppedFile); // <-- ZAPISUJEMY PRZYCIĘTY PLIK DO WYSŁANIA
+        setCroppedFileToSend(croppedFile);
 
-        // Opcjonalnie: utwórz URL Base64 dla PODGLĄDU, jeśli chcesz go wyświetlać
         const reader = new FileReader();
         reader.readAsDataURL(croppedFile);
         reader.onloadend = () => {
@@ -129,9 +148,16 @@ export default function NewProductForm() {
     }
   }, [croppedAreaPixels, imageSrcForCropper]);
 
-  // --- Główna funkcja do wysyłania formularza ---
   const handleSubmit = async (e, redirectToHome = false) => {
     e.preventDefault();
+
+    // Dodatkowa walidacja dostępu przed wysłaniem formularza
+    if (!user || !user.is_admin) {
+        alert("Brak uprawnień administratora do dodawania produktów.");
+        navigate("/"); // Przekieruj, jeśli nie jest adminem
+        return;
+    }
+
     const validCategory = allCategories.find(
       (cat) => cat.name.toLowerCase() === category.toLowerCase()
     );
@@ -141,7 +167,6 @@ export default function NewProductForm() {
       return;
     }
 
-    // Walidacja, czy przycięty plik jest gotowy do wysłania
     if (!croppedFileToSend) {
       alert("Proszę przyciąć zdjęcie, klikając 'Przytnij zdjęcie'.");
       return;
@@ -153,12 +178,9 @@ export default function NewProductForm() {
     formData.append("price", price);
     formData.append("category", validCategory.id);
     formData.append("condition", condition);
-
-    // *** KLUCZOWA ZMIANA: Dodajemy PRZYCIĘTY PLIK do FormData ***
-    formData.append("image", croppedFileToSend, croppedFileToSend.name); // croppedFileToSend jest już obiektem File
+    formData.append("image", croppedFileToSend, croppedFileToSend.name);
 
     const url = "http://127.0.0.1:8000/api/store/product/add/";
-
     const currentToken = localStorage.getItem("token");
 
     if (!currentToken) {
@@ -204,9 +226,8 @@ export default function NewProductForm() {
       alert("Produkt został dodany pomyślnie!");
 
       if (redirectToHome) {
-        navigate("/"); // Przekieruj na stronę główną
+        navigate("/");
       } else {
-        // Odśwież formularz, ale nie odświeżaj całej strony przeglądarki
         setName("");
         setDescription("");
         setPrice("");
@@ -225,25 +246,57 @@ export default function NewProductForm() {
     }
   };
 
-  // Obsługa zmiany kategorii w polu tekstowym (dla sugestii)
   const handleCategoryChange = (e) => {
     const value = e.target.value;
     setCategory(value);
     setShowSuggestions(value.trim() !== "");
   };
 
-  // Obsługa kliknięcia sugestii kategorii
   const handleSuggestionClick = (name) => {
     setCategory(name);
     setShowSuggestions(false);
   };
 
+  // --- Kluczowe zmiany w renderowaniu: ---
+
+  // 1. Pokaż komunikat ładowania, jeśli dane użytkownika są ładowane
+  if (loadingUser) {
+    return (
+      <div className="product-form-container">
+        <p>Ładowanie danych użytkownika...</p>
+      </div>
+    );
+  }
+
+  // 2. Pokaż komunikat o błędzie, jeśli wystąpił problem z ładowaniem danych użytkownika
+  if (userError) {
+    return (
+      <div className="product-form-container">
+        <p>Błąd ładowania danych użytkownika: {userError}</p>
+        <p>Proszę odświeżyć stronę lub spróbować ponownie później.</p>
+        <Link to="/" className="back-button">Powrót do strony głównej</Link>
+      </div>
+    );
+  }
+
+  // 3. Sprawdź uprawnienia admina po załadowaniu danych użytkownika
+  if (!user || !user.is_admin) {
+    return (
+      <div className="product-form-container">
+        <p>Brak uprawnień. Tylko administratorzy mogą dodawać produkty.</p>
+        <Link to="/" className="back-button">Powrót do strony głównej</Link>
+      </div>
+    );
+  }
+
+  // Jeśli wszystko jest ok (user załadowany i jest adminem), renderuj formularz
   return (
     <div className="product-form-container">
       <Link to="/" className="back-button">
         Powrót
       </Link>
       <h2>Dodaj nowy produkt</h2>
+      {/* Reszta Twojego formularza */}
       <form onSubmit={handleSubmit} className="product-form">
         <label>Nazwa produktu</label>
         <input
@@ -339,7 +392,6 @@ export default function NewProductForm() {
           </div>
         )}
 
-        {/* Zmieniono nazwę funkcji wywoływanej przez przycisk */}
         {imageSrcForCropper && (
           <button
             type="button"
@@ -350,7 +402,6 @@ export default function NewProductForm() {
           </button>
         )}
 
-        {/* Podgląd przyciętego obrazu (opcjonalny, jeśli chcesz wyświetlać Base64) */}
         {croppedImagePreviewUrl && (
           <div className="image-preview">
             <p>Podgląd przyciętego obrazu:</p>
