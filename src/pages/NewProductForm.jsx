@@ -1,164 +1,198 @@
 import { useState, useCallback, useEffect } from "react";
 import Cropper from "react-easy-crop";
-import { getCroppedImg } from "./utils/cropImage"; // funkcja pomocnicza niżej
-import { v4 as uuidv4 } from 'uuid';
-import "./styles/newProductForm.css"
-import { Link } from "react-router-dom"; // <-- Dodaj ten import
+// Teraz getCroppedImg zwraca obiekt File (Blob)
+import { getCroppedImg } from "./utils/cropImage";
+import "./styles/newProductForm.css";
+import { Link } from "react-router-dom";
 
 export default function NewProductForm() {
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-  const [price, setPrice] = useState("");
-  const [category, setCategory] = useState("");
-  const [image, setImage] = useState(null);
-  const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
-  const [croppedImage, setCroppedImage] = useState(null);
-  const [crop, setCrop] = useState({ x: 0, y: 0 });
-  const [zoom, setZoom] = useState(1);
+    const [name, setName] = useState("");
+    const [description, setDescription] = useState("");
+    const [price, setPrice] = useState("");
+    const [category, setCategory] = useState("");
+    const [condition, setCondition] = useState("new");
 
-  const [categoryGroups, setCategoryGroups] = useState([]);
-  const [allCategories, setAllCategories] = useState([]);
-  const [filteredCategories, setFilteredCategories] = useState([]);
-  const [showSuggestions, setShowSuggestions] = useState(false);
+    const [imageSrcForCropper, setImageSrcForCropper] = useState(null); // URL dla Croppera (z `URL.createObjectURL`)
+    const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
+    const [croppedFileToSend, setCroppedFileToSend] = useState(null); // <-- NOWY STAN: przycięty plik do wysłania
+    const [croppedImagePreviewUrl, setCroppedImagePreviewUrl] = useState(null); // URL Base64 dla podglądu (opcjonalny, jeśli chcesz podgląd)
 
-  const [token, setToken] = useState(null);
+    const [crop, setCrop] = useState({ x: 0, y: 0 });
+    const [zoom, setZoom] = useState(1);
 
-useEffect(() => {
-    const storedToken = localStorage.getItem("token");
-    setToken(storedToken);
-}, []);
+    const [categoryGroups, setCategoryGroups] = useState([]);
+    const [allCategories, setAllCategories] = useState([]);
+    const [showSuggestions, setShowSuggestions] = useState(false);
 
-  const groupedSuggestions = categoryGroups.map((group) => {
-    const matches = allCategories.filter(
-      (cat) =>
-        cat.group === group.id &&
-        cat.name.toLowerCase().includes(category.toLowerCase())
-    );
-    return {
-      groupName: group.name,
-      categories: matches
+    // laoding categories
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const [categoryRes, groupRes] = await Promise.all([
+                    fetch("http://127.0.0.1:8000/api/store/category/"),
+                    fetch("http://127.0.0.1:8000/api/store/categorygroup/")
+                ]);
+                const categoryData = await categoryRes.json();
+                const groupData = await groupRes.json();
+                setAllCategories(categoryData);
+                setCategoryGroups(groupData);
+            } 
+            catch (err) {
+                console.error("category loading error:", err);
+            }
+        };
+        fetchData();
+    }, []);
+
+    const groupedSuggestions = categoryGroups.map((group) => {
+        const matches = allCategories.filter(
+            (cat) =>
+                cat.group === group.id &&
+                cat.name.toLowerCase().includes(category.toLowerCase())
+            );
+        return {
+            groupName: group.name,
+            categories: matches,
+        };
+    })
+    .filter((group) => group.categories.length > 0);
+
+    const onCropComplete = useCallback((_, newCroppedAreaPixels) => {
+        setCroppedAreaPixels(newCroppedAreaPixels);
+    }, []);
+
+    // Obsługa wyboru pliku: ustawia tylko URL dla Croppera
+    const handleImageFileChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setImageSrcForCropper(URL.createObjectURL(file));
+            setCroppedFileToSend(null); // Resetuj przycięty plik do wysłania
+            setCroppedImagePreviewUrl(null); // Resetuj podgląd
+            setCrop({ x: 0, y: 0 });
+            setZoom(1);
+        }
     };
-  }).filter(group => group.categories.length > 0);
+
+    // Funkcja do generowania PRZYCIĘTEGO PLIKU I PODGLĄDU
+    const generateCroppedFileAndPreview = useCallback(async () => {
+        try {
+            if (imageSrcForCropper && croppedAreaPixels) {
+                // getCroppedImg teraz zwraca obiekt File (Blob)
+                const croppedFile = await getCroppedImg(imageSrcForCropper, croppedAreaPixels);
+                setCroppedFileToSend(croppedFile); // <-- ZAPISUJEMY PRZYCIĘTY PLIK DO WYSŁANIA
+
+                // Opcjonalnie: utwórz URL Base64 dla PODGLĄDU, jeśli chcesz go wyświetlać
+                const reader = new FileReader();
+                reader.readAsDataURL(croppedFile);
+                reader.onloadend = () => {
+                    setCroppedImagePreviewUrl(reader.result);
+                };
+            }
+        } 
+        catch (e) {
+            console.error("Błąd podczas generowania przyciętego pliku/podglądu:", e);
+        }
+    }, [croppedAreaPixels, imageSrcForCropper]);
 
 
-  const onCropComplete = useCallback((_, croppedAreaPixels) => {
-    setCroppedAreaPixels(croppedAreaPixels);
-  }, []);
-
-  const handleImageUpload = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const imageUrl = URL.createObjectURL(file);
-      setImage(imageUrl);
-    }
-  };
-
-  const showCroppedImage = useCallback(async () => {
-    try {
-      const cropped = await getCroppedImg(image, croppedAreaPixels);
-      setCroppedImage(cropped);
-    } catch (e) {
-      console.error(e);
-    }
-  }, [croppedAreaPixels, image]);
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    const validCategory = allCategories.find(
-      (cat) => cat.name.toLowerCase() === category.toLowerCase()
-    );
+    // --- Główna funkcja do wysyłania formularza ---
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        const validCategory = allCategories.find((cat) => cat.name.toLowerCase() === category.toLowerCase());
 
     if (!validCategory) {
-      alert("Wpisana kategoria nie istnieje.");
-      return;
+        alert("Wpisana kategoria nie istnieje. Proszę wybrać kategorię z listy.");
+        return;
     }
 
-    const productData = {
-      name,
-      description,
-      price,
-      category: validCategory.id,
-      condition: "new",
-      image: croppedImage,
-    };
-
-    console.log("New Product:", productData);
-    alert("Produkt został dodany (symulacja).");
+    // Walidacja, czy przycięty plik jest gotowy do wysłania
+    if (!croppedFileToSend) {
+        alert("Proszę przyciąć zdjęcie, klikając 'Przytnij zdjęcie'.");
+        return;
+    }
 
     const formData = new FormData();
-        formData.append('name', productData.name);
-        formData.append('description', productData.description);
-        formData.append('price', productData.price);
-        formData.append('category', productData.category);
-        formData.append('condition', productData.condition);
+    formData.append('name', name);
+    formData.append('description', description);
+    formData.append('price', price);
+    formData.append('category', validCategory.id);
+    formData.append('condition', condition);
 
-        // Jeśli croppedImage jest obiektem File lub Blob, dodaj go w ten sposób:
-        if (productData.image instanceof File || productData.image instanceof Blob) {
-        formData.append('image', productData.image, productData.image.name); // trzeci argument jest opcjonalny (nazwa pliku)
-        } else if (productData.image) {
-        // Jeśli croppedImage to np. base64 string, możesz go dodać jako zwykłe pole tekstowe
-        // Pamiętaj, że backend musi być przygotowany na dekodowanie base64
-        formData.append('image', productData.image);
-    }
+    // *** KLUCZOWA ZMIANA: Dodajemy PRZYCIĘTY PLIK do FormData ***
+    formData.append('image', croppedFileToSend, croppedFileToSend.name); // croppedFileToSend jest już obiektem File
 
-    const url = 'http://127.0.0.1:8000/api/store/product/add/'
+    const url = 'http://127.0.0.1:8000/api/store/product/add/';
 
     const currentToken = localStorage.getItem("token");
 
     if (!currentToken) {
-      alert("Jesteś niezalogowany. Proszę się zalogować.");
-      console.error("Brak tokena uwierzytelniającego.");
-      return; // Zatrzymaj proces, jeśli tokena brakuje
+        alert("Jesteś niezalogowany. Proszę się zalogować.");
+        console.error("Brak tokena uwierzytelniającego.");
+        return;
     }
 
-    fetch(url, {
-        method: "POST",
-        headers: {
-            'Authorization': `Bearer ${currentToken}`,
-        },
-        body: formData,
-    })
+    try {
+        const response = await fetch(url, {
+            method: "POST",
+            headers: {
+                'Authorization': `Bearer ${currentToken}`,
+            },
+            body: formData,
+        });
 
+        if (!response.ok) {
+            const errorData = await response.json();
+            console.error("Błąd odpowiedzi serwera:", response.status, response.statusText);
+            console.error("Szczegóły błędu:", errorData);
+
+            let errorMessage = `Wystąpił błąd: ${response.status} ${response.statusText}.`;
+            if (errorData && typeof errorData === 'object') {
+            for (const key in errorData) {
+                if (Object.hasOwnProperty.call(errorData, key)) {
+                errorMessage += `\n${key}: ${JSON.stringify(errorData[key])}`;
+                }
+            }
+            } 
+            else if (typeof errorData === 'string') {
+                errorMessage += `\nSzczegóły: ${errorData}`;
+            }
+            alert(errorMessage);
+            return;
+        }
+
+        const data = await response.json();
+        console.log("Produkt dodany pomyślnie:", data);
+        alert("Produkt został dodany pomyślnie!");
+
+        // Resetowanie formularza po sukcesie
+        setName("");
+        setDescription("");
+        setPrice("");
+        setCategory("");
+        setCondition("new");
+        setImageSrcForCropper(null);
+        setCroppedAreaPixels(null);
+        setCroppedFileToSend(null); // Resetuj przycięty plik
+        setCroppedImagePreviewUrl(null); // Resetuj podgląd
+        setCrop({ x: 0, y: 0 });
+        setZoom(1);
+
+    } 
+    catch (error) {
+        console.error("Błąd podczas dodawania produktu (catch):", error);
+        alert(`Wystąpił błąd sieciowy lub nieoczekiwany: ${error.message}`);
+    }
   };
 
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [categoryRes, groupRes] = await Promise.all([
-          fetch("http://127.0.0.1:8000/api/store/category/"),
-          fetch("http://127.0.0.1:8000/api/store/categorygroup/")
-        ]);
-        const categoryData = await categoryRes.json();
-        const groupData = await groupRes.json();
-        setAllCategories(categoryData);
-        setCategoryGroups(groupData);
-      } catch (err) {
-        console.error("Błąd ładowania danych:", err);
-      }
-    };
-    fetchData();
-  }, []);
-
-
+  // Obsługa zmiany kategorii w polu tekstowym (dla sugestii)
   const handleCategoryChange = (e) => {
     const value = e.target.value;
     setCategory(value);
-
-    if (value.trim() === "") {
-      setFilteredCategories([]);
-      setShowSuggestions(false);
-      return;
-    }
-
-    const filtered = allCategories.filter((cat) =>
-      cat.name.toLowerCase().includes(value.toLowerCase())
-    );
-    setFilteredCategories(filtered);
-    setShowSuggestions(true);
+    setShowSuggestions(value.trim() !== "");
   };
 
+  // Obsługa kliknięcia sugestii kategorii
   const handleSuggestionClick = (name) => {
     setCategory(name);
     setShowSuggestions(false);
@@ -166,9 +200,7 @@ useEffect(() => {
 
   return (
     <div className="product-form-container">
-      {/* Dodajemy przycisk "Powrót" tutaj */}
-      <Link to="/" className="back-button">Powrót</Link> 
-        {token}
+      <Link to="/" className="back-button">Powrót</Link>
       <h2>Dodaj nowy produkt</h2>
       <form onSubmit={handleSubmit} className="product-form">
         <label>Nazwa produktu</label>
@@ -214,7 +246,7 @@ useEffect(() => {
                   {group.categories.map((cat) => (
                     <div
                       key={cat.id}
-                      onClick={() => handleSuggestionClick(cat.name)}
+                      onMouseDown={() => handleSuggestionClick(cat.name)}
                       className="suggestion-item"
                     >
                       {cat.name}
@@ -226,17 +258,29 @@ useEffect(() => {
           )}
         </div>
 
+        <label htmlFor="condition">Stan produktu</label>
+        <select
+          id="condition"
+          value={condition}
+          onChange={(e) => setCondition(e.target.value)}
+          required
+        >
+          <option value="new">Nowy</option>
+          <option value="used">Używany</option>
+        </select>
+
         <label>Zdjęcie produktu (1:1)</label>
         <input
           type="file"
           accept="image/*"
-          onChange={handleImageUpload}
+          onChange={handleImageFileChange}
+          required
         />
 
-        {image && (
+        {imageSrcForCropper && (
           <div className="cropper-container">
             <Cropper
-              image={image}
+              image={imageSrcForCropper}
               crop={crop}
               zoom={zoom}
               aspect={1}
@@ -247,16 +291,18 @@ useEffect(() => {
           </div>
         )}
 
-        {image && (
-          <button type="button" onClick={showCroppedImage} className="crop-button">
+        {/* Zmieniono nazwę funkcji wywoływanej przez przycisk */}
+        {imageSrcForCropper && (
+          <button type="button" onClick={generateCroppedFileAndPreview} className="crop-button">
             Przytnij zdjęcie
           </button>
         )}
 
-        {croppedImage && (
+        {/* Podgląd przyciętego obrazu (opcjonalny, jeśli chcesz wyświetlać Base64) */}
+        {croppedImagePreviewUrl && (
           <div className="image-preview">
-            <p>Podgląd:</p>
-            <img src={croppedImage} alt="Cropped" />
+            <p>Podgląd przyciętego obrazu:</p>
+            <img src={croppedImagePreviewUrl} alt="Cropped Preview" />
           </div>
         )}
 
@@ -266,4 +312,4 @@ useEffect(() => {
       </form>
     </div>
   );
-}   
+}

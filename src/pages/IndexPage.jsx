@@ -178,7 +178,7 @@ export default function IndexPage() {
                   <h2 className="product-name" style={{ fontSize: "1.8rem" }}>
                     <a href={`/product/${product.id}`}>{product.name}</a>
                   </h2>
-                  <h2 className="category" style={{ fontSize: "1rem" }}onClick={() => setCategory(product.category)}>{product.category}</h2>
+                  <h2 className="category" style={{ fontSize: "1rem" }}onClick={() => setCategory(product.category_name)}>{product.category_name}</h2>
                   <h2 style={{ color: "white", fontSize: "1rem", paddingTop: "1em" }}>
                     {product.condition}
                   </h2>

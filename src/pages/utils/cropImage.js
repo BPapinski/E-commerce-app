@@ -1,8 +1,11 @@
+// utils/cropImage.js (PO MODYFIKACJI)
+// Importuj uuid, jeśli nie masz go już w utils/cropImage.js
+import { v4 as uuidv4 } from 'uuid'; // Dodaj ten import, jeśli potrzebny
+
 export const getCroppedImg = async (imageSrc, croppedAreaPixels) => {
   const image = new Image();
   image.src = imageSrc;
 
-  // Czekaj, aż obraz się załaduje
   await new Promise(resolve => {
     image.onload = resolve;
   });
@@ -28,10 +31,19 @@ export const getCroppedImg = async (imageSrc, croppedAreaPixels) => {
     croppedAreaPixels.height
   );
 
-  return new Promise(resolve => {
-    // Zwraca URL base64. Jeśli potrzebujesz Bloba (pliku), zmień na canvas.toBlob()
-    canvas.toDataURL('image/jpeg', 0.8, (dataUrl) => {
-      resolve(dataUrl);
-    });
+  return new Promise((resolve, reject) => {
+    // Zwraca obiekt Blob
+    canvas.toBlob(blob => {
+      if (!blob) {
+        console.error('Canvas is empty');
+        reject(new Error('Canvas is empty'));
+        return;
+      }
+      // Domyślna nazwa pliku dla Bloba
+      const filename = `cropped_image_${uuidv4()}.jpeg`;
+      // Dodajemy nazwę pliku do Bloba (lub tworzymy nowy obiekt File z Bloba)
+      const croppedFile = new File([blob], filename, { type: 'image/jpeg' });
+      resolve(croppedFile); // Zwracamy obiekt File (który jest typem Bloba)
+    }, 'image/jpeg', 0.8); // Format (jpeg), jakość (0.8)
   });
 };
