@@ -1,33 +1,37 @@
-export const getCroppedImg = (imageSrc, pixelCrop) => {
-  return new Promise((resolve, reject) => {
-    const image = new Image();
-    image.src = imageSrc;
-    image.onload = () => {
-      const canvas = document.createElement("canvas");
-      canvas.width = pixelCrop.width;
-      canvas.height = pixelCrop.height;
-      const ctx = canvas.getContext("2d");
+export const getCroppedImg = async (imageSrc, croppedAreaPixels) => {
+  const image = new Image();
+  image.src = imageSrc;
 
-      ctx.drawImage(
-        image,
-        pixelCrop.x,
-        pixelCrop.y,
-        pixelCrop.width,
-        pixelCrop.height,
-        0,
-        0,
-        pixelCrop.width,
-        pixelCrop.height
-      );
+  // Czekaj, aż obraz się załaduje
+  await new Promise(resolve => {
+    image.onload = resolve;
+  });
 
-      canvas.toBlob((blob) => {
-        if (!blob) {
-          return reject("Canvas is empty");
-        }
-        const croppedUrl = URL.createObjectURL(blob);
-        resolve(croppedUrl);
-      }, "image/jpeg");
-    };
-    image.onerror = reject;
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
+
+  const scaleX = image.naturalWidth / image.width;
+  const scaleY = image.naturalHeight / image.height;
+
+  canvas.width = croppedAreaPixels.width;
+  canvas.height = croppedAreaPixels.height;
+
+  ctx.drawImage(
+    image,
+    croppedAreaPixels.x * scaleX,
+    croppedAreaPixels.y * scaleY,
+    croppedAreaPixels.width * scaleX,
+    croppedAreaPixels.height * scaleY,
+    0,
+    0,
+    croppedAreaPixels.width,
+    croppedAreaPixels.height
+  );
+
+  return new Promise(resolve => {
+    // Zwraca URL base64. Jeśli potrzebujesz Bloba (pliku), zmień na canvas.toBlob()
+    canvas.toDataURL('image/jpeg', 0.8, (dataUrl) => {
+      resolve(dataUrl);
+    });
   });
 };

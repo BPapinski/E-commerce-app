@@ -21,6 +21,13 @@ export default function NewProductForm() {
   const [filteredCategories, setFilteredCategories] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
 
+  const [token, setToken] = useState(null);
+
+useEffect(() => {
+    const storedToken = localStorage.getItem("token");
+    setToken(storedToken);
+}, []);
+
   const groupedSuggestions = categoryGroups.map((group) => {
     const matches = allCategories.filter(
       (cat) =>
@@ -68,16 +75,51 @@ export default function NewProductForm() {
     }
 
     const productData = {
-      id: uuidv4(),
       name,
       description,
       price,
-      category: validCategory.name,
+      category: validCategory.id,
+      condition: "new",
       image: croppedImage,
     };
 
     console.log("New Product:", productData);
     alert("Produkt został dodany (symulacja).");
+
+    const formData = new FormData();
+        formData.append('name', productData.name);
+        formData.append('description', productData.description);
+        formData.append('price', productData.price);
+        formData.append('category', productData.category);
+        formData.append('condition', productData.condition);
+
+        // Jeśli croppedImage jest obiektem File lub Blob, dodaj go w ten sposób:
+        if (productData.image instanceof File || productData.image instanceof Blob) {
+        formData.append('image', productData.image, productData.image.name); // trzeci argument jest opcjonalny (nazwa pliku)
+        } else if (productData.image) {
+        // Jeśli croppedImage to np. base64 string, możesz go dodać jako zwykłe pole tekstowe
+        // Pamiętaj, że backend musi być przygotowany na dekodowanie base64
+        formData.append('image', productData.image);
+    }
+
+    const url = 'http://127.0.0.1:8000/api/store/product/add/'
+
+    const currentToken = localStorage.getItem("token");
+
+    if (!currentToken) {
+      alert("Jesteś niezalogowany. Proszę się zalogować.");
+      console.error("Brak tokena uwierzytelniającego.");
+      return; // Zatrzymaj proces, jeśli tokena brakuje
+    }
+
+    fetch(url, {
+        method: "POST",
+        headers: {
+            'Authorization': `Bearer ${currentToken}`,
+        },
+        body: formData,
+    })
+
   };
 
 
@@ -126,7 +168,7 @@ export default function NewProductForm() {
     <div className="product-form-container">
       {/* Dodajemy przycisk "Powrót" tutaj */}
       <Link to="/" className="back-button">Powrót</Link> 
-
+        {token}
       <h2>Dodaj nowy produkt</h2>
       <form onSubmit={handleSubmit} className="product-form">
         <label>Nazwa produktu</label>

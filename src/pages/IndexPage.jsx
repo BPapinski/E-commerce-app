@@ -162,7 +162,7 @@ export default function IndexPage() {
           ) : user ? (
             <></>
           ) : (
-            <></>
+            <h3>niezalogowany</h3>
           )}
 
           

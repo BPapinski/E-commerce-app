@@ -68,7 +68,6 @@ class ProductCreateAPIView(generics.CreateAPIView):
         # To jest miejsce, gdzie przypisujesz zalogowanego użytkownika jako sprzedawcę.
         serializer.save(seller=self.request.user)
 
-
 class CategoryListView(generics.ListAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
