@@ -1,14 +1,16 @@
 import { useState, useEffect } from "react";
 import "../pages/styles/sidebar.css";
-import toggleSidebar from "../scripts/toggleSidebar";
-import $ from "jquery";
-import Slider from "./Slider";
-import SidebarElement from "./SidebarElement";
+// import toggleSidebar from "../scripts/toggleSidebar"; // Zakomentowano, jeśli nie jest używane
+// import $ from "jquery"; // Zakomentowano, jeśli nie jest używane do manipulacji DOM
+import Slider from "./Slider"; // Upewnij się, że ten komponent jest poprawnie zaimportowany
+import SidebarElement from "./SidebarElement"; // Upewnij się, że ten komponent jest poprawnie zaimportowany
 import { useLocation, useNavigate } from "react-router-dom";
 
 export default function Sidebar() {
   const [joinedData, setJoinedData] = useState([]);
   const [range, setRange] = useState([0, 100]);
+  // Nowy stan dla wybranego stanu produktu (null, 'new', lub 'used')
+  const [selectedCondition, setSelectedCondition] = useState(null);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -61,9 +63,7 @@ export default function Sidebar() {
           })
         );
 
-        console.log(groupedArray);
-
-        console.log("dupa");
+        console.log(groupedArray); // Dla celów debugowania
 
         setJoinedData(groupedArray);
       } catch (error) {
@@ -74,51 +74,88 @@ export default function Sidebar() {
     fetchData();
   }, []);
 
+  // Funkcja do obsługi zmiany stanu produktu
+  const handleConditionChange = (condition) => {
+    setSelectedCondition(condition);
+  };
+
+  // Funkcja do stosowania filtrów
   function Apply() {
     const [min, max] = range;
     const params = new URLSearchParams(location.search);
     params.set("min_price", min);
     params.set("max_price", max);
+
+    // Dodaj lub usuń parametr 'condition' w zależności od wyboru
+    if (selectedCondition) {
+      params.set("condition", selectedCondition);
+    } else {
+      params.delete("condition");
+    }
+
     navigate({ search: params.toString() });
   }
 
   return (
     <div className="sidebar">
-      <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+      {/* <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script> */}
       <div className="sidebar-header"></div>
+
+      {/* Sekcja Slidera Cenowego */}
       <div className="slider-element">
-        <h1> cena</h1>
+        <h1>Cena</h1>
         <Slider range={range} setRange={setRange} />
       </div>
 
+      {/* Sekcja Stanu Produktu */}
       <div className="product-condition">
         <div>
-          <h2>stan produktu</h2>
+          <h2>Stan produktu</h2>
         </div>
         <div className="product-condition-choose">
-          <div className="product-condition-option">
+          {/* Opcja "Nowy" */}
+          <div
+            className={`product-condition-option ${selectedCondition === "new" ? "active" : ""}`}
+            onClick={() => handleConditionChange("new")}
+          >
             <label className="product-condition-checkbox-container">
               Nowy
-              <input type="checkbox" />
+              <input
+                type="checkbox"
+                checked={selectedCondition === "new"}
+                onChange={() => {}} // Pusty handler, bo klikamy na div
+              />
               <span className="checkmark"></span>
             </label>
           </div>
 
-          <div className="product-condition-option">
-            <label class="product-condition-checkbox-container">
+          {/* Opcja "Używany" */}
+          <div
+            className={`product-condition-option ${selectedCondition === "used" ? "active" : ""}`}
+            onClick={() => handleConditionChange("used")}
+          >
+            <label className="product-condition-checkbox-container">
               Używany
-              <input type="checkbox" />
+              <input
+                type="checkbox"
+                checked={selectedCondition === "used"}
+                onChange={() => {}} // Pusty handler, bo klikamy na div
+              />
               <span className="checkmark"></span>
             </label>
           </div>
         </div>
       </div>
+
+      {/* Przycisk Zastosuj */}
       <div>
-        <button onClick={Apply}>zastosuj</button>
+        <button onClick={Apply}>Zastosuj</button>
       </div>
 
+      {/* Odstęp - rozważ użycie CSS zamiast <br> */}
       <br></br>
 
+      {/* Sekcja Kategorii */}
       <div className="categories">
         {joinedData.map((group, index) => (
           <SidebarElement

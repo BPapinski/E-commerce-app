@@ -1,3 +1,22 @@
+:root {
+    /* Twoje główne kolory - ZAKTUALIZOWANE Wartości RGB! */
+    --subheadercolor: #8E1616;
+    --subheadercolor-rgb: 142, 22, 22; /* RGB dla #8E1616 */
+
+    --headercolor: #EEEEEE;
+    --headercolor-rgb: 238, 238, 238; /* RGB dla #EEEEEE */
+
+    --contentcolor: #EEEEEE; /* Używasz tego samego co headercolor dla content */
+    --contentcolor-rgb: 238, 238, 238; /* RGB dla #EEEEEE */
+
+    --sidebarcolor: #1D1616;
+    --sidebarcolor-rgb: 29, 22, 22; /* RGB dla #1D1616 */
+
+    --sidebarcolor-hover: #2e2525; /* Używany w innych miejscach sidebara */
+    --hovercolor: rgb(223, 118, 118); /* Kolor akcentu na hover */
+    --buy-button-accent: #8E1616; /* Twoje akcenty dla przycisku */
+    --buy-button-hover: #A72828;
+}
 
 
 .sidebar {
@@ -41,43 +60,32 @@
     color: var(--contentcolor);
 }
 
-
-
 .sidebar-subelement {
     background-color: inherit;
     color: var(--headercolor);
     margin-left: 0.3rem;
     overflow: hidden;
-    transition: height 0.8s linear, opacity 0.8s linear, padding-bottom 0.8s linear; /* Animacja dla height i opacity */
-    height: 0px;  /* Domyślnie element jest zwinięty */
-    opacity: 0;   /* Tekst jest początkowo niewidoczny */
-    /* Padding */
+    transition: height 0.8s linear, opacity 0.8s linear, padding-bottom 0.8s linear;
+    height: 0px;
+    opacity: 0;
     padding-bottom: 0px;
 }
 
-/* Po aktywacji */
 .sidebar-subelement.active {
-    height: auto;  /* Automatyczna wysokość, dostosowana do zawartości */
-    opacity: 1;    /* Element staje się widoczny */
- /* Padding w stanie rozwiniętym */
+    height: auto;
+    opacity: 1;
     padding-bottom: 10px;
 }
 
 .sidebar-subelement.active div:hover {
-    height: auto;  /* Automatyczna wysokość, dostosowana do zawartości */
-    opacity: 1;    /* Element staje się widoczny */
- /* Padding w stanie rozwiniętym */
     filter: brightness(85%);
-    color: var( --subheadercolor)
+    color: var(--subheadercolor);
 }
 
-
-/* Zakładając, że "hidden" ukrywa elementy */
 .sidebar-subelement.hidden {
     display: none;
 }
 
-/* Dodaj do pliku sidebar.css */
 .sidebar-element.active h2 {
     color: var(--subheadercolor);
 }
@@ -86,43 +94,126 @@
     color: var(--subheadercolor);
 }
 
+/* --- Sekcja Slidera Cenowego --- */
+.slider-element {
+    color: var(--headercolor);
+    padding: 0.75rem 1rem;
+    margin-bottom: 1.5rem;
+    /* Subtelna linia, jaśniejsza i przezroczysta, oparta o headercolor */
+    border-bottom: 1px solid rgba(var(--headercolor-rgb), 0.1);
+    padding-bottom: 2rem;
+}
 
-.product-condition{
+.slider-element h1 {
+    font-size: 1.1rem;
+    margin-bottom: 1.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--headercolor);
+    text-align: center;
+}
+
+/* Stylowanie dla paska slidera (przykładowe klasy dla 'rc-slider' lub podobnych) */
+.rc-slider {
+    margin: 0 10px;
+}
+
+.rc-slider-track {
+    /* Wypełniony pasek w kolorze Twojego subheadercolor (#8E1616) */
+    background-color: var(--subheadercolor) !important;
+    height: 6px;
+    border-radius: 3px;
+}
+
+.rc-slider-rail {
+    /* Tło paska, jaśniejsze i bardziej przezroczyste, oparte o headercolor */
+    background-color: rgba(var(--headercolor-rgb), 0.2) !important;
+    height: 6px;
+    border-radius: 3px;
+}
+
+.rc-slider-handle {
+    /* Gałki: obwódka subheadercolor, tło sidebarcolor (czarne) */
+    border-color: var(--subheadercolor) !important;
+    background-color: var(--sidebarcolor) !important;
+    width: 18px !important;
+    height: 18px !important;
+    margin-top: -6px !important;
+    /* Cień dla kontrastu z tłem sidebara */
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.4);
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.rc-slider-handle:hover {
+    transform: scale(1.2);
+    /* Większy cień przy najechaniu */
+    box-shadow: 0 0 12px rgba(0, 0, 0, 0.6);
+}
+
+/* --- Sekcja Stanu Produktu --- */
+.product-condition {
     display: flex;
     flex-direction: column;
     padding: 0.75rem 1rem;
     font-size: 0.9rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid rgba(var(--headercolor-rgb), 0.1);
+    padding-bottom: 2rem;
 }
 
-.product-condition label{
-    color:white;
+.product-condition h2 {
+    color: var(--headercolor);
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    text-align: center;
 }
 
-.product-condition h2{
-    color:white;
-    width: inherit;
-}
-
-.product-condition-choose{
+.product-condition-choose {
     display: flex;
-    flex-direction: row;
-    justify-content: space-evenly; /* Wycentrowanie poziome */
-    align-items: center; 
+    flex-direction: row; /* Opcje obok siebie */
+    justify-content: space-evenly;
+    align-items: center;
+    gap: 1rem;
+    padding-top: 0.5rem;
 }
 
-.product-condition-checkbox-container{
-    display: block;
-  position: relative;
-  padding-left: 1.4rem;
-  cursor: pointer;
-  font-size: 1.2rem;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
+.product-condition-option {
+    flex: 1;
+    text-align: center;
+    padding: 0.8rem 0.5rem;
+    border-radius: 8px;
+    transition: background-color 0.3s ease, border 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    border: 2px solid transparent; /* Domyślna przezroczysta ramka */
+    /* Lekko przezroczyste tło sidebarcolor (prawie czarne) */
+    background-color: rgba(var(--sidebarcolor-rgb), 0.8);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Delikatny cień domyślnie */
 }
 
-.product-condition-checkbox-container input{ /* ukrywam przegladarkowy checkbox */
+.product-condition-option:hover {
+    transform: translateY(-3px);
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Zwiększony cień przy najechaniu */
+}
+
+.product-condition-checkbox-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    padding-left: 0;
+    cursor: pointer;
+    font-size: 1rem;
+    color: var(--contentcolor); /* Kolor tekstu opcji (biały) */
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    font-weight: 500;
+}
+
+.product-condition-checkbox-container input {
     position: absolute;
     opacity: 0;
     cursor: pointer;
@@ -131,18 +222,84 @@
 }
 
 .checkmark {
-    position: absolute;
-    top: 0.2em;
-    left: 0;
+    position: relative;
+    top: auto;
+    left: auto;
     height: 1.2rem;
     width: 1.2rem;
-    background-color: #eee;
-  }
+    /* Kolor tła checkboxa (sidebarcolor) i ramka contentcolor (biała) */
+    background-color: var(--sidebarcolor);
+    border: 2px solid var(--contentcolor);
+    border-radius: 4px;
+    margin-right: 0.6rem;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
 
-  .product-condition-option{
-    padding-right: 1rem;
-  }
+.product-condition-checkbox-container input:checked ~ .checkmark {
+    /* Wypełnienie subheadercolor (#8E1616) po zaznaczeniu */
+    background-color: var(--subheadercolor);
+    border-color: var(--subheadercolor);
+}
 
-  .slider-element{
-    color: white;
-  }
+.checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+
+.product-condition-checkbox-container input:checked ~ .checkmark:after {
+    display: block;
+}
+
+.product-condition-checkbox-container .checkmark:after {
+    left: 0.35em;
+    top: 0.1em;
+    width: 0.25em;
+    height: 0.6em;
+    /* Kolor "ptaszka" w checkboxie - sidebarcolor (czarny) dla kontrastu */
+    border: solid var(--sidebarcolor);
+    border-width: 0 0.15em 0.15em 0;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
+}
+
+/* Styl dla aktywnie wybranej opcji (całego div-a) */
+.product-condition-option.active {
+    /* Subtelne tło oparte na subheadercolor (#8E1616) z przezroczystością */
+    background-color: rgba(var(--subheadercolor-rgb), 0.2);
+    /* Wyraźna ramka w subheadercolor (#8E1616) */
+    border: 2px solid var(--subheadercolor);
+    /* Silniejszy cień z kolorem subheadercolor (#8E1616) */
+    box-shadow: 0 0 12px rgba(var(--subheadercolor-rgb), 0.5);
+    transform: translateY(-3px); /* Zachowujemy podniesienie po kliknięciu */
+}
+
+/* --- Stylowanie Przycisku "Zastosuj" --- */
+.sidebar button {
+    /* Przycisk w kolorze subheadercolor (#8E1616) */
+    background-color: var(--subheadercolor);
+    color: white; /* Tekst biały */
+    border: none;
+    padding: 0.9rem 1.5rem;
+    font-size: 1rem;
+    font-weight: bold;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    width: calc(100% - 2rem);
+    margin: 2rem 1rem 1.5rem 1rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.sidebar button:hover {
+    /* Na hover używamy hovercolor (223, 118, 118) */
+    background-color: var(--hovercolor);
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+}
+
+.sidebar button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}

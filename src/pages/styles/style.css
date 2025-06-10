@@ -1,18 +1,8 @@
-:root {
-    --subheadercolor: #8E1616;
-    --headercolor: #EEEEEE;
-    --contentcolor: #EEEEEE;
-    --sidebarcolor: #1D1616;
-    --sidebarcolor-hover: #2e2525;
-    --hovercolor: rgb(223, 118, 118);
-    --buy-button-accent: #8E1616;
-    --buy-button-hover: #A72828;
-}
-
-.container {
+container {
     display: flex;
     flex-direction: column;
     min-height: calc(100vh);
+
 }
 
 .header {
@@ -20,6 +10,7 @@
     top: 0px;
     height: 75px;
     background-color: var(--headercolor);
+
     display: flex;
     flex-direction: row;
 }
@@ -27,12 +18,15 @@
 .header-element {
     height: inherit;
     background-color: inherit;
+
     height: 100%;
     width: auto;
     flex: 1;
     display: flex;
     justify-content: center;
+    /* Wycentrowanie poziome */
     align-items: center;
+    /* Wycentrowanie pionowe */
 }
 
 .header-element a {
@@ -41,11 +35,15 @@
     height: 100%;
 }
 
+
+
 .header-element img {
     max-height: 100%;
     width: auto;
     display: block;
 }
+
+
 
 .icons {
     justify-content: space-around;
@@ -61,7 +59,9 @@
     width: 100%;
     border-radius: 5px;
     overflow: hidden;
+    /* Zapobiega wystawaniu elementów */
     background-color: #DBDBDB;
+    /* Kolor tła */
 }
 
 .search-bar input {
@@ -73,14 +73,19 @@
     background-color: #DBDBDB;
 }
 
+
+
 .search-bar form {
     display: flex;
     align-items: center;
     width: 100%;
     border-radius: 5px;
     overflow: hidden;
+    /* Zapobiega wystawaniu elementów */
     background-color: #DBDBDB;
+    /* Kolor tła */
 }
+
 
 .search-button {
     padding: 0 10px 0 10px;
@@ -97,6 +102,7 @@
     color: var(--hovercolor);
     cursor: pointer;
 }
+
 
 .subheader {
     position: sticky;
@@ -128,6 +134,8 @@
     cursor: pointer;
 }
 
+
+
 .main {
     display: grid;
     grid-template-columns: 1fr 5fr;
@@ -139,13 +147,22 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+
+
 }
+
+
+
+
+
 
 .product {
     display: flex;
     align-items: stretch;
     width: 100%;
+    /* Dostosuj w zależności od układu */
     max-width: 100%;
+    /* Możesz dostosować */
     border: 1px solid #ccc;
     background-color: var(--sidebarcolor);
 }
@@ -174,10 +191,13 @@
 .product-data {
     display: grid;
     grid-template-columns: 2fr 2fr 1fr;
+    /* Poprawiona siatka */
     align-items: center;
     justify-content: space-between;
     width: calc(100% - 200px);
+    /* Stała szerokość */
     height: 200px;
+    /* Dopasowanie do obrazka */
     padding: 0.5em;
     box-sizing: border-box;
 }
@@ -185,12 +205,6 @@
 .product-info {
     grid-column: 1 / 2;
     padding: 0.5em;
-    display: flex;
-    /* Zmieniamy na flexbox, aby łatwiej kontrolować odstępy */
-    flex-direction: column;
-    /* Ustawiamy na kolumnę */
-    justify-content: center;
-    /* Wyśrodkowanie pionowe */
 }
 
 .product-placeholder {
@@ -202,40 +216,45 @@
     text-align: center;
 }
 
-.product-price h2 {
-    color: white;
-    font-size: 1.5rem;
-    /* Zwiększono rozmiar ceny */
-    margin-bottom: 0.2em;
-    /* Dodano mały margines pod ceną */
-}
-
 .product-price button {
+    /* Nowe style dla przycisku "Kup" */
     width: 80%;
+    /* Daje przyciskowi trochę miejsca od krawędzi */
     padding: 0.7em 1em;
+    /* Zwiększony padding, jak w przycisku Dodaj produkt */
     font-size: 1rem;
     font-weight: bold;
     background-color: var(--buy-button-accent);
+    /* Używamy zmiennej dla spójności */
     color: white;
     border: none;
     border-radius: 8px;
+    /* Zaokrąglone rogi, jak w przycisku Dodaj produkt */
     transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
     box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+    /* Ciepły cień */
     cursor: pointer;
     box-sizing: border-box;
+    /* Ważne dla spójnego paddingu */
     margin-top: 0.5em;
+    /* Zachowujemy margines od ceny */
 }
 
 .product-price button:hover {
     background-color: var(--buy-button-hover);
+    /* Intensywniejszy hover */
     transform: translateY(-2px) scale(1.01);
+    /* Ruch w górę i lekkie powiększenie */
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+    /* Większy cień przy najechaniu */
 }
 
 .product-price button:focus {
     outline: 2px solid var(--buy-button-hover);
+    /* Focus state dla dostępności */
     outline-offset: 2px;
 }
+
 
 h2 {
     margin: 0;
@@ -244,77 +263,15 @@ h2 {
 
 .category {
     display: inline;
+    /*zeby napis nie rozciagal sie na cala szerokosc*/
 }
 
 .product-info h2 {
     color: white;
-    margin-bottom: 0;
-    /* Usuwamy domyślne marginesy h2 */
-    padding-bottom: 0;
 }
-
-/* Specyficzne style dla elementów w .product-info */
-.product-name {
-    font-size: 1.8rem;
-    /* Większa czcionka dla nazwy produktu (jak sugerowałeś w JSX) */
-    font-weight: bold;
-    /* Pogrubienie nazwy produktu */
-    margin-bottom: 0.2em;
-    /* Mały odstęp od kategorii */
-    line-height: 1.2;
-    /* Lepszy odstęp między liniami dla dłuższych nazw */
-}
-
-.product-info .category {
-    font-size: 1.1rem;
-    /* Ujednolicony rozmiar dla kategorii */
-    font-weight: normal;
-    /* Normalna waga czcionki */
-    opacity: 0.8;
-    /* Lekko przyciemniona */
-    margin-bottom: 0.5em;
-    /* Odstęp od stanu */
-}
-
-.product-info h2:not(.product-name):not(.category) {
-    /* Dotyczy stanu produktu */
-    font-size: 1rem;
-    /* Rozmiar dla stanu */
-    opacity: 0.9;
-    /* Nieco jaśniejszy niż kategoria */
-    margin-bottom: 0.5em;
-    /* Odstęp od sprzedawcy */
-    color: white;
-    /* Upewniamy się, że kolor jest biały */
-}
-
-.product-author {
-    font-size: 1rem;
-    /* Rozmiar dla sprzedawcy */
-    opacity: 0.7;
-    /* Lekko przyciemniony */
-    margin-top: 0;
-    /* Usuwamy domyślny margines */
-    color: white;
-    /* Upewniamy się, że kolor jest biały */
-}
-
 
 .product-info h2:hover {
     color: var(--hovercolor);
-    transition: 0.2s;
-}
-
-.product-name a {
-    color: inherit;
-    /* Zachowujemy biały kolor linku */
-    text-decoration: none;
-    /* Usuwamy podkreślenie */
-}
-
-.product-name a:hover {
-    color: var(--hovercolor);
-    /* Kolor hover dla linku */
     transition: 0.2s;
 }
 
@@ -334,6 +291,7 @@ a {
 .filter-pink:hover {
     filter: invert(82%) sepia(26%) saturate(7430%) hue-rotate(310deg) brightness(92%) contrast(89%);
 }
+
 
 .suggestions-box {
     position: absolute;
@@ -362,9 +320,16 @@ a {
     display: none;
 }
 
-/* Usunięto inline style z JSX, dodano do CSS */
-/* .product-author {
-    width: fit-content;
-    fontSize: "1rem";
-    paddingTop: "1em" ;
-} */
+.product-author {
+    width: fit-content;
+    fontSize: "1rem";
+    /* Styl JS, lepiej przenieść do CSS */
+    paddingTop: "1em";
+    /* Styl JS, lepiej przenieść do CSS */
+}
+
+.product-author:hover {
+    cursor: pointer;
+    color: var(--hovercolor);
+    transition: 0.2s;
+}
