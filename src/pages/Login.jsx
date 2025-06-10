@@ -15,8 +15,8 @@ export default function Login() {
   const navigate = useNavigate();
 
   const [loggedIn, setLoggedIn] = useState()
-  const [login, setLogin] = useState("");
-  const [password, setPassword] = useState("");
+  const [login, setLogin] = useState("admin@email.com");
+  const [password, setPassword] = useState("Haslo123!");
 
   function submitLogin(e){
     e.preventDefault();

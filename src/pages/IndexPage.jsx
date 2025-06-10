@@ -6,6 +6,7 @@ import Sidebar from "../Components/Sidebar";
 import PaginationBar from "../Components/PaginationBar";
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import AddNewProduct from "../Components/AddNewProduct";
 
 export default function IndexPage() {
   const location = useLocation();
@@ -30,7 +31,7 @@ export default function IndexPage() {
   useEffect(() => {
     if (!token) return;
 
-    fetch("http://127.0.0.1:8000/api/profile/", {
+    fetch("http://127.0.0.1:8000/api/user/", {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -43,6 +44,7 @@ export default function IndexPage() {
       })
       .then((userData) => {
         setUser(userData);
+        console.log(userData)
       })
       .catch((error) => {
         console.error("Błąd użytkownika:", error);
@@ -155,7 +157,15 @@ export default function IndexPage() {
         <div className="content">
 
           
-      
+          {user?.is_admin ? (
+            <AddNewProduct/>
+          ) : user ? (
+            <></>
+          ) : (
+            <></>
+          )}
+
+          
           {error && <div className="error">{error}</div>}
 
           {products.map((product, index) => (

@@ -1,0 +1,23 @@
+.add-product-button-container {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  padding: 1em;
+}
+
+.add-product-button {
+  background-color: var(--subheadercolor);
+  color: white;
+  border: none;
+  font-weight: bold;
+  padding: 0.8em 1.5em;
+  border-radius: 10px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.add-product-button:hover {
+  background-color: color-mix(in oklch, var(--subheadercolor) 80%, black 20%);
+}
+

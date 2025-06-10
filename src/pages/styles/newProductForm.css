@@ -1,0 +1,170 @@
+.product-form-container {
+  background-color: var(--contentcolor);
+  padding: 2rem;
+  margin: 2rem auto;
+  border-radius: 1.5rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  max-width: 700px;
+  width: 90%;
+}
+
+.product-form-container h2 {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: var(--subheadercolor);
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.product-form input,
+.product-form textarea,
+.product-form select {
+  width: 100%;
+  padding: 1rem;
+  margin-bottom: 1.2rem;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  background-color: white;
+  font-size: 1rem;
+}
+
+.product-form textarea {
+  resize: vertical;
+}
+
+.product-form label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+  color: var(--sidebarcolor);
+}
+
+.cropper-container {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+  background-color: #ddd;
+  margin-bottom: 1rem;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.crop-button,
+.submit-button {
+  background-color: var(--subheadercolor);
+  color: white;
+  font-weight: bold;
+  padding: 0.8rem 1.5rem;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.crop-button:hover,
+.submit-button:hover {
+  background-color: color-mix(in oklch, var(--subheadercolor) 80%, black 20%);
+}
+
+.image-preview {
+  margin-top: 1.2rem;
+  text-align: center;
+}
+
+.image-preview img {
+  width: 130px;
+  height: 130px;
+  border-radius: 10px;
+  object-fit: cover;
+  border: 2px solid var(--subheadercolor);
+}
+
+.category-suggestions-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.suggestions-box {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  list-style: none;
+  padding: 0;
+  margin-top: 0.25rem;
+  width: 100%;
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 100;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.suggestions-box li {
+  /* Usuwamy padding i border-bottom z li, bo będą na .suggestion-item */
+  padding: 0;
+  border-bottom: none;
+}
+
+.suggestions-box strong { /* Styl dla nazw grup */
+  padding: 10px 15px; /* Dodajemy padding tutaj */
+  display: block;
+  background: #f7f7f7;
+  border-bottom: 1px solid #eee; /* Linia pod nazwą grupy */
+  font-size: 0.9em; /* Możesz dostosować rozmiar czcionki */
+  color: #555;
+}
+
+.suggestion-item {
+  padding: 10px 15px; /* Dodajemy padding do pojedynczego elementu sugestii */
+  cursor: pointer;
+  border-bottom: 1px solid #eee; /* Linia pod pojedynczą sugestią */
+}
+
+.suggestion-item:last-child {
+    border-bottom: none; /* Usuwamy dolną linię dla ostatniego elementu w grupie, aby uniknąć podwójnych linii */
+}
+
+
+.suggestions-box li:last-child .suggestion-item:last-child {
+  border-bottom: none; /* Upewniamy się, że ostatni element w ostatniej grupie też nie ma dolnej linii */
+}
+
+.suggestion-item:hover {
+  background-color: var(--hovercolor);
+  color: white;
+}
+
+
+/* ... (istniejące style) ... */
+
+.back-button {
+  display: inline-block; /* Aby button nie zajmował całej szerokości */
+  background-color: #555; /* Ciemniejszy kolor, żeby odróżnić od przycisków formularza */
+  color: white;
+  font-weight: bold;
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 8px; /* Nieco mniejszy border-radius dla subtelności */
+  font-size: 0.9rem; /* Trochę mniejsza czcionka */
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  text-decoration: none; /* Usuń podkreślenie z Link */
+  margin-bottom: 1.5rem; /* Odstęp od nagłówka */
+  position: absolute; /* Ustawienie absolutne do kontenera formularza */
+  top: 1.5rem; /* Od góry */
+  left: 2rem; /* Od lewej */
+}
+
+.back-button:hover {
+  background-color: #777; /* Jaśniejszy kolor po najechaniu */
+}
+
+/* Możesz też dostosować padding dla product-form-container, jeśli przycisk będzie za blisko krawędzi */
+.product-form-container {
+    position: relative; /* Ważne! Aby .back-button z position: absolute był pozycjonowany względem tego kontenera */
+    /* ... (reszta istniejących stylów) ... */
+    padding: 3rem 2rem 2rem; /* Zwiększ górny padding, aby zrobić miejsce na przycisk */
+}
