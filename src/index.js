@@ -1,55 +1,32 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import {
-  createBrowserRouter,
-  RouterProvider,
-  Navigate,
-} from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { AuthProvider } from './contexts/AuthContext';
 
-// Importuj swoje strony
-import IndexPage from "./pages/IndexPage"; // Główna strona
+// Importuj strony
+import IndexPage from "./pages/IndexPage";
 import Login from "./pages/Login";
 import Logout from "./pages/Logout";
 import Register from "./pages/Register";
 import ProductPage from "./pages/ProductPage";
 import NewProductForm from "./pages/NewProductForm";
 
-// 1. Zdefiniuj obiekt routera za pomocą createBrowserRouter
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <IndexPage />, // IndexPage jest bezpośrednio elementem dla trasy "/"
-  },
-  {
-    path: "/login",
-    element: <Login />,
-  },
-  {
-    path: "/logout",
-    element: <Logout />,
-  },
-  {
-    path: "/register",
-    element: <Register />,
-  },
-  {
-    path: "/product/:id",
-    element: <ProductPage />,
-  },
-  {
-    path: "/add-new-product",
-    element: <NewProductForm />,
-  },
-  {
-    path: "*", // Trasa catch-all
-    element: <Navigate to="/" replace />,
-  },
-]);
+const root = ReactDOM.createRoot(document.getElementById("root"));
 
-// 2. Renderowanie aplikacji za pomocą RouterProvider
-const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <BrowserRouter>
+      <AuthProvider>
+        <Routes>
+          <Route path="/" element={<IndexPage />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/logout" element={<Logout />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/product/:id" element={<ProductPage />} />
+          <Route path="/add-new-product" element={<NewProductForm />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </AuthProvider>
+    </BrowserRouter>
   </React.StrictMode>
 );

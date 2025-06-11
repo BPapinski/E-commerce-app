@@ -7,13 +7,10 @@ export default function Logout() {
   useEffect(() => {
     // 🧹 Czyszczenie danych logowania z localStorage
     localStorage.removeItem("token"); // jeśli token był zapisywany
-
-    // Można też całkowicie wyczyścić localStorage:
-    // localStorage.clear();
-
-    // 🔁 Przekierowanie do logowania
     navigate("/login");
-  }, [navigate]);
+  }, 
+  
+  [navigate]);
 
   return null; // Komponent nie renderuje nic — tylko efekt
 }

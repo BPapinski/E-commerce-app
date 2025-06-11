@@ -7,48 +7,27 @@ import PaginationBar from "../Components/PaginationBar";
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import AddNewProduct from "../Components/AddNewProduct";
+import { useAuth } from "../contexts/AuthContext";
 
 export default function IndexPage() {
   const location = useLocation();
   const [products, setProducts] = useState([]);
   const [error, setError] = useState(null);
-  const [user, setUser] = useState(null);
-  const [token, setToken] = useState(null);
+
+
+
 
   const [totalPages, setTotalPages] = useState(10);
 
   const params = new URLSearchParams(location.search);
   const currentPage = parseInt(params.get("page")) || 1;
 
+  
   const navigate = useNavigate();
-  // Ustaw token z localStorage
-  useEffect(() => {
-    const storedToken = localStorage.getItem("token");
-    setToken(storedToken);
-  }, []);
+  const { token, isLoggedIn, login, logout, user, loadingUser } = useAuth();
+  console.log(login)
 
-  // Pobierz dane użytkownika, jeśli token jest
-  useEffect(() => {
-    if (!token) return;
-    fetch("http://127.0.0.1:8000/api/user/", {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error("Nie udało się pobrać danych użytkownika");
-        return res.json();
-      })
-      .then((userData) => {
-        setUser(userData);
-        console.log(userData);
-      })
-      .catch((error) => {
-        console.error("Błąd użytkownika:", error);
-      });
-  }, [token]);
+  
 
   // Dynamiczne filtrowanie produktów na podstawie URL
   useEffect(() => {
@@ -144,14 +123,19 @@ export default function IndexPage() {
     navigate({ search: params.toString() });
   }
 
+  
+
   return (
     <div className="container">
-      <Header user={user} />
+
+      <Header/>
       <Subheader />
       <div className="main">
         <Sidebar />
         <div className="content">
-          {user?.is_admin ? (
+          {loadingUser ? (
+            <h3>Ładowanie...</h3>
+          ) : user?.is_admin ? (
             <AddNewProduct />
           ) : user ? (
             <h3>brak uprawnień</h3>

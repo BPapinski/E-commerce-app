@@ -9,18 +9,15 @@ import loginIcon from "../icons/login.svg";
 import logoIcon from "../icons/logo.png";
 import personIcon from "../icons/person.svg";
 import "./styles/HeaderDropdown.css";
+import { useAuth } from "../contexts/AuthContext";
 
-export default function Header({ user }) {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+export default function Header() {
   const [searchValue, setSearchValue] = useState("");
+
+  const { isLoggedIn, token, logout } = useAuth();
 
   const navigate = useNavigate();
   const location = useLocation();
-
-  useEffect(() => {
-    const logged = localStorage.getItem("loggedIn") === "true";
-    setIsLoggedIn(logged);
-  }, []);
 
   function submitSearch(e) {
     e.preventDefault();
@@ -71,8 +68,7 @@ export default function Header({ user }) {
             style={{ height: "48px" }}
           />
         </a>
-        {/* 🔐 Zależność od logowania */}
-        {isLoggedIn ? (
+        {token ? (
           <div className="dropdown-container">
             <a href="/profile" className="dropdown-toggle">
               <img 
