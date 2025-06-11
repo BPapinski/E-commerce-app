@@ -6,7 +6,6 @@ export default function Logout() {
 
   useEffect(() => {
     // 🧹 Czyszczenie danych logowania z localStorage
-    localStorage.removeItem("loggedIn");
     localStorage.removeItem("token"); // jeśli token był zapisywany
 
     // Można też całkowicie wyczyścić localStorage:

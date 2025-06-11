@@ -1,0 +1,45 @@
+.dropdown-menu {
+    display: none; /* Domyślnie ukryte */
+    position: absolute; /* Pozycjonowanie względem .dropdown-container */
+    top: 100%; /* MENU ZACZYNA SIĘ DOKŁADNIE PONIŻEJ KONTENERA */
+    left: 50%; /* Wyśrodkowanie poziome */
+    transform: translateX(-50%); /* Korekcja wyśrodkowania */
+
+    background-color: #fff;
+    min-width: 250px;
+    box-shadow: 0px 10px 20px 0px rgba(0, 0, 0, 0.15);
+    padding: 5px 0;
+    border-radius: 8px;
+    z-index: 50; /* Ważne, aby być nad innymi elementami wewnątrz kontenera, ale to nie jest problem w Twoim przypadku */
+    border: 1px solid #eee;
+}
+
+.dropdown-menu a {
+  color: #333; /* Ciemniejszy, ale nie czarny kolor tekstu */
+  padding: 12px 20px; /* Większe paddingi dla większego obszaru kliknięcia */
+  text-decoration: none;
+  display: block;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Bardziej nowoczesna czcionka */
+  font-size: 1rem; /* Lekko większa czcionka */
+  transition: background-color 0.2s ease, color 0.2s ease; /* Płynne przejście koloru tła i tekstu */
+}
+
+.dropdown-menu a:hover {
+  background-color: #f0f0f0;
+  box-shadow: inset 3px 0 0 0 var(--hover-accent);
+}
+
+/* Pozycjonowanie menu względem ikony (opcjonalne, dla precyzji) */
+.dropdown-container {
+  position: relative;
+  display: inline-block;
+  z-index: 3; /* Zapewnij, że kontener jest nad innymi elementami */
+  height: inherit;
+}
+
+
+
+/* Pokazuje menu po najechaniu na cały kontener */
+.dropdown-container:hover .dropdown-menu {
+  display: block;
+}

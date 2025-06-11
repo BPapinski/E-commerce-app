@@ -1,0 +1,30 @@
+.subheader {
+  position: sticky;
+  top: 75px;
+  height: 50px;
+  background-color: var(--subheadercolor);
+  z-index: 0; /* Zmniejszamy z-index subheadera, jeśli to możliwe */
+  display: flex;
+  flex-direction: row;
+  z-index: 1;
+}
+
+.subheader-element {
+    height: inherit;
+    background-color: inherit;
+    font-size: 0.6rem;
+    width: auto;
+    flex: 1;
+    justify-content: space-around;
+    display: flex;
+    align-items: center;
+}
+
+.subheader-element h2 {
+    color: white;
+}
+
+.subheader-element h2:hover {
+    color: var(--hovercolor);
+    cursor: pointer;
+}

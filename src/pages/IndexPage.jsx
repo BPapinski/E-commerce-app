@@ -154,7 +154,7 @@ export default function IndexPage() {
           {user?.is_admin ? (
             <AddNewProduct />
           ) : user ? (
-            <></>
+            <h3>brak uprawnień</h3>
           ) : (
             <h3>niezalogowany</h3>
           )}

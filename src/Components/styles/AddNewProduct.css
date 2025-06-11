@@ -1,15 +1,4 @@
-:root {
-  --primary-bg: var(--sidebarcolor, #1D1616);
-  /* Ciemne tło karty (jak pierwotnie) */
-  --primary-bg-hover: var(--sidebarcolor-hover, #2e2525);
-  /* Ciemniejszy hover karty */
-  --accent: var(--subheadercolor, #8E1616);
-  /* Akcent (jak pierwotnie) */
-  --text-light: #ffffff;
-  /* Biały tekst dla kontrastu */
-  --hover-accent: var(--hovercolor, #A72828);
-  /* Nowy, nieco intensywniejszy hover dla przycisku */
-}
+
 
 .add-product-card {
   display: flex;

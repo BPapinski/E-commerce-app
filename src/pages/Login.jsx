@@ -10,7 +10,6 @@ import { useNavigate } from "react-router-dom";
 export default function Login() {
   const navigate = useNavigate();
 
-  const [loggedIn, setLoggedIn] = useState();
   const [login, setLogin] = useState("admin@email.com");
   const [password, setPassword] = useState("Haslo123!");
 
@@ -28,7 +27,6 @@ export default function Login() {
     })
       .then((res) => {
         if (res.ok) {
-          setLoggedIn(true);
           loginError();
           setLoginErrorMessage("");
           return res.json();
@@ -37,13 +35,11 @@ export default function Login() {
         }
       })
       .then((data) => {
-        localStorage.setItem("loggedIn", "true");
         console.log(data);
         if (data.access) {
           localStorage.setItem("token", data.access);
+          console.log("Zalogowano:", data);
         }
-        console.log("Zalogowano:", data);
-        setLoggedIn(true);
         navigate("/");
       })
       .catch((err) => {

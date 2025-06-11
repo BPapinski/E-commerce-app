@@ -7,6 +7,8 @@ import heartIcon from "../icons/heart.svg";
 import logoutIcon from "../icons/logout.svg";
 import loginIcon from "../icons/login.svg";
 import logoIcon from "../icons/logo.png";
+import personIcon from "../icons/person.svg";
+import "./styles/HeaderDropdown.css";
 
 export default function Header({ user }) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -71,27 +73,33 @@ export default function Header({ user }) {
         </a>
         {/* 🔐 Zależność od logowania */}
         {isLoggedIn ? (
-          <a href="/logout">
-            <img
-              src={logoutIcon}
-              alt="Logout"
-              className="filter-pink"
-              style={{ height: "48px" }}
-            />
-          </a>
+          <div className="dropdown-container">
+            <a href="/profile" className="dropdown-toggle">
+              <img 
+                src={personIcon} 
+                alt=""
+                className="filter-pink"
+                style={{ height: "48px" }}
+                />
+            </a>
+            <div class="dropdown-menu">
+              <a href="/link1">Moje Konto</a>
+              <a href="/link2">Ustawienia</a>
+              <a href="/link3">Moje Zamówienia</a>
+              <a href="/link4">Pomoc</a>
+              <a href="/logout">Wyloguj</a>
+            </div>
+          </div>
         ) : (
-          <a href="/login">
-            <img
-              src={loginIcon}
-              alt="Login"
-              className="filter-pink"
-              style={{ height: "48px" }}
-            />
-          </a>
+            <a href="/login">
+              <img
+                src={loginIcon}
+                alt="Login"
+                className="filter-pink"
+                style={{ height: "48px" }}
+              />
+            </a>
         )}
-      </div>
-      <div className="header-element">
-        <h1>{user ? <h1>Profil</h1> : <h1>Gość</h1>}</h1>
       </div>
     </div>
   );

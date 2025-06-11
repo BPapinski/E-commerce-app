@@ -1,3 +1,5 @@
+import "./styles/Subheader.css"
+
 export default function Subheader() {
   return (
     <div className="subheader">

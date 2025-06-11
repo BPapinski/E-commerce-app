@@ -24,12 +24,11 @@ Nowoczesna aplikacja e-commerce zbudowana w oparciu o **Django** oraz **React**.
 
 - ✅ Rejestracja i logowanie użytkownika
 - ✅ Przeglądanie produktów i kategorii
+- ✅ Filtry i wyszukiwarka
 - ✅ Koszyk zakupowy (w trakcie tworzenia)
 - ✅ Proces składania zamówienia (w trakcie tworzenia)
 - ✅ Panel administratora do zarządzania sklepem
 - ✅ System ocen i recenzji produktów (w trakcie tworzenia)
-- ✅ Filtry i wyszukiwarka (w trakcie tworzenia)
-
 ---
 
 ## 🚀 Uruchomienie projektu lokalnie
