@@ -10,36 +10,45 @@
     box-shadow: 0px 10px 20px 0px rgba(0, 0, 0, 0.15);
     padding: 5px 0;
     border-radius: 8px;
-    z-index: 50; /* Ważne, aby być nad innymi elementami wewnątrz kontenera, ale to nie jest problem w Twoim przypadku */
+    z-index: 50;
     border: 1px solid #eee;
 }
 
-.dropdown-menu a {
-  color: #333; /* Ciemniejszy, ale nie czarny kolor tekstu */
-  padding: 12px 20px; /* Większe paddingi dla większego obszaru kliknięcia */
-  text-decoration: none;
-  display: block;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Bardziej nowoczesna czcionka */
-  font-size: 1rem; /* Lekko większa czcionka */
-  transition: background-color 0.2s ease, color 0.2s ease; /* Płynne przejście koloru tła i tekstu */
+/* Style dla linków i przycisku w menu rozwijanym - są identyczne */
+.dropdown-menu a,
+.dropdown-menu .logout-button { /* Dodano selektor dla .logout-button */
+    color: #333;
+    padding: 12px 20px;
+    text-decoration: none;
+    display: block;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 1rem;
+    transition: background-color 0.2s ease, color 0.2s ease;
+
+    /* Resetowanie domyślnych stylów przycisku, aby wyglądał jak link */
+    background: none;
+    border: none;
+    text-align: left;
+    width: 100%;
+    cursor: pointer;
 }
 
-.dropdown-menu a:hover {
-  background-color: #f0f0f0;
-  box-shadow: inset 3px 0 0 0 var(--hover-accent);
+/* Style dla linków i przycisku po najechaniu myszką - są identyczne */
+.dropdown-menu a:hover,
+.dropdown-menu .logout-button:hover { /* Dodano selektor dla .logout-button:hover */
+    background-color: #f0f0f0;
+    box-shadow: inset 3px 0 0 0 var(--hover-accent); /* Zakładając, że --hover-accent jest zdefiniowany gdzie indziej lub użyj konkretnego koloru */
 }
 
-/* Pozycjonowanie menu względem ikony (opcjonalne, dla precyzji) */
+/* Pozycjonowanie menu względem ikony */
 .dropdown-container {
-  position: relative;
-  display: inline-block;
-  z-index: 3; /* Zapewnij, że kontener jest nad innymi elementami */
-  height: inherit;
+    position: relative;
+    display: inline-block;
+    z-index: 3;
+    height: inherit;
 }
-
-
 
 /* Pokazuje menu po najechaniu na cały kontener */
 .dropdown-container:hover .dropdown-menu {
-  display: block;
+    display: block;
 }

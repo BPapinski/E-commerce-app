@@ -14,7 +14,7 @@ import { useAuth } from "../contexts/AuthContext";
 export default function Header() {
   const [searchValue, setSearchValue] = useState("");
 
-  const { isLoggedIn, token, logout } = useAuth();
+  const { token, isLoggedIn, loadingUser, logout } = useAuth();
 
   const navigate = useNavigate();
   const location = useLocation();

@@ -137,7 +137,7 @@ export default function IndexPage() {
             <h3>Ładowanie...</h3>
           ) : user?.is_admin ? (
             <AddNewProduct />
-          ) : user ? (
+          ) : isLoggedIn ? (
             <h3>brak uprawnień</h3>
           ) : (
             <h3>niezalogowany</h3>
