@@ -14,9 +14,6 @@ export default function IndexPage() {
   const [products, setProducts] = useState([]);
   const [error, setError] = useState(null);
 
-
-
-
   const [totalPages, setTotalPages] = useState(10);
 
   const params = new URLSearchParams(location.search);
@@ -123,6 +120,36 @@ export default function IndexPage() {
     navigate({ search: params.toString() });
   }
 
+  const handleAddToCart = async (productId) => {
+    try {
+        const response = await fetch('http://127.0.0.1:8000/api/store/cart/add/', { 
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`, // PRZYKŁAD! Dostosuj
+            },
+            body: JSON.stringify({
+                product_id: productId,
+                quantity: 1
+            }),
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            console.log('Produkt dodany do koszyka:', data);
+            alert('Produkt został dodany do koszyka!'); // Proste powiadomienie użytkownika
+            // Tutaj możesz dodać logikę aktualizacji stanu koszyka w UI
+        } else {
+            const errorData = await response.json();
+            console.error('Błąd podczas dodawania do koszyka:', errorData);
+            alert(`Nie udało się dodać produktu do koszyka: ${JSON.stringify(errorData)}`);
+        }
+    } catch (error) {
+        console.error('Wystąpił błąd sieci lub inny błąd:', error);
+        alert('Wystąpił błąd podczas komunikacji z serwerem.');
+    }
+  }
+
   
 
   return (
@@ -184,7 +211,12 @@ export default function IndexPage() {
                   <h2 style={{ color: "white", fontSize: "1.2rem" }}>
                     {product.price}zł
                   </h2>
-                  <button style={{ marginTop: "0.5em" }}>Kup</button>
+                  <button 
+                    style={{ marginTop: "0.5em" }}
+                    onClick={() => handleAddToCart(product.id)}
+                    >
+                      Kup</button>
+
                 </div>
               </div>
             </div>

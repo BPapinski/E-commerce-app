@@ -102,6 +102,8 @@ export default function Cart() {
     }
   };
 
+  
+
   return (
     <div className={styles.cartContainer}>
         <h2 className={styles.cartTitle}>Twój koszyk</h2>
