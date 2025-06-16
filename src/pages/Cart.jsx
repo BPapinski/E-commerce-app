@@ -7,33 +7,47 @@ import { useNavigate } from "react-router-dom";
 
 
 export default function Cart() {
-  const [items, setItems] = useState([]);
-  const { token } = useAuth();
+    const navigate = useNavigate()
+    const [items, setItems] = useState([]);
+    const { token, isLoggedIn, loadingUser } = useAuth();
 
-  // Pobieranie koszyka
-  useEffect(() => {
-    fetch("http://127.0.0.1:8000/api/store/cart/", {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        setItems(data.items || []);
-        console.log(data)
-      })
-      .catch((error) => {
-        console.error("Błąd podczas pobierania koszyka:", error);
-      });
-  }, [token]);
+    useEffect(() => {
+        if (!isLoggedIn && !loadingUser) {
+        navigate("/login");
+        }
+    }, [isLoggedIn, loadingUser, navigate]);
 
-  const totalPrice = items.reduce(
-    (sum, item) => sum + item.product.price * item.quantity,
-    0
+
+   // ❗ Pobieranie koszyka
+    useEffect(() => {
+        if (!token || !isLoggedIn) return;
+
+        fetch("http://127.0.0.1:8000/api/store/cart/", {
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+        },
+        })
+        .then((res) => {
+            if (res.status === 401) {
+            navigate("/login");
+            return Promise.reject("Unauthorized");
+            }
+            return res.json();
+        })
+        .then((data) => {
+            setItems(data.items || []);
+        })
+        .catch((error) => {
+            console.error("Błąd podczas pobierania koszyka:", error);
+        });
+    }, [token, isLoggedIn, navigate]);
+
+    const totalPrice = items.reduce(
+        (sum, item) => sum + item.product.price * item.quantity
+        ,0
     );
 
-    const navigate = useNavigate()
 
   // Zwiększanie ilości
   const increaseQuantity = (item) => {

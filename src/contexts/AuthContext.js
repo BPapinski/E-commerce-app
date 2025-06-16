@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-  const [token, setToken] = useState(() => localStorage.getItem("token"));
+  const [token, setToken] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(() => !!localStorage.getItem("token"));
   const [user, setUser] = useState(null);
   const [loadingUser, setLoadingUser] = useState(true);
@@ -29,6 +29,13 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
     navigate("/login");
   };
+
+  useEffect(() => {
+    const savedToken = localStorage.getItem("token");
+    if (savedToken) {
+      setToken(savedToken);
+    }
+  }, []);
 
   // Nasłuchiwanie zmian w localStorage (np. z innych zakładek)
   useEffect(() => {

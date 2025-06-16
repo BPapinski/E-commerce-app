@@ -6,13 +6,17 @@ import Subheader from "../Components/Subheader";
 import Sidebar from "../Components/Sidebar";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
+
 
 export default function Login() {
   const navigate = useNavigate();
+  const { login: loginWithToken } = useAuth();
 
   const [login, setLogin] = useState("admin@email.com");
   const [password, setPassword] = useState("Haslo123!");
 
+  
   function submitLogin(e) {
     e.preventDefault();
     fetch("http://127.0.0.1:8000/api/login/", {
@@ -35,12 +39,9 @@ export default function Login() {
         }
       })
       .then((data) => {
-        console.log(data);
         if (data.access) {
-          localStorage.setItem("token", data.access);
-          console.log("Zalogowano:", data);
+          loginWithToken(data.access); // <--- to jest kluczowe
         }
-        navigate("/");
       })
       .catch((err) => {
         console.error("Błąd logowania:", err);

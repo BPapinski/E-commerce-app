@@ -68,7 +68,7 @@ export default function Header() {
             style={{ height: "48px" }}
           />
         </a>
-        {token ? (
+        {isLoggedIn ? (
           <div className="dropdown-container">
             <a href="/profile" className="dropdown-toggle">
               <img 
@@ -76,25 +76,25 @@ export default function Header() {
                 alt=""
                 className="filter-pink"
                 style={{ height: "48px" }}
-                />
+              />
             </a>
-            <div class="dropdown-menu">
-              <a href="/link1">Moje Konto</a>
-              <a href="/link2">Ustawienia</a>
-              <a href="/link3">Moje Zamówienia</a>
-              <a href="/link4">Pomoc</a>
-              <a href="/logout">Wyloguj</a>
+            <div className="dropdown-menu">
+              <a href="/profile">Moje Konto</a>
+              <a href="/settings">Ustawienia</a>
+              <a href="/orders">Moje Zamówienia</a>
+              <a href="/help">Pomoc</a>
+              <button onClick={logout} className="logout-button">Wyloguj</button>
             </div>
           </div>
         ) : (
-            <a href="/login">
-              <img
-                src={loginIcon}
-                alt="Login"
-                className="filter-pink"
-                style={{ height: "48px" }}
-              />
-            </a>
+          <a href="/login">
+            <img
+              src={loginIcon}
+              alt="Login"
+              className="filter-pink"
+              style={{ height: "48px" }}
+            />
+          </a>
         )}
       </div>
     </div>
