@@ -6,7 +6,7 @@ from django.conf import settings
 
 
 from rest_framework import serializers
-from .models import Product, Category, CategoryGroup
+from .models import Product, Category, CategoryGroup, CartItem, Cart
 
 # store/serializers.py
 import os
@@ -82,3 +82,23 @@ class CategoryGroupSerializer(serializers.ModelSerializer):
     class Meta:
         model = CategoryGroup
         fields = '__all__'
+
+
+class CartItemSerializer(serializers.ModelSerializer):
+    product = ProductSerializer(read_only=True)
+    product_id = serializers.PrimaryKeyRelatedField(
+        queryset=Product.objects.all(), write_only=True, source='product'
+    )
+
+    class Meta:
+        model = CartItem
+        fields = ['id', 'product', 'product_id', 'quantity', 'get_total_price']
+
+
+class CartSerializer(serializers.ModelSerializer):
+    items = CartItemSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Cart
+        fields = ['id', 'user', 'items', 'created_at']
+        read_only_fields = ['user']

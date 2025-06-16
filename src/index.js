@@ -10,6 +10,7 @@ import Logout from "./pages/Logout";
 import Register from "./pages/Register";
 import ProductPage from "./pages/ProductPage";
 import NewProductForm from "./pages/NewProductForm";
+import Cart from "./pages/Cart";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
@@ -24,6 +25,7 @@ root.render(
           <Route path="/register" element={<Register />} />
           <Route path="/product/:id" element={<ProductPage />} />
           <Route path="/add-new-product" element={<NewProductForm />} />
+          <Route path="/cart" element={<Cart/>}/>
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </AuthProvider>
