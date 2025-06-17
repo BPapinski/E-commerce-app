@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import "./styles/AddNewProduct.css";
+import "../styles/AddNewProduct.css"
 
 export default function AddNewProduct() {
   const navigate = useNavigate();

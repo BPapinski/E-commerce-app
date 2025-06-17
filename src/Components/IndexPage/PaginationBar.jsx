@@ -1,5 +1,5 @@
 import React from "react";
-import "./styles/PaginationBar.css"; // lub style module jeśli wolisz
+import "../styles/PaginationBar.css"; // lub style module jeśli wolisz
 
 const PaginationBar = ({
   currentPage,

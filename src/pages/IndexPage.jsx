@@ -3,10 +3,10 @@ import "./styles/reset.css";
 import Header from "../Components/Header";
 import Subheader from "../Components/Subheader";
 import Sidebar from "../Components/Sidebar";
-import PaginationBar from "../Components/PaginationBar";
+import PaginationBar from "../Components/IndexPage/PaginationBar";
 import React, { useEffect, useState, useCallback } from "react"; // Dodaj useCallback
 import { useLocation, useNavigate } from "react-router-dom";
-import AddNewProduct from "../Components/AddNewProduct";
+import AddNewProduct from "../Components/IndexPage/AddNewProduct";
 import { useAuth } from "../contexts/AuthContext";
 import useApi from "./utils/api";
 import ProductCard from "../Components/IndexPage/ProductCard";
