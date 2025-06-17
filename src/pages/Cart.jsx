@@ -9,7 +9,7 @@ import { useNavigate } from "react-router-dom";
 export default function Cart() {
     const navigate = useNavigate()
     const [items, setItems] = useState([]);
-    const { token, isLoggedIn, loadingUser } = useAuth();
+    const { accessToken, isLoggedIn, loadingUser } = useAuth();
 
     useEffect(() => {
         if (!isLoggedIn && !loadingUser) {
@@ -20,12 +20,12 @@ export default function Cart() {
 
    // ❗ Pobieranie koszyka
     useEffect(() => {
-        if (!token || !isLoggedIn) return;
+        if (!accessToken || !isLoggedIn) return;
 
         fetch("http://127.0.0.1:8000/api/store/cart/", {
         headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${accessToken}`,
         },
         })
         .then((res) => {
@@ -41,7 +41,7 @@ export default function Cart() {
         .catch((error) => {
             console.error("Błąd podczas pobierania koszyka:", error);
         });
-    }, [token, isLoggedIn, navigate]);
+    }, [accessToken, isLoggedIn, navigate]);
 
     const totalPrice = items.reduce(
         (sum, item) => sum + item.product.price * item.quantity
@@ -55,7 +55,7 @@ export default function Cart() {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${accessToken}`,
       },
       body: JSON.stringify({ quantity: item.quantity + 1 }),
     })
@@ -75,7 +75,7 @@ export default function Cart() {
       fetch(`http://127.0.0.1:8000/api/store/cart/remove/${item.id}/`, {
         method: "DELETE",
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${accessToken}`,
         },
       })
         .then(() => {
@@ -88,7 +88,7 @@ export default function Cart() {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${accessToken}`,
         },
         body: JSON.stringify({ quantity: item.quantity - 1 }),
       })

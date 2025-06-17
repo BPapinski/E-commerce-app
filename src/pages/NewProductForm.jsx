@@ -1,8 +1,10 @@
 import { useState, useCallback, useEffect } from "react";
 import Cropper from "react-easy-crop";
-import { getCroppedImg } from "./utils/cropImage";
+import { getCroppedImg } from "./utils/cropImage"; // Upewnij się, że ścieżka jest poprawna
 import "./styles/newProductForm.css";
 import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext"; // Importuj useAuth
+import useApi from "./utils/api";
 
 export default function NewProductForm() {
   const [name, setName] = useState("");
@@ -23,64 +25,43 @@ export default function NewProductForm() {
   const [allCategories, setAllCategories] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
 
-  const [user, setUser] = useState(null); // Początkowo null
-  const [token, setToken] = useState(null);
-  const [loadingUser, setLoadingUser] = useState(true); // Dodany stan ładowania użytkownika
-  const [userError, setUserError] = useState(null); // Dodany stan błędu użytkownika
+  // ----- Zmiany w stanie związane z autoryzacją -----
+  // Usuń lokalne stany user, token, loadingUser, userError
+  // const [user, setUser] = useState(null);
+  // const [token, setToken] = useState(null);
+  // const [loadingUser, setLoadingUser] = useState(true);
+  // const [userError, setUserError] = useState(null);
+
+  // Użyj useAuth i useApi
+  const { user, loadingUser, isLoggedIn } = useAuth(); // Pobierz z kontekstu
+  const { authFetch } = useApi(); // Pobierz funkcję do autoryzowanych zapytań
 
   const navigate = useNavigate();
 
+  // --- Poprawiony useEffect do sprawdzania autoryzacji i przekierowania ---
   useEffect(() => {
-    const storedToken = localStorage.getItem("token");
-    setToken(storedToken);
-    if (!storedToken) {
-      navigate("/");
-    }
-  }, [navigate]);
-
-  // Pobierz dane użytkownika, jeśli token jest
-  useEffect(() => {
-    if (!token) {
-      setLoadingUser(false); // Jeśli brak tokena, zakończ ładowanie
+    // Czekaj, aż AuthContext zakończy ładowanie stanu użytkownika
+    if (loadingUser) {
       return;
     }
 
-    setLoadingUser(true); // Rozpocznij ładowanie
-    setUserError(null); // Resetuj błąd
-    fetch("http://127.0.0.1:8000/api/user/", {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-    })
-      .then((res) => {
-        if (res.status === 401) {
-          localStorage.removeItem("token");
-          navigate("/"); // Przekieruj na stronę główną lub logowania
-          throw new Error("Nieautoryzowany dostęp. Zaloguj się ponownie.");
-        }
-        if (!res.ok) {
-          throw new Error("Nie udało się pobrać danych użytkownika");
-        }
-        return res.json();
-      })
-      .then((userData) => {
-        setUser(userData);
-        console.log("Dane użytkownika załadowane:", userData);
-      })
-      .catch((error) => {
-        console.error("Błąd użytkownika:", error);
-        setUserError(error.message); // Ustaw wiadomość błędu
-        // Opcjonalnie przekieruj, jeśli błąd jest krytyczny (np. brak dostępu)
-        // navigate("/");
-      })
-      .finally(() => {
-        setLoadingUser(false); // Zawsze zakończ ładowanie po fetchu
-      });
-  }, [token, navigate]); // navigate jest potrzebne w zależnościach!
+    // Jeśli użytkownik nie jest zalogowany
+    if (!isLoggedIn) {
+      console.log("NewProductForm: Użytkownik niezalogowany, przekierowuję do logowania.");
+      navigate("/login"); // Przekieruj do strony logowania
+      return; // Zatrzymaj renderowanie i wykonanie dalszego kodu, zanim użytkownik zostanie przekierowany
+    }
 
-  // laoding categories (bez zmian)
+    // Jeśli użytkownik jest zalogowany, ale nie jest adminem
+    if (user && !user.is_admin) {
+        console.log("NewProductForm: Użytkownik nie jest administratorem, przekierowuję do strony głównej.");
+        alert("Brak uprawnień administratora do dodawania produktów."); // Poinformuj użytkownika
+        navigate("/");
+    }
+  }, [loadingUser, isLoggedIn, user, navigate]); // Zależności: stany z useAuth i navigate
+
+
+  // Pobieranie kategorii (NIE wymagają tokena, więc zwykły fetch jest OK, ale można użyć authFetch dla spójności)
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -98,6 +79,7 @@ export default function NewProductForm() {
     };
     fetchData();
   }, []);
+
 
   const groupedSuggestions = categoryGroups
     .map((group) => {
@@ -148,14 +130,21 @@ export default function NewProductForm() {
     }
   }, [croppedAreaPixels, imageSrcForCropper]);
 
+  // --- Funkcja do wysyłania formularza - TERAZ UŻYWA authFetch ---
   const handleSubmit = async (e, redirectToHome = false) => {
     e.preventDefault();
 
-    // Dodatkowa walidacja dostępu przed wysłaniem formularza
-    if (!user || !user.is_admin) {
-        alert("Brak uprawnień administratora do dodawania produktów.");
-        navigate("/"); // Przekieruj, jeśli nie jest adminem
-        return;
+    // Dodatkowa walidacja dostępu PRZED wysłaniem formularza
+    // Ta walidacja jest w pewnym stopniu redundantna z useEffectem powyżej,
+    // ale zapewnia dodatkową ochronę, gdyby coś poszło nie tak z początkowym przekierowaniem.
+    if (!isLoggedIn || !user || !user.is_admin) {
+      alert("Brak uprawnień administratora do dodawania produktów. Proszę się zalogować jako administrator.");
+      if (isLoggedIn) { // Jeśli zalogowany, ale nie admin, wróć na główną
+        navigate("/");
+      } else { // Jeśli niezalogowany, idź do logowania
+        navigate("/login");
+      }
+      return;
     }
 
     const validCategory = allCategories.find(
@@ -181,21 +170,15 @@ export default function NewProductForm() {
     formData.append("image", croppedFileToSend, croppedFileToSend.name);
 
     const url = "http://127.0.0.1:8000/api/store/product/add/";
-    const currentToken = localStorage.getItem("token");
-
-    if (!currentToken) {
-      alert("Jesteś niezalogowany. Proszę się zalogować.");
-      console.error("Brak tokena uwierzytelniającego.");
-      return;
-    }
 
     try {
-      const response = await fetch(url, {
+      // Użyj authFetch do wysłania danych
+      // authFetch automatycznie obsłuży nagłówek Authorization i odświeżanie tokena
+      const response = await authFetch(url, {
         method: "POST",
-        headers: {
-          Authorization: `Bearer ${currentToken}`,
-        },
-        body: formData,
+        // NIE DODAWAJ JUŻ RĘCZNIE NAGŁÓWKA Authorization TUTAJ!
+        // authFetch sam to zrobi i zadba o odświeżanie.
+        body: formData, // FormData automatycznie ustawia Content-Type na multipart/form-data
       });
 
       if (!response.ok) {
@@ -268,19 +251,20 @@ export default function NewProductForm() {
     );
   }
 
-  // 2. Pokaż komunikat o błędzie, jeśli wystąpił problem z ładowaniem danych użytkownika
-  if (userError) {
-    return (
-      <div className="product-form-container">
-        <p>Błąd ładowania danych użytkownika: {userError}</p>
-        <p>Proszę odświeżyć stronę lub spróbować ponownie później.</p>
-        <Link to="/" className="back-button">Powrót do strony głównej</Link>
-      </div>
-    );
+  // 2. Obsługa przypadków, gdy użytkownik nie ma dostępu lub nie jest zalogowany
+  // Te warunki zostaną spełnione, jeśli useEffect powyżej przekierował, ale przeglądarka jeszcze nie.
+  // Dają pewność, że nic nie renderuje się niepotrzebnie.
+  if (!isLoggedIn) {
+      return (
+        <div className="product-form-container">
+          <p>Musisz być zalogowany, aby dodać produkt.</p>
+          <Link to="/login" className="back-button">Przejdź do logowania</Link>
+        </div>
+      );
   }
 
-  // 3. Sprawdź uprawnienia admina po załadowaniu danych użytkownika
-  if (!user || !user.is_admin) {
+  // Jeśli użytkownik jest zalogowany, ale nie jest adminem
+  if (user && !user.is_admin) {
     return (
       <div className="product-form-container">
         <p>Brak uprawnień. Tylko administratorzy mogą dodawać produkty.</p>
@@ -297,7 +281,7 @@ export default function NewProductForm() {
       </Link>
       <h2>Dodaj nowy produkt</h2>
       {/* Reszta Twojego formularza */}
-      <form onSubmit={handleSubmit} className="product-form">
+      <form onSubmit={(e) => handleSubmit(e, false)} className="product-form"> {/* Domyślne zachowanie na "Zapisz i dodaj kolejny" */}
         <label>Nazwa produktu</label>
         <input
           type="text"
@@ -412,7 +396,9 @@ export default function NewProductForm() {
         <button
           type="submit"
           className="submit-button"
-          onClick={(e) => handleSubmit(e, false)}
+          // onSubmit przekazuje domyślnie 'e', tutaj możemy przekazać 'false'
+          // dla pierwszego przycisku lub oddzielną funkcję
+          onClick={(e) => handleSubmit(e, false)} 
         >
           Zapisz i dodaj kolejny
         </button>
