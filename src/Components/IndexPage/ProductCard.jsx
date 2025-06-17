@@ -1,10 +1,13 @@
-import React, { useCallback } from 'react';
-import useSearchFilters from '../../Hooks/useSearchFilters';
+import React, { useCallback } from "react";
+import useSearchFilters from "../../Hooks/useSearchFilters";
+import { ReactComponent as FavoriteIcon } from "../../icons/favourite.svg";
+import { ReactComponent as DeleteIcon } from "../../icons/delete.svg";
+import { ReactComponent as EditIcon } from "../../icons/edit.svg";
+import "../styles/ProductCart.css";
 
 const ProductCard = ({ product, handleAddToCart }) => {
-
   const { setCategory, setAuthor } = useSearchFilters();
-  
+
   return (
     <div className="product">
       <div className="product-image">
@@ -40,16 +43,29 @@ const ProductCard = ({ product, handleAddToCart }) => {
         </div>
         <div className="product-placeholder"></div>
         <div className="product-price">
-          <h2 style={{ color: "white", fontSize: "1.2rem" }}>
-            {product.price}zł
-          </h2>
-          <button
-            style={{ marginTop: "0.5em" }}
-            onClick={() => handleAddToCart(product.id)}
-          >
-            Dodaj do koszyka
-          </button>
-        </div>
+  <h2 style={{ color: "white", fontSize: "1.2rem" }}>
+    {product.price}zł
+  </h2>
+  <div className="button-and-icons-wrapper"> {/* Nowy kontener */}
+    <button
+      style={{ marginTop: "0.5em" }}
+      onClick={() => handleAddToCart(product.id)}
+    >
+      Dodaj do koszyka
+    </button>
+    <div className="product-icons">
+      <button className="icon-button" onClick={() => console.log("Favourite clicked")}>
+        <FavoriteIcon />
+      </button>
+      <button className="icon-button" onClick={() => console.log("Delete clicked")}>
+        <DeleteIcon />
+      </button>
+      <button className="icon-button" onClick={() => console.log("Edit clicked")}>
+        <EditIcon />
+      </button>
+    </div>
+  </div>
+</div>
       </div>
     </div>
   );

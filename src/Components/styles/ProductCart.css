@@ -1,0 +1,159 @@
+:root {
+  --primary-bg: var(--sidebarcolor, #1D1616);
+  --primary-bg-hover: var(--sidebarcolor-hover, #2e2525);
+  --accent: var(--subheadercolor, #8E1616);
+  --text-light: #ffffff;
+  --hover-accent: var(--hovercolor, #A72828);
+}
+
+
+img, picture, video, canvas, svg {
+    display: block;
+    max-width: none;
+}
+
+.product {
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+  max-width: 100%;
+  border: 1px solid #ccc;
+  background-color: var(--sidebarcolor);
+}
+
+.product:hover {
+  background-color: var(--sidebarcolor-hover);
+  transition: 0.4s;
+}
+
+.product-image {
+  width: 200px;
+  height: 200px;
+  flex: 0 0 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.product-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.product-data {
+  display: grid;
+  grid-template-columns: 2fr 2fr 1fr;
+  align-items: center;
+  justify-content: space-between;
+  width: calc(100% - 200px);
+  height: 200px;
+  padding: 0.5em;
+  box-sizing: border-box;
+}
+
+.product-name a{
+    text-decoration: none;
+    color: white
+}
+
+.product-info {
+  grid-column: 1 / 2;
+  padding: 0.5em;
+}
+
+.product-placeholder {
+  grid-column: 2 / 3;
+}
+
+.category {
+    color: white
+}
+
+.product-author{
+    color:white;
+}
+
+
+/* ... istniejący kod CSS ... */
+
+.product-price {
+  grid-column: 3 / 4;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Wyśrodkuj zawartość `.product-price` */
+}
+
+.button-and-icons-wrapper {
+  width: 80%; /* Nadaj mu taką samą szerokość jak przyciskowi */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* Zmień na align-items: flex-start, aby wszystko było wyrównane do lewej w tym wrapperze */
+}
+
+.product-price button {
+  width: 100%; /* Spraw, aby przycisk zajmował całą szerokość wrappera */
+  padding: 0.7em 1em;
+  font-size: 1rem;
+  font-weight: bold;
+  background-color: var(--buy-button-accent);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  box-sizing: border-box;
+  margin-top: 0.5em;
+  margin-bottom: 0.5em; /* Dodaj odstęp pod przyciskiem */
+}
+
+.product-price button:hover {
+  background-color: var(--buy-button-hover);
+  transform: translateY(-2px) scale(1.01);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+}
+
+.product-price button:focus {
+  outline: 2px solid var(--buy-button-hover);
+  outline-offset: 2px;
+}
+
+.product-icons {
+  display: flex;
+  justify-content: flex-start; /* KLUCZOWA ZMIANA: wyrównanie ikon do lewej */
+  gap: 0.8em; /* Odstęp między ikonami. Możesz dostosować tę wartość. */
+  width: 100%; /* Upewnij się, że kontener ikon zajmuje pełną szerokość wrappera */
+  margin-top: 0.5em; /* Odstęp od przycisku "Dodaj do koszyka" */
+  flex-direction: row;
+}
+
+.icon-button {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  transition: background-color 0.3s ease;
+  flex:1;
+}
+
+.icon-button:hover {
+  background-color: var(--primary-bg-hover);
+}
+
+.icon-button svg {
+  width: 24px;
+  height: 24px;
+  fill: var(--text-light);
+}
+
+/* ... reszta twojego kodu CSS ... */
+
