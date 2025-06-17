@@ -51,7 +51,12 @@ class ProductListCreateView(generics.ListCreateAPIView):
                 queryset = queryset.filter(seller_id=seller_id)
             except ValueError:
                 pass
+            
+        condition = params.get('condition')
 
+        if condition:
+            if condition.lower() in ['new', 'used']:
+                queryset = queryset.filter(condition=condition.lower())
         return queryset
 
 # 🔽 Szczegóły pojedynczego produktu

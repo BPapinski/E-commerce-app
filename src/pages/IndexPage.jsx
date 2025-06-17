@@ -26,13 +26,14 @@ export default function IndexPage() {
 
   // Dynamiczne filtrowanie produktów na podstawie URL
   useEffect(() => {
-    const fetchProducts = async () => { // Zmieniamy na funkcję async/await
+    const fetchProducts = async () => {
       const params = new URLSearchParams(location.search);
       const category = params.get("category");
       const search = params.get("search");
       const minPrice = params.get("min_price");
       const maxPrice = params.get("max_price");
       const sellerId = params.get("sellerId");
+      const condition = params.get("condition");
 
       let apiUrl = "http://127.0.0.1:8000/api/store/";
       const queryParams = new URLSearchParams();
@@ -42,6 +43,7 @@ export default function IndexPage() {
       if (minPrice) queryParams.append("min_price", minPrice);
       if (maxPrice) queryParams.append("max_price", maxPrice);
       if (sellerId) queryParams.append("sellerId", sellerId);
+      if (condition) queryParams.append("condition", condition);
 
       queryParams.append("page", currentPage);
 
@@ -50,9 +52,6 @@ export default function IndexPage() {
       }
 
       try {
-        // Użyj authFetch do pobierania produktów
-        // Zakładam, że endpoint /api/store/ NIE wymaga tokena JWT, więc token nie jest wysyłany.
-        // Jeśli jednak wymaga, authFetch i tak go doda automatycznie.
         const res = await authFetch(apiUrl, {
           method: "GET",
           headers: {
@@ -61,29 +60,31 @@ export default function IndexPage() {
         });
 
         if (!res.ok) throw new Error("Błąd podczas pobierania produktów");
-        
+
         const data = await res.json();
         setProducts(data.results || data);
-        const pages = Math.ceil(data.count / 10); // 10 = page_size z Django
+        const pages = Math.ceil(data.count / 10);
         setTotalPages(pages);
         setError(null);
       } catch (err) {
         console.error(err);
-        setError("Nie udało się pobrać produktów."); // Ustaw ogólny błąd dla użytkownika
+        setError("Nie udało się pobrać produktów.");
 
-        // Jeśli aktualna strona > 1, spróbuj ponownie z pierwszą stroną
         if (currentPage > 1) {
           const params = new URLSearchParams(location.search);
-          params.set("page", 1);
-          navigate({ search: params.toString() });
-        } else {
-          // Jeśli to już pierwsza strona i jest błąd, nic więcej nie robimy
+          if (params.get("page") !== "1") {
+            params.set("page", 1);
+            navigate({ search: params.toString() });
+          }
         }
       }
     };
 
-    fetchProducts();
-  }, [location.search, currentPage, navigate, authFetch]); // Dodano authFetch do zależności useEffect
+    // Prevent infinite loop by debouncing effect
+    let timeout = setTimeout(fetchProducts, 100);
+
+    return () => clearTimeout(timeout);
+  }, [location.search, currentPage]);
 
   // Funkcje nawigacyjne (bez zmian, nie wymagają tokena)
   const nextPage = useCallback(() => {
@@ -138,11 +139,9 @@ export default function IndexPage() {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            // Nagłówek Authorization NIE jest już tu potrzebny,
-            // bo authFetch sam go dodaje i odświeża
           },
           body: JSON.stringify({
-            product_id: productId, // Zmieniono z product_id na product zgodnie z API
+            product_id: productId,
             quantity: 1,
           }),
         }

@@ -34,8 +34,8 @@ const SidebarElement = ({ groupName, categories }) => {
       </div>
       <ul className={`sidebar-subelement ${expanded ? "active" : ""}`}>
         {categories.map((cat, index) => (
-          <div>
-            <li key={index}>
+          <div key={index}>
+            <li>
               <a
                 href="#"
                 onClick={() => handleCategoryChoice(cat.category_name)}
