@@ -25,43 +25,29 @@ export default function NewProductForm() {
   const [allCategories, setAllCategories] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
 
-  // ----- Zmiany w stanie związane z autoryzacją -----
-  // Usuń lokalne stany user, token, loadingUser, userError
-  // const [user, setUser] = useState(null);
-  // const [token, setToken] = useState(null);
-  // const [loadingUser, setLoadingUser] = useState(true);
-  // const [userError, setUserError] = useState(null);
-
-  // Użyj useAuth i useApi
   const { user, loadingUser, isLoggedIn } = useAuth(); // Pobierz z kontekstu
   const { authFetch } = useApi(); // Pobierz funkcję do autoryzowanych zapytań
 
   const navigate = useNavigate();
 
-  // --- Poprawiony useEffect do sprawdzania autoryzacji i przekierowania ---
   useEffect(() => {
-    // Czekaj, aż AuthContext zakończy ładowanie stanu użytkownika
     if (loadingUser) {
       return;
     }
 
-    // Jeśli użytkownik nie jest zalogowany
     if (!isLoggedIn) {
       console.log("NewProductForm: Użytkownik niezalogowany, przekierowuję do logowania.");
-      navigate("/login"); // Przekieruj do strony logowania
-      return; // Zatrzymaj renderowanie i wykonanie dalszego kodu, zanim użytkownik zostanie przekierowany
+      navigate("/login"); 
+      return;
     }
 
-    // Jeśli użytkownik jest zalogowany, ale nie jest adminem
     if (user && !user.is_admin) {
         console.log("NewProductForm: Użytkownik nie jest administratorem, przekierowuję do strony głównej.");
-        alert("Brak uprawnień administratora do dodawania produktów."); // Poinformuj użytkownika
+        alert("Brak uprawnień administratora do dodawania produktów.");
         navigate("/");
     }
-  }, [loadingUser, isLoggedIn, user, navigate]); // Zależności: stany z useAuth i navigate
+  }, [loadingUser, isLoggedIn, user, navigate]); 
 
-
-  // Pobieranie kategorii (NIE wymagają tokena, więc zwykły fetch jest OK, ale można użyć authFetch dla spójności)
   useEffect(() => {
     const fetchData = async () => {
       try {
