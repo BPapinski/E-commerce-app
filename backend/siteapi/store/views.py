@@ -7,6 +7,9 @@ from .serializers import ProductSerializer, CategorySerializer, CategoryGroupSer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.exceptions import PermissionDenied
+
+
 
 class StandardResultsSetPagination(PageNumberPagination):
     page_size = 10
@@ -69,12 +72,23 @@ class ProductDetailView(generics.RetrieveAPIView):
 class ProductCreateAPIView(generics.CreateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
-    permission_classes = [IsAuthenticated]
 
     def perform_create(self, serializer):
         # To jest miejsce, gdzie przypisujesz zalogowanego użytkownika jako sprzedawcę.
         serializer.save(seller=self.request.user)
 
+class ProductDeleteAPIView(generics.DestroyAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def perform_destroy(self, instance):
+        user = self.request.user
+        if instance.seller == user or user.is_staff:
+            instance.delete()
+        else:
+            raise PermissionDenied("Nie masz uprawnień do usunięcia tego produktu.")
+    
 class CategoryListView(generics.ListAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer

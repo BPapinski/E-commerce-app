@@ -183,6 +183,7 @@ export default function IndexPage() {
               key={index}
               product={product}
               handleAddToCart={handleAddToCart}
+              user = {user}
             />
           ))}
 

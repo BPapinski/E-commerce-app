@@ -5,8 +5,9 @@ import { ReactComponent as DeleteIcon } from "../../icons/delete.svg";
 import { ReactComponent as EditIcon } from "../../icons/edit.svg";
 import "../styles/ProductCart.css";
 
-const ProductCard = ({ product, handleAddToCart }) => {
+const ProductCard = ({ product, handleAddToCart, user }) => {
   const { setCategory, setAuthor } = useSearchFilters();
+
 
   return (
     <div className="product">
@@ -54,15 +55,20 @@ const ProductCard = ({ product, handleAddToCart }) => {
       Dodaj do koszyka
     </button>
     <div className="product-icons">
-      <button className="icon-button" onClick={() => console.log("Favourite clicked")}>
-        <FavoriteIcon />
-      </button>
-      <button className="icon-button" onClick={() => console.log("Delete clicked")}>
-        <DeleteIcon />
-      </button>
-      <button className="icon-button" onClick={() => console.log("Edit clicked")}>
-        <EditIcon />
-      </button>
+      {user && (user.email === product.seller_email || user.is_admin) && (
+        <>
+          <button className="icon-button" onClick={() => console.log("Delete clicked")}>
+            <DeleteIcon />
+          </button>
+          <button className="icon-button" onClick={() => console.log("Edit clicked")}>
+            <EditIcon />
+          </button>
+        </>
+      )}
+
+    <button className="icon-button" onClick={() => console.log("Favourite clicked")}>
+      <FavoriteIcon />
+    </button>
     </div>
   </div>
 </div>
