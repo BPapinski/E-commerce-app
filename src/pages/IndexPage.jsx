@@ -25,6 +25,10 @@ export default function IndexPage() {
   const { user, loadingUser, isLoggedIn } = useAuth();
   const { authFetch } = useApi();
 
+  const handleProductDeleted = (deletedProductId) => {
+        setProducts(prevProducts => prevProducts.filter(product => product.id !== deletedProductId));
+    };
+
   // Dynamiczne filtrowanie produktów na podstawie URL
   useEffect(() => {
     const fetchProducts = async () => {
@@ -184,6 +188,8 @@ export default function IndexPage() {
               product={product}
               handleAddToCart={handleAddToCart}
               user = {user}
+              onProductDeleted={handleProductDeleted}
+              
             />
           ))}
 
