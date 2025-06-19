@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useState, useEffect } from "react";
 import useSearchFilters from "../../Hooks/useSearchFilters";
 import { ReactComponent as FavoriteIcon } from "../../icons/favourite.svg";
 import { ReactComponent as DeleteIcon } from "../../icons/delete.svg";
@@ -7,7 +7,6 @@ import "../styles/ProductCart.css";
 import { useAuth } from "../../contexts/AuthContext";
 import useApi from "../../pages/utils/api";
 import { useNavigate } from "react-router-dom";
-
 
 import ConfirmModal from "./ConfirmModal";
 
@@ -18,18 +17,42 @@ const ProductCard = ({ product, handleAddToCart, user, onProductDeleted }) => {
   const { authFetch } = useApi();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [productIdToDelete, setProductIdToDelete] = useState(null);
-  const [productNameToDelete, setProductNameToDelete] = useState('')
+  const [productNameToDelete, setProductNameToDelete] = useState("");
   const navigate = useNavigate();
+  const [isFavourite, setIsFavourite] = useState(false);
+
+
+  useEffect(() => {
+  const checkIsFavourite = async () => {
+    try {
+      const res = await authFetch(`http://127.0.0.1:8000/api/store/favourite/is_favourite/${product.id}/`);
+      if (res.ok) {
+        const data = await res.json();
+        setIsFavourite(data.isFavourite);
+      } else {
+        setIsFavourite(false);
+      }
+    } catch (err) {
+      console.error("Błąd ładowania ulubionych:", err);
+      setIsFavourite(false);
+    }
+  };
+
+  if (product.id) {
+    checkIsFavourite();
+  }
+}, [product.id, authFetch]);
+
 
   const handleDeleteClick = useCallback((productId, productName) => {
     setProductIdToDelete(productId);
-    setProductNameToDelete(productName)
+    setProductNameToDelete(productName);
     setIsModalOpen(true);
   }, []);
 
   const handleEditClick = useCallback((productId) => {
     navigate(`/edit-product/${productId}`);
-   }, [])
+  }, []);
 
   const confirmDelete = useCallback(async () => {
     setIsModalOpen(false);
@@ -40,7 +63,6 @@ const ProductCard = ({ product, handleAddToCart, user, onProductDeleted }) => {
           method: "DELETE",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
           },
         }
       );
@@ -67,8 +89,46 @@ const ProductCard = ({ product, handleAddToCart, user, onProductDeleted }) => {
 
   const cancelDelete = useCallback(() => {
     setIsModalOpen(false);
-    setProductIdToDelete(null); 
+    setProductIdToDelete(null);
   }, []);
+
+  const handleFavouriteClick = useCallback(
+    async (productId) => {
+      try {
+        if (isFavourite) {
+          // Usuń z ulubionych
+          
+          const res = await authFetch(
+            `http://127.0.0.1:8000/api/store/favourite/remove/${productId}/`,
+            {
+              method: "DELETE",
+            }
+          );
+          if (res.ok) {
+            setIsFavourite(false);
+          } else {
+            alert("Nie udało się usunąć z ulubionych");
+          }
+        } else {
+          // Dodaj do ulubionych
+          const res = await authFetch(
+            `http://127.0.0.1:8000/api/store/favourite/add/${productId}/`,
+            {
+              method: "POST",
+            }
+          );
+          if (res.ok) {
+            setIsFavourite(true);
+          } else {
+            alert("Nie udało się dodać do ulubionych");
+          }
+        }
+      } catch (err) {
+        alert("Błąd połączenia z serwerem.");
+      }
+    },
+    [isFavourite, authFetch, product.id]
+  );
 
   return (
     <div className="product">
@@ -139,12 +199,12 @@ const ProductCard = ({ product, handleAddToCart, user, onProductDeleted }) => {
                   </>
                 )}
 
-              <button
-                className="icon-button"
-                onClick={() => console.log("Favourite clicked")}
-              >
-                <FavoriteIcon />
-              </button>
+                <button
+                  className="icon-button"
+                  onClick={() => handleFavouriteClick(product.id)}
+                >
+                  {isFavourite ? <FavoriteIcon style={{ fill: "red" }} />: <FavoriteIcon />}
+                </button>
             </div>
           </div>
         </div>
