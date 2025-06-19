@@ -1,0 +1,73 @@
+/* src/Components/ConfirmModal/ConfirmModal.css */
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    /* Półprzezroczyste tło z użyciem głównego koloru tła */
+    background-color: rgba(29, 22, 22, 0.8); /* Użycie wartości --primary-bg (#1D1616) z przezroczystością */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* Upewnij się, że modal jest na wierzchu */
+}
+
+.modal-content {
+    background-color: var(--primary-bg); /* Tło modala zgodne z głównym tłem */
+    color: var(--text-light); /* Kolor tekstu zgodny z jasnym tekstem */
+    padding: 2.5em 2em; /* Nieco więcej paddingu dla estetyki */
+    border-radius: 8px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4); /* Wyraźniejszy cień */
+    text-align: center;
+    max-width: 450px; /* Nieco szerszy modal */
+    width: 90%;
+    border: 1px solid var(--accent); /* Delikatna ramka z kolorem akcentu */
+}
+
+.modal-content p {
+    font-size: 1.3rem; /* Nieco większa czcionka */
+    margin-bottom: 2em;
+    font-weight: bold; /* Pogrubiony tekst pytania */
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: center;
+    gap: 1.5em; /* Większy odstęp między przyciskami */
+}
+
+.modal-button {
+    padding: 0.9em 2em; /* Większe przyciski */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1.1rem; /* Większa czcionka w przyciskach */
+    font-weight: bold;
+    transition: background-color 0.3s ease, transform 0.1s ease; /* Dodano animację transform */
+}
+
+.modal-button:hover {
+    transform: translateY(-2px); /* Delikatne podniesienie przycisku na hover */
+}
+
+.modal-button.confirm {
+    background-color: var(--accent); /* Kolor akcentu dla przycisku potwierdzenia */
+    color: var(--text-light);
+}
+
+.modal-button.confirm:hover {
+    background-color: var(--hover-accent); /* Kolor hover dla akcentu */
+}
+
+.modal-button.cancel {
+    background-color: var(--primary-bg-hover); /* Kolor tła hover dla przycisku anulowania */
+    color: var(--text-light);
+    border: 1px solid var(--accent); /* Dodatkowa ramka, by był wyraźniejszy */
+}
+
+.modal-button.cancel:hover {
+    background-color: #403636; /* Trochę ciemniejszy kolor niż primary-bg-hover */
+    border-color: var(--hover-accent);
+}
