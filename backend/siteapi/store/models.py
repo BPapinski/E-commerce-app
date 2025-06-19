@@ -37,6 +37,8 @@ class Product(models.Model):
 
     seller = models.ForeignKey(User, on_delete=models.SET_DEFAULT, default=1)
     condition = models.CharField(max_length=10, choices=CONDITION_CHOICES, default='new')
+    
+    likes_count = models.PositiveIntegerField(default=0)
 
     def __str__(self):
         return self.name
@@ -77,3 +79,15 @@ class OrderItem(models.Model):
     def __str__(self):
         return f'{self.quantity}x {self.product.name}'
 
+class FavouriteItem(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateField(auto_now=True)
+    is_active = models.BooleanField()
+    
+    class Meta:
+        unique_together = ('user', 'product') # Zapobiega duplikatom
+
+    def __str__(self):
+        return f'Użytkownik {self.user.email} lubi produkt {self.product.name}'

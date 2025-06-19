@@ -3,7 +3,7 @@ from django.contrib import admin
 from .models import (
     CategoryGroup, Category, Product,
     Cart, CartItem,
-    Order, OrderItem
+    Order, OrderItem, FavouriteItem
 )
 
 
@@ -65,3 +65,13 @@ class OrderAdmin(nested_admin.NestedModelAdmin):
     inlines = [OrderItemInline]
     list_display = ['user', 'created_at', 'is_paid']
     list_filter = ['is_paid', 'created_at']
+
+
+@admin.register(FavouriteItem)
+class FavouriteItemAdmin(admin.ModelAdmin):
+    list_display = ['user', 'product', 'is_active', 'created_at', 'updated_at']
+    list_filter = ['is_active', 'created_at', 'user', 'product']
+    search_fields = ['user__email', 'product__name']
+    readonly_fields = ['created_at', 'updated_at']
+
+
