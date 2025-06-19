@@ -1,18 +1,19 @@
 import { useState, useCallback, useEffect } from "react";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import Cropper from "react-easy-crop";
 import { getCroppedImg } from "./utils/cropImage";
-import "./styles/newProductForm.css";
-import { useParams, useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import useApi from "./utils/api";
+import "./styles/newProductForm.css";
 
 export default function EditProductForm() {
   const { productId } = useParams();
+  const navigate = useNavigate();
   const { user, loadingUser, isLoggedIn } = useAuth();
   const { authFetch } = useApi();
-  const navigate = useNavigate();
 
   const [productLoaded, setProductLoaded] = useState(false);
+  const [canEdit, setCanEdit] = useState(false);
 
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -20,11 +21,10 @@ export default function EditProductForm() {
   const [category, setCategory] = useState("");
   const [condition, setCondition] = useState("new");
 
-  const [imageSrcForCropper, setImageSrcForCropper] = useState(null);
-  const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
-  const [croppedFileToSend, setCroppedFileToSend] = useState(null);
-  const [croppedImagePreviewUrl, setCroppedImagePreviewUrl] = useState(null);
-
+  const [imageSrc, setImageSrc] = useState(null);
+  const [croppedArea, setCroppedArea] = useState(null);
+  const [croppedFile, setCroppedFile] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState(null);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
 
@@ -33,41 +33,36 @@ export default function EditProductForm() {
   const [showSuggestions, setShowSuggestions] = useState(false);
 
   useEffect(() => {
-    if (loadingUser) return;
-    if (!isLoggedIn) {
-      navigate("/login");
-      return;
-    }
-
-  }, [loadingUser, isLoggedIn, user, navigate]);
+    if (!loadingUser && !isLoggedIn) navigate("/login");
+  }, [loadingUser, isLoggedIn, navigate]);
 
   useEffect(() => {
-  const fetchProduct = async () => {
-    try {
-      const res = await authFetch(`http://127.0.0.1:8000/api/store/product/${productId}/`);
-      const data = await res.json();
+    const fetchProduct = async () => {
+      try {
+        const res = await authFetch(`http://127.0.0.1:8000/api/store/product/${productId}/`);
+        if (res.status === 404) return navigate("/");
 
-      // Sprawdź, czy użytkownik ma prawo edycji (admin lub autor)
-      const isOwner = user?.id === data.user;
-      const canEdit = user?.is_admin || isOwner;
+        const data = await res.json();
+        const isOwner = user?.email === data.seller_email;
+        const canUserEdit = user?.is_admin || isOwner;
+        setCanEdit(canUserEdit);
 
-      if (canEdit && !productLoaded) {
+        if (!canUserEdit) return setProductLoaded(true);
+
         setName(data.name);
         setDescription(data.description);
         setPrice(data.price);
         setCategory(data.category_name || "");
         setCondition(data.condition);
         setProductLoaded(true);
+      } catch (err) {
+        console.error("Błąd ładowania produktu:", err);
+        navigate("/");
       }
-    } catch (err) {
-      console.error("Błąd ładowania produktu:", err);
-    }
-  };
+    };
 
-  if (isLoggedIn && !productLoaded) {
-    fetchProduct();
-  }
-}, [authFetch, productId, isLoggedIn, user, productLoaded]);
+    if (isLoggedIn && !productLoaded) fetchProduct();
+  }, [authFetch, productId, isLoggedIn, user, productLoaded, navigate]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -76,10 +71,8 @@ export default function EditProductForm() {
           fetch("http://127.0.0.1:8000/api/store/category/"),
           fetch("http://127.0.0.1:8000/api/store/categorygroup/"),
         ]);
-        const categoryData = await categoryRes.json();
-        const groupData = await groupRes.json();
-        setAllCategories(categoryData);
-        setCategoryGroups(groupData);
+        setAllCategories(await categoryRes.json());
+        setCategoryGroups(await groupRes.json());
       } catch (err) {
         console.error("Błąd ładowania kategorii:", err);
       }
@@ -87,119 +80,92 @@ export default function EditProductForm() {
     fetchData();
   }, []);
 
-  const groupedSuggestions = categoryGroups
-    .map((group) => {
-      const matches = allCategories.filter(
-        (cat) =>
-          cat.group === group.id &&
-          cat.name.toLowerCase().includes(category.toLowerCase())
-      );
-      return {
-        groupName: group.name,
-        categories: matches,
-      };
-    })
-    .filter((group) => group.categories.length > 0);
+  useEffect(() => {
+    if (productLoaded && !canEdit) {
+      navigate("/");
+    }
+  }, [productLoaded, canEdit, navigate]);
 
-  const onCropComplete = useCallback((_, newCroppedAreaPixels) => {
-    setCroppedAreaPixels(newCroppedAreaPixels);
-  }, []);
+  const groupedSuggestions = categoryGroups
+    .map((group) => ({
+      groupName: group.name,
+      categories: allCategories.filter(
+        (cat) => cat.group === group.id && cat.name.toLowerCase().includes(category.toLowerCase())
+      ),
+    }))
+    .filter((group) => group.categories.length > 0);
 
   const handleImageFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setImageSrcForCropper(URL.createObjectURL(file));
-      setCroppedFileToSend(null);
-      setCroppedImagePreviewUrl(null);
+      setImageSrc(URL.createObjectURL(file));
+      setCroppedFile(null);
+      setPreviewUrl(null);
       setCrop({ x: 0, y: 0 });
       setZoom(1);
     }
   };
 
+  const onCropComplete = useCallback((_, pixels) => {
+    setCroppedArea(pixels);
+  }, []);
+
   const generateCroppedFileAndPreview = useCallback(async () => {
     try {
-      if (imageSrcForCropper && croppedAreaPixels) {
-        const croppedFile = await getCroppedImg(
-          imageSrcForCropper,
-          croppedAreaPixels
-        );
-        setCroppedFileToSend(croppedFile);
+      if (!imageSrc || !croppedArea) return;
+      const cropped = await getCroppedImg(imageSrc, croppedArea);
+      setCroppedFile(cropped);
 
-        const reader = new FileReader();
-        reader.readAsDataURL(croppedFile);
-        reader.onloadend = () => {
-          setCroppedImagePreviewUrl(reader.result);
-        };
-      }
-    } catch (e) {
-      console.error("Błąd przycinania:", e);
+      const reader = new FileReader();
+      reader.readAsDataURL(cropped);
+      reader.onloadend = () => setPreviewUrl(reader.result);
+    } catch (err) {
+      console.error("Błąd przycinania:", err);
     }
-  }, [croppedAreaPixels, imageSrcForCropper]);
+  }, [imageSrc, croppedArea]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!isLoggedIn || !user?.is_admin) {
-      alert("Brak uprawnień.");
-      return navigate("/login");
-    }
+    if (!canEdit) return navigate("/login");
 
-    const validCategory = allCategories.find(
+    const foundCategory = allCategories.find(
       (cat) => cat.name.toLowerCase() === category.toLowerCase()
     );
-
-    if (!validCategory) {
-      alert("Nieprawidłowa kategoria.");
-      return;
-    }
+    if (!foundCategory) return
 
     const formData = new FormData();
     formData.append("name", name);
     formData.append("description", description);
     formData.append("price", price);
-    formData.append("category", validCategory.id);
+    formData.append("category", foundCategory.id);
     formData.append("condition", condition);
-    if (croppedFileToSend) {
-      formData.append("image", croppedFileToSend, croppedFileToSend.name);
-    }
+    if (croppedFile) formData.append("image", croppedFile, croppedFile.name);
 
     try {
-      const res = await authFetch(
-        `http://127.0.0.1:8000/api/store/product/${productId}/`,
-        {
-          method: "PUT",
-          body: formData,
-        }
-      );
+      const res = await authFetch(`http://127.0.0.1:8000/api/store/product/${productId}/`, {
+        method: "PUT",
+        body: formData,
+      });
 
       if (!res.ok) {
-        const errorData = await res.json();
-        console.error("Błąd:", errorData);
-        alert("Błąd zapisu.");
+        const errData = await res.json();
+        console.error("Błąd:", errData);
         return;
       }
 
-      alert("Produkt zaktualizowany.");
       navigate("/");
     } catch (err) {
       console.error("Błąd sieci:", err);
-      alert("Błąd sieci.");
     }
   };
 
-  const handleCategoryChange = (e) => {
-    const value = e.target.value;
-    setCategory(value);
-    setShowSuggestions(value.trim() !== "");
-  };
-
-  const handleSuggestionClick = (name) => {
-    setCategory(name);
-    setShowSuggestions(false);
-  };
-
   if (!productLoaded) {
-    return <div className="product-form-container"><p>Ładowanie...</p></div>;
+    return (
+      <div className="product-form-container">
+        <p>Ładowanie...</p>
+      </div>
+    );
   }
 
   return (
@@ -208,35 +174,22 @@ export default function EditProductForm() {
       <h2>Edytuj produkt</h2>
       <form onSubmit={handleSubmit} className="product-form">
         <label>Nazwa produktu</label>
-        <input
-          type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          required
-        />
+        <input value={name} onChange={(e) => setName(e.target.value)} required />
 
         <label>Opis produktu</label>
-        <textarea
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          rows={3}
-          required
-        />
+        <textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={3} required />
 
         <label>Cena (PLN)</label>
-        <input
-          type="number"
-          value={price}
-          onChange={(e) => setPrice(e.target.value)}
-          required
-        />
+        <input type="number" value={price} onChange={(e) => setPrice(e.target.value)} required />
 
         <label>Kategoria</label>
         <div className="category-suggestions-wrapper">
           <input
-            type="text"
             value={category}
-            onChange={handleCategoryChange}
+            onChange={(e) => {
+              setCategory(e.target.value);
+              setShowSuggestions(e.target.value.trim() !== "");
+            }}
             onFocus={() => setShowSuggestions(true)}
             onBlur={() => setTimeout(() => setShowSuggestions(false), 100)}
             required
@@ -251,7 +204,10 @@ export default function EditProductForm() {
                   {group.categories.map((cat) => (
                     <div
                       key={cat.id}
-                      onMouseDown={() => handleSuggestionClick(cat.name)}
+                      onMouseDown={() => {
+                        setCategory(cat.name);
+                        setShowSuggestions(false);
+                      }}
                       className="suggestion-item"
                     >
                       {cat.name}
@@ -264,50 +220,37 @@ export default function EditProductForm() {
         </div>
 
         <label>Stan produktu</label>
-        <select
-          value={condition}
-          onChange={(e) => setCondition(e.target.value)}
-          required
-        >
+        <select value={condition} onChange={(e) => setCondition(e.target.value)} required>
           <option value="new">Nowy</option>
           <option value="used">Używany</option>
         </select>
 
         <label>Zdjęcie produktu (opcjonalnie)</label>
-        <input
-          type="file"
-          accept="image/*"
-          onChange={handleImageFileChange}
-        />
+        <input type="file" accept="image/*" onChange={handleImageFileChange} />
 
-        {imageSrcForCropper && (
-          <div className="cropper-container">
-            <Cropper
-              image={imageSrcForCropper}
-              crop={crop}
-              zoom={zoom}
-              aspect={1}
-              onCropChange={setCrop}
-              onZoomChange={setZoom}
-              onCropComplete={onCropComplete}
-            />
-          </div>
+        {imageSrc && (
+          <>
+            <div className="cropper-container">
+              <Cropper
+                image={imageSrc}
+                crop={crop}
+                zoom={zoom}
+                aspect={1}
+                onCropChange={setCrop}
+                onZoomChange={setZoom}
+                onCropComplete={onCropComplete}
+              />
+            </div>
+            <button type="button" onClick={generateCroppedFileAndPreview} className="crop-button">
+              Przytnij zdjęcie
+            </button>
+          </>
         )}
 
-        {imageSrcForCropper && (
-          <button
-            type="button"
-            onClick={generateCroppedFileAndPreview}
-            className="crop-button"
-          >
-            Przytnij zdjęcie
-          </button>
-        )}
-
-        {croppedImagePreviewUrl && (
+        {previewUrl && (
           <div className="image-preview">
             <p>Podgląd przyciętego obrazu:</p>
-            <img src={croppedImagePreviewUrl} alt="Cropped Preview" />
+            <img src={previewUrl} alt="Cropped Preview" />
           </div>
         )}
 
