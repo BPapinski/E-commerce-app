@@ -8,7 +8,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.exceptions import PermissionDenied
-
+from .permissions import IsAdminOrSellerOrReadOnly  # importuj nową klasę
 
 
 class StandardResultsSetPagination(PageNumberPagination):
@@ -62,11 +62,11 @@ class ProductListCreateView(generics.ListCreateAPIView):
                 queryset = queryset.filter(condition=condition.lower())
         return queryset
 
-# 🔽 Szczegóły pojedynczego produktu
-class ProductDetailView(generics.RetrieveAPIView):
+
+class ProductDetailView(generics.RetrieveUpdateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [IsAdminOrSellerOrReadOnly]
     lookup_field = 'id'
 
 class ProductCreateAPIView(generics.CreateAPIView):

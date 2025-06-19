@@ -11,6 +11,7 @@ import Register from "./pages/Register";
 import ProductPage from "./pages/ProductPage";
 import NewProductForm from "./pages/NewProductForm";
 import Cart from "./pages/Cart";
+import EditProductForm from "./pages/editProductForm";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
@@ -27,6 +28,7 @@ root.render(
           <Route path="/add-new-product" element={<NewProductForm />} />
           <Route path="/cart" element={<Cart/>}/>
           <Route path="*" element={<Navigate to="/" replace />} />
+          <Route path="/edit-product/:productId" element={<EditProductForm />} />
         </Routes>
       </AuthProvider>
     </BrowserRouter>

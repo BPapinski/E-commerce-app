@@ -6,6 +6,8 @@ import { ReactComponent as EditIcon } from "../../icons/edit.svg";
 import "../styles/ProductCart.css";
 import { useAuth } from "../../contexts/AuthContext";
 import useApi from "../../pages/utils/api";
+import { useNavigate } from "react-router-dom";
+
 
 import ConfirmModal from "./ConfirmModal";
 
@@ -17,12 +19,17 @@ const ProductCard = ({ product, handleAddToCart, user, onProductDeleted }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [productIdToDelete, setProductIdToDelete] = useState(null);
   const [productNameToDelete, setProductNameToDelete] = useState('')
+  const navigate = useNavigate();
 
   const handleDeleteClick = useCallback((productId, productName) => {
     setProductIdToDelete(productId);
     setProductNameToDelete(productName)
     setIsModalOpen(true);
   }, []);
+
+  const handleEditClick = useCallback((productId) => {
+    navigate(`/edit-product/${productId}`);
+   }, [])
 
   const confirmDelete = useCallback(async () => {
     setIsModalOpen(false);
@@ -125,7 +132,7 @@ const ProductCard = ({ product, handleAddToCart, user, onProductDeleted }) => {
                     </button>
                     <button
                       className="icon-button"
-                      onClick={() => console.log("Edit clicked")}
+                      onClick={() => handleEditClick(product.id)}
                     >
                       <EditIcon />
                     </button>
