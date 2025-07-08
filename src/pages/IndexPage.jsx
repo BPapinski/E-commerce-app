@@ -184,7 +184,7 @@ export default function IndexPage() {
 
 
           
-          {products.map((product, index) => (
+          {products.filter((product) => product.available).map((product, index) => (
             <ProductCard
               key={index}
               product={product}

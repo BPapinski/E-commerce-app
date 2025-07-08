@@ -69,6 +69,7 @@
     height: 0px;
     opacity: 0;
     padding-bottom: 0px;
+    text-decoration: none;
 }
 
 .sidebar-subelement.active {
@@ -88,6 +89,12 @@
 
 .sidebar-element.active h2 {
     color: var(--subheadercolor);
+}
+
+.sidebar-subelement a {
+  color: inherit;          /* dziedziczy kolor tekstu */
+  text-decoration: none;   /* usuwa podkreślenie */
+  cursor: pointer;         /* zmienia kursor na rękę (opcjonalnie) */
 }
 
 .sidebar-subelement a.active {

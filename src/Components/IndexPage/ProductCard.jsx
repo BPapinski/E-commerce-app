@@ -75,37 +75,36 @@ const ProductCard = ({ product, handleAddToCart, user, onProductDeleted }) => {
   }, []);
 
   const confirmDelete = useCallback(async () => {
-    setIsModalOpen(false);
-    try {
-      const response = await authFetch(
-        `http://127.0.0.1:8000/api/store/product/${productIdToDelete}/delete/`,
-        {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      if (response.ok) {
-        if (response.status === 204) {
-          if (onProductDeleted) {
-            onProductDeleted(productIdToDelete);
-          }
-        } else {
-          const data = await response.json();
-          console.log(data);
-        }
-      } else {
-        const errorData = await response.json();
-        console.error("Błąd:", errorData);
+  setIsModalOpen(false);
+  try {
+    const response = await authFetch(
+      `http://127.0.0.1:8000/api/store/product/${productIdToDelete}/toggle/`,
+      {
+        method: "POST", // zmienione z DELETE
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`, // jeśli nie robi tego automatycznie authFetch
+        },
       }
-    } catch (error) {
-      console.error("Wystąpił błąd sieci lub inny błąd:", error);
-    } finally {
-      setProductIdToDelete(null);
+    );
+
+    if (response.ok) {
+      const data = await response.json();
+      console.log("Produkt zaktualizowany:", data);
+
+      if (onProductDeleted && data.available === false) {
+        onProductDeleted(productIdToDelete); // powiadom, jeśli produkt został "ukryty"
+      }
+    } else {
+      const errorData = await response.json();
+      console.error("Błąd:", errorData);
     }
-  }, [accessToken, authFetch, onProductDeleted, productIdToDelete]);
+  } catch (error) {
+    console.error("Wystąpił błąd sieci lub inny błąd:", error);
+  } finally {
+    setProductIdToDelete(null);
+  }
+}, [accessToken, authFetch, onProductDeleted, productIdToDelete]);
 
   const cancelDelete = useCallback(() => {
     setIsModalOpen(false);

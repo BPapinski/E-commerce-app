@@ -9,6 +9,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.exceptions import PermissionDenied
 from .permissions import IsAdminOrSellerOrReadOnly  # importuj nową klasę
+from django.shortcuts import get_object_or_404
 
 
 class StandardResultsSetPagination(PageNumberPagination):
@@ -77,7 +78,7 @@ class ProductCreateAPIView(generics.CreateAPIView):
         # To jest miejsce, gdzie przypisujesz zalogowanego użytkownika jako sprzedawcę.
         serializer.save(seller=self.request.user)
 
-class ProductDeleteAPIView(generics.DestroyAPIView):
+class ProductDeleteAPIView(generics.DestroyAPIView): # do wywalenia wkrótce --> usuwanie będzie polegało na aminie "available" a nie usuwaniu produktu z bazy
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     permission_classes = [permissions.IsAuthenticated]
@@ -88,6 +89,20 @@ class ProductDeleteAPIView(generics.DestroyAPIView):
             instance.delete()
         else:
             raise PermissionDenied("Nie masz uprawnień do usunięcia tego produktu.")
+        
+class ProductAvailabilityToggle(APIView):
+    permission_classes = [IsAuthenticated, IsAdminOrSellerOrReadOnly]
+
+    def post(self, request, product_id):
+        product = get_object_or_404(Product, id=product_id)
+        self.check_object_permissions(request, product)  # ważne!
+
+        product.available = not product.available
+        product.save()
+        return Response({
+            'status': 'success',
+            'available': product.available,
+        }, status=status.HTTP_200_OK)
     
 class CategoryListView(generics.ListAPIView):
     queryset = Category.objects.all()
