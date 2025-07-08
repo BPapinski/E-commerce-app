@@ -3,19 +3,6 @@ import { useNavigate } from 'react-router-dom';
 
 const AuthContext = createContext(null);
 
-// Funkcja pomocnicza do sprawdzania, czy token wygasł (na podstawie daty 'exp' w JWT)
-const isTokenExpired = (token) => {
-  if (!token) return true;
-  try {
-    const decoded = JSON.parse(atob(token.split('.')[1]));
-    const currentTime = Date.now() / 1000;
-    return decoded.exp < currentTime;
-  } catch (e) {
-    console.error("Błąd dekodowania tokena:", e);
-    return true;
-  }
-};
-
 export const AuthProvider = ({ children }) => {
   const [accessToken, setAccessToken] = useState(null);
   const [refreshToken, setRefreshToken] = useState(null);
@@ -47,33 +34,49 @@ export const AuthProvider = ({ children }) => {
     navigate("/login");
   }, [navigate]);
 
-  // Memoizujemy funkcję odświeżania tokena
   const refreshAccessToken = async () => {
-    const refreshToken = localStorage.getItem("refresh_token");
-    if (!refreshToken) {
-      console.error('Brak refresh tokena, nie mogę odświeżyć. Pozwalam na przeglądanie.');
-      return null; // Zwróć null, zamiast wylogowywać użytkownika
-    }
+    const token = refreshTokenRef.current || localStorage.getItem("refresh_token");
 
-    const response = await fetch('/api/token/refresh/', {
-      method: 'POST',
-      body: JSON.stringify({ refresh: refreshToken }),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-
-    if (!response.ok) {
-      console.error('Błąd podczas próby odświeżenia tokenu');
+    if (!token) {
+      console.error("Brak refresh tokena, nie mogę odświeżyć.");
       return null;
     }
+        
+    try {
+      const response = await fetch('http://127.0.0.1:8000/api/token/refresh/', {
+        method: 'POST',
+        body: JSON.stringify({ refresh: token }),
+        headers: { 'Content-Type': 'application/json' },
+      });
+      const data = await response.json();
 
-    const data = await response.json();
-    localStorage.setItem('access_token', data.access); // Zapisz nowy token
-    return data.access;
+      if (!response.ok) {
+        console.error('Błąd podczas próby odświeżenia tokenu');
+        return null;
+      }
+      localStorage.setItem('access_token', data.access);
+      setAccessToken(data.access);
+      return data.access;
+    } catch (error) {
+      console.error('Błąd sieci podczas odświeżania tokenu:', error);
+      return null;
+    }
   };
 
-  
+useEffect(() => {
+  if (!refreshToken) return;
+
+  const interval = setInterval(async () => {
+    const newAccess = await refreshAccessToken();
+    if (!newAccess) {
+      alert("Nie udało się odświeżyć tokena, wylogowuję.");
+      logout();
+    }
+  }, 12 * 1000); // odświeżanie co 12 minut (token żyje 15 ale dla bezpieczeństwa)
+
+  return () => clearInterval(interval);
+}, [refreshToken, refreshAccessToken, logout]);
+
 
   // Inicjalizacja tokenów z localStorage przy ładowaniu aplikacji
   useEffect(() => {
