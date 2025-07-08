@@ -79,7 +79,7 @@ export default function Header() {
               />
             </a>
             <div className="dropdown-menu">
-              <a href="/profile">Moje Konto</a>
+              <a href="/myproducts">Sprzedaje</a>
               <a href="/settings">Ustawienia</a>
               <a href="/orders">Moje Zamówienia</a>
               <a href="/help">Pomoc</a>

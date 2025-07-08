@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+
 function handleCategoryChoice(categoryName) {
   console.log("wybrano kategorie " + categoryName);
 
