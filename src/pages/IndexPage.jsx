@@ -182,6 +182,8 @@ export default function IndexPage() {
 
           {error && <div className="error">{error}</div>}
 
+
+          
           {products.map((product, index) => (
             <ProductCard
               key={index}
@@ -189,9 +191,9 @@ export default function IndexPage() {
               handleAddToCart={handleAddToCart}
               user = {user}
               onProductDeleted={handleProductDeleted}
-              
             />
           ))}
+          
 
           <PaginationBar
             currentPage={currentPage}

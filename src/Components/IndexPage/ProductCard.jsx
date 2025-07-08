@@ -13,7 +13,7 @@ import ConfirmModal from "./ConfirmModal";
 // Dodaj 'onProductDeleted' do propsów
 const ProductCard = ({ product, handleAddToCart, user, onProductDeleted }) => {
   const { setCategory, setAuthor } = useSearchFilters();
-  const { token } = useAuth();
+  const { accessToken } = useAuth();
   const { authFetch } = useApi();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [productIdToDelete, setProductIdToDelete] = useState(null);
@@ -21,34 +21,54 @@ const ProductCard = ({ product, handleAddToCart, user, onProductDeleted }) => {
   const navigate = useNavigate();
   const [isFavourite, setIsFavourite] = useState(false);
 
-
   useEffect(() => {
-  const checkIsFavourite = async () => {
-    try {
-      const res = await authFetch(`http://127.0.0.1:8000/api/store/favourite/is_favourite/${product.id}/`);
-      if (res.ok) {
-        const data = await res.json();
-        setIsFavourite(data.isFavourite);
-      } else {
+    console.log("useEffect wywołany dla produktu:", product.id);  // Sprawdzamy, czy useEffect jest wywoływany
+
+    const checkIsFavourite = async () => {
+      if (!accessToken) {
+        setIsFavourite(false);  // Jeśli użytkownik nie jest zalogowany, ustawiamy false
+        console.log("Brak tokenu, ustawiamy isFavourite na false");
+        return;  // Pomijamy dalszą logikę
+      }
+
+      try {
+        console.log("Wysyłam zapytanie o ulubione dla produktu:", product.id);
+        const res = await authFetch(
+          `http://127.0.0.1:8000/api/store/favourite/is_favourite/${product.id}/`
+        );
+        console.log("Odpowiedź z serwera:", res);  // Sprawdzamy odpowiedź serwera
+        if (res.ok) {
+          const data = await res.json();
+          console.log("Odpowiedź API:", data);  // Logowanie odpowiedzi z API
+          setIsFavourite(data.isFavourite);
+        } else {
+          setIsFavourite(false);
+          console.log("Odpowiedź serwera:", res);
+        }
+      } catch (err) {
+        console.error("Błąd ładowania ulubionych:", err);
         setIsFavourite(false);
       }
-    } catch (err) {
-      console.error("Błąd ładowania ulubionych:", err);
-      setIsFavourite(false);
+    };
+
+    // Sprawdzamy, czy ID produktu jest dostępne i tylko wtedy uruchamiamy zapytanie
+    if (product.id && accessToken) {
+      checkIsFavourite();
+    } else {
+      console.log("Brak product.id lub tokenu, nie wykonano zapytania.");
     }
-  };
-
-  if (product.id) {
-    checkIsFavourite();
-  }
-}, [product.id, authFetch]);
-
+  }, [product.id, accessToken, authFetch]);  // Zależy od product.id, tokenu i authFetch
 
   const handleDeleteClick = useCallback((productId, productName) => {
+    if (!accessToken) {
+      navigate('/login');
+      return;
+    }
+
     setProductIdToDelete(productId);
     setProductNameToDelete(productName);
     setIsModalOpen(true);
-  }, []);
+  }, [accessToken, navigate]);
 
   const handleEditClick = useCallback((productId) => {
     navigate(`/edit-product/${productId}`);
@@ -85,7 +105,7 @@ const ProductCard = ({ product, handleAddToCart, user, onProductDeleted }) => {
     } finally {
       setProductIdToDelete(null);
     }
-  }, [token, authFetch, onProductDeleted, productIdToDelete]);
+  }, [accessToken, authFetch, onProductDeleted, productIdToDelete]);
 
   const cancelDelete = useCallback(() => {
     setIsModalOpen(false);
@@ -94,10 +114,15 @@ const ProductCard = ({ product, handleAddToCart, user, onProductDeleted }) => {
 
   const handleFavouriteClick = useCallback(
     async (productId) => {
+      if (!accessToken) {
+        // Jeśli brak tokenu (niezalogowany użytkownik), przekieruj na stronę logowania
+        navigate("/login");
+        return;
+      }
+
       try {
         if (isFavourite) {
           // Usuń z ulubionych
-          
           const res = await authFetch(
             `http://127.0.0.1:8000/api/store/favourite/remove/${productId}/`,
             {
@@ -127,7 +152,7 @@ const ProductCard = ({ product, handleAddToCart, user, onProductDeleted }) => {
         alert("Błąd połączenia z serwerem.");
       }
     },
-    [isFavourite, authFetch, product.id]
+    [isFavourite, authFetch, product.id, accessToken, navigate]
   );
 
   return (
@@ -169,8 +194,6 @@ const ProductCard = ({ product, handleAddToCart, user, onProductDeleted }) => {
             {product.price}zł
           </h2>
           <div className="button-and-icons-wrapper">
-            {" "}
-            {/* Nowy kontener */}
             <button
               style={{ marginTop: "0.5em" }}
               onClick={() => handleAddToCart(product.id)}
@@ -199,12 +222,16 @@ const ProductCard = ({ product, handleAddToCart, user, onProductDeleted }) => {
                   </>
                 )}
 
-                <button
-                  className="icon-button"
-                  onClick={() => handleFavouriteClick(product.id)}
-                >
-                  {isFavourite ? <FavoriteIcon style={{ fill: "red" }} />: <FavoriteIcon />}
-                </button>
+              <button
+                className="icon-button"
+                onClick={() => handleFavouriteClick(product.id)}
+              >
+                {isFavourite ? (
+                  <FavoriteIcon style={{ fill: "red" }} />
+                ) : (
+                  <FavoriteIcon />
+                )}
+              </button>
             </div>
           </div>
         </div>

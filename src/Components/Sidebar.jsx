@@ -62,22 +62,21 @@ export default function Sidebar() {
             categories,
           })
         );
-
-        console.log(groupedArray); // Dla celów debugowania
-
         setJoinedData(groupedArray);
       } catch (error) {
         console.error("Błąd podczas pobierania danych:", error);
       }
     }
-
     fetchData();
   }, []);
 
-  // Funkcja do obsługi zmiany stanu produktu
+
   const handleConditionChange = (condition) => {
-    setSelectedCondition(condition);
+    setSelectedCondition(prev =>
+      prev === condition ? null : condition
+    );
   };
+
 
   // Funkcja do stosowania filtrów
   function Apply() {
@@ -86,15 +85,14 @@ export default function Sidebar() {
     params.set("min_price", min);
     params.set("max_price", max);
 
-    // Dodaj lub usuń parametr 'condition' w zależności od wyboru
     if (selectedCondition) {
       params.set("condition", selectedCondition);
     } else {
       params.delete("condition");
     }
-
     navigate({ search: params.toString() });
   }
+
 
   return (
     <div className="sidebar">
@@ -111,6 +109,7 @@ export default function Sidebar() {
       <div className="product-condition">
         <div>
           <h2>Stan produktu</h2>
+          {selectedCondition}
         </div>
         <div className="product-condition-choose">
           {/* Opcja "Nowy" */}
@@ -123,11 +122,13 @@ export default function Sidebar() {
               <input
                 type="checkbox"
                 checked={selectedCondition === "new"}
-                onChange={() => {}} // Pusty handler, bo klikamy na div
+                readOnly
+                onClick={(e) => e.stopPropagation()}
               />
               <span className="checkmark"></span>
             </label>
           </div>
+
 
           {/* Opcja "Używany" */}
           <div
@@ -139,7 +140,8 @@ export default function Sidebar() {
               <input
                 type="checkbox"
                 checked={selectedCondition === "used"}
-                onChange={() => {}} // Pusty handler, bo klikamy na div
+                readOnly
+                onClick={(e) => e.stopPropagation()}
               />
               <span className="checkmark"></span>
             </label>

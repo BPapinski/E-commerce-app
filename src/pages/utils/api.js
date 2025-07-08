@@ -26,60 +26,46 @@ const useApi = () => {
   };
 
   const authFetch = async (url, options = {}) => {
-    // 1️⃣  Zbuduj nagłówki nie nadpisując Authorization, jeśli już jest:
-    const headers = { ...(options.headers || {}) };
-    if (!('Authorization' in headers) && accessToken) {
-      headers.Authorization = `Bearer ${accessToken}`;
-    }
+  const headers = { ...(options.headers || {}) };
+  if (!('Authorization' in headers) && accessToken) {
+    headers.Authorization = `Bearer ${accessToken}`;
+  }
 
-    // 2️⃣  Jeśli token w stanie jest wygasły → spróbuj odświeżyć **przed** wysłaniem
-    let finalHeaders = headers;
-    if (headers.Authorization && isTokenExpired(headers.Authorization.split(' ')[1])) {
-      const newTok = await refreshAccessToken();
-      if (!newTok) {
+  // Sprawdź, czy token jest wygasły przed wysłaniem zapytania
+  if (accessToken && isTokenExpired(accessToken)) {
+    const newAccessToken = await refreshAccessToken();
+    if (!newAccessToken) {
+      // Jeśli nie uda się odświeżyć tokenu, przekieruj na stronę logowania
+      logout();
+      window.location.href = '/login'; // lub navigate('/login');
+      return;
+    }
+    headers.Authorization = `Bearer ${newAccessToken}`;
+  }
+
+  try {
+    let response = await fetch(url, { ...options, headers });
+
+    // Obsługuje sytuację, gdy token już wygasł i jest konieczność jego odświeżenia
+    if (response.status === 401) {
+      const newToken = await refreshAccessToken();
+      if (!newToken) {
         logout();
-        throw new Error('Token refresh failed – logged out');
+        window.location.href = '/login'; // lub navigate('/login');
+        return;
       }
-      finalHeaders = { ...headers, Authorization: `Bearer ${newTok}` };
+      headers.Authorization = `Bearer ${newToken}`;
+      response = await fetch(url, { ...options, headers });
     }
 
-    try {
-      let response = await fetch(url, { ...options, headers: finalHeaders });
-
-      if (response.status === 401 && url !== 'http://127.0.0.1:8000/api/token/refresh/') {
-        if (isRefreshing.current) {
-          return new Promise((resolve, reject) => {
-            failedQueue.current.push({ resolve, reject });
-          }).then(token => authFetch(url, {
-            ...options,
-            headers: { ...options.headers, Authorization: `Bearer ${token}` },
-          }));
-        }
-
-        isRefreshing.current = true;
-        const newToken = await refreshAccessToken();
-        isRefreshing.current = false;
-
-        if (newToken) {
-          processQueue(null, newToken);
-          return fetch(url, {
-            ...options,
-            headers: { ...options.headers, Authorization: `Bearer ${newToken}` },
-          });
-        }
-        processQueue(new Error('Token refresh failed'));
-        logout();
-        throw new Error('Token refresh failed – logged out');
-      }
-
-      return response;
-    } catch (err) {
-      console.error('authFetch error:', err);
-      throw err;
-    }
-  };
-
-  return { authFetch };
+    return response;
+  } catch (err) {
+    console.error('authFetch error:', err);
+    throw err;
+  }
 };
+
+    return { authFetch };
+  };
 
 export default useApi;
