@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import ConfirmModal from "../Components/IndexPage/ConfirmModal";
 import useApi from "./utils/api";
+import AddNewProduct from "../Components/IndexPage/AddNewProduct";
 
 export default function UserProducts() {
   const { authFetch } = useApi();
@@ -100,6 +101,7 @@ export default function UserProducts() {
           <div className="loading">Ładowanie produktów...</div>
         ) : (
           <div className="products-list">
+            <AddNewProduct/>
             {products && products.length > 0 ? (
               products.map((product) => (
                 <div
