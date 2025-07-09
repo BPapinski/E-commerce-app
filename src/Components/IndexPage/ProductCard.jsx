@@ -210,7 +210,6 @@ const ProductCard = ({ product, handleAddToCart, user, onProductDeleted }) => {
                       }
                     >
                       <DeleteIcon />
-                      {product.id}
                     </button>
                     <button
                       className="icon-button"
