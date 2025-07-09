@@ -10,6 +10,7 @@ from rest_framework.response import Response
 from rest_framework.exceptions import PermissionDenied
 from .permissions import IsAdminOrSellerOrReadOnly  # importuj nową klasę
 from django.shortcuts import get_object_or_404
+from authuser.models import User
 
 
 class StandardResultsSetPagination(PageNumberPagination):
@@ -113,8 +114,25 @@ class CategoryGroupListView(generics.ListAPIView):
     queryset = CategoryGroup.objects.all()
     serializer_class = CategoryGroupSerializer
     permission_classes = [permissions.AllowAny]
-    
 
+class UserProductsListView(APIView):
+    permission_classes = [permissions.AllowAny]  # Każdy może wejść
+
+    def get(self, request, user_id=None):
+        if user_id == "me":
+            if not request.user.is_authenticated:
+                return Response({"detail": "Musisz być zalogowany, by zobaczyć swoje produkty."},
+                                status=status.HTTP_401_UNAUTHORIZED)
+            user = request.user
+        else:
+            try:
+                user = User.objects.get(pk=int(user_id))
+            except User.DoesNotExist:
+                return Response({"detail": "Użytkownik nie istnieje."}, status=status.HTTP_404_NOT_FOUND)
+
+        products = Product.objects.filter(seller=user)
+        serializer = ProductSerializer(products, many=True)
+        return Response(serializer.data)
 
 # logika koszyka
 

@@ -47,8 +47,6 @@
 }
 
 .product-image {
-  width: 140px;
-  height: 140px;
   object-fit: cover;
   border-radius: 0.6rem;
   flex-shrink: 0;
