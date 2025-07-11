@@ -26,68 +26,51 @@ export default function IndexPage() {
   const { authFetch } = useApi();
 
   const handleProductDeleted = (deletedProductId) => {
-        setProducts(prevProducts => prevProducts.filter(product => product.id !== deletedProductId));
-    };
+    setProducts((prevProducts) =>
+      prevProducts.filter((product) => product.id !== deletedProductId)
+    );
+  };
 
-  // Dynamiczne filtrowanie produktów na podstawie URL
-  useEffect(() => {
-    const fetchProducts = async () => {
-      const params = new URLSearchParams(location.search);
-      const category = params.get("category");
-      const search = params.get("search");
-      const minPrice = params.get("min_price");
-      const maxPrice = params.get("max_price");
-      const sellerId = params.get("sellerId");
-      const condition = params.get("condition");
+  const fetchProducts = async () => {
+    const params = new URLSearchParams(location.search);
+    let apiUrl = "http://127.0.0.1:8000/api/store/";
+    params.append("page", currentPage);
 
-      let apiUrl = "http://127.0.0.1:8000/api/store/";
-      const queryParams = new URLSearchParams();
+    if ([...params].length > 0) {
+      apiUrl += "?" + params.toString();
+    }
 
-      if (category) queryParams.append("category", category);
-      if (search) queryParams.append("search", search);
-      if (minPrice) queryParams.append("min_price", minPrice);
-      if (maxPrice) queryParams.append("max_price", maxPrice);
-      if (sellerId) queryParams.append("sellerId", sellerId);
-      if (condition) queryParams.append("condition", condition);
+    try {
+      const res = await authFetch(apiUrl, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
 
-      queryParams.append("page", currentPage);
+      if (!res.ok) throw new Error("Błąd podczas pobierania produktów");
 
-      if ([...queryParams].length > 0) {
-        apiUrl += "?" + queryParams.toString();
-      }
+      const data = await res.json();
+      setProducts(data.results || data);
+      const pages = Math.ceil(data.count / 10);
+      setTotalPages(pages);
+      setError(null);
+    } catch (err) {
+      console.error(err);
+      setError("Nie udało się pobrać produktów.");
 
-      try {
-        const res = await authFetch(apiUrl, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-
-        if (!res.ok) throw new Error("Błąd podczas pobierania produktów");
-
-        const data = await res.json();
-        setProducts(data.results || data);
-        const pages = Math.ceil(data.count / 10);
-        setTotalPages(pages);
-        setError(null);
-      } catch (err) {
-        console.error(err);
-        setError("Nie udało się pobrać produktów.");
-
-        if (currentPage > 1) {
-          const params = new URLSearchParams(location.search);
-          if (params.get("page") !== "1") {
-            params.set("page", 1);
-            navigate({ search: params.toString() });
-          }
+      if (currentPage > 1) {
+        const params = new URLSearchParams(location.search);
+        if (params.get("page") !== "1") {
+          params.set("page", 1);
+          navigate({ search: params.toString() });
         }
       }
-    };
+    }
+  };
 
-    // Prevent infinite loop by debouncing effect
+  useEffect(() => {
     let timeout = setTimeout(fetchProducts, 100);
-
     return () => clearTimeout(timeout);
   }, [location.search, currentPage]);
 
@@ -115,12 +98,9 @@ export default function IndexPage() {
     [location.search, navigate]
   );
 
-
-  // Funkcja dodawania do koszyka - TERAZ UŻYWA authFetch
   const handleAddToCart = useCallback(
     async (productId) => {
       try {
-        // Używamy authFetch, który automatycznie obsłuży tokeny
         const response = await authFetch(
           "http://127.0.0.1:8000/api/store/cart/add/",
           {
@@ -143,10 +123,8 @@ export default function IndexPage() {
         } else {
           const errorData = await response.json();
           console.error("Błąd podczas dodawania do koszyka:", errorData);
-          // Sprawdź, czy błąd to "token_not_valid"
           if (errorData.code === "token_not_valid") {
             alert("Twoja sesja wygasła. Zaloguj się ponownie.");
-            // authFetch powinien sam wylogować, ale można tu dodać dodatkowe przekierowanie
           } else {
             alert(
               `Nie udało się dodać produktu do koszyka: ${JSON.stringify(
@@ -161,7 +139,7 @@ export default function IndexPage() {
       }
     },
     [authFetch]
-  ); // Zależność tylko od authFetch
+  );
 
   return (
     <div className="container">
@@ -171,29 +149,28 @@ export default function IndexPage() {
         <Sidebar />
         <div className="content">
           {loadingUser ? (
-            <h3>Ładowanie danych użytkownika...</h3> // Poprawiony tekst ładowania
+            <h3>Ładowanie danych użytkownika...</h3> 
           ) : user?.is_admin ? (
             <AddNewProduct />
           ) : isLoggedIn ? (
-            <h3>Brak uprawnień. Zaloguj się jako administrator.</h3> // Poprawiony tekst
+            <h3>Brak uprawnień. Zaloguj się jako administrator.</h3>
           ) : (
-            <h3>Proszę się zalogować, aby zobaczyć więcej opcji.</h3> // Poprawiony tekst
+            <h3>Proszę się zalogować, aby zobaczyć więcej opcji.</h3> 
           )}
 
           {error && <div className="error">{error}</div>}
 
-
-          
-          {products.filter((product) => product.available).map((product, index) => (
-            <ProductCard
-              key={index}
-              product={product}
-              handleAddToCart={handleAddToCart}
-              user = {user}
-              onProductDeleted={handleProductDeleted}
-            />
-          ))}
-          
+          {products
+            .filter((product) => product.available)
+            .map((product, index) => (
+              <ProductCard
+                key={index}
+                product={product}
+                handleAddToCart={handleAddToCart}
+                user={user}
+                onProductDeleted={handleProductDeleted}
+              />
+            ))}
 
           <PaginationBar
             currentPage={currentPage}
