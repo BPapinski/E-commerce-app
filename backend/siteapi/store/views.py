@@ -2,8 +2,43 @@
 
 from rest_framework import generics, permissions, filters, status
 from rest_framework.pagination import PageNumberPagination
-from .models import Product, Category, CategoryGroup, Cart, CartItem, FavouriteItem
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.exceptions import PermissionDenied
+from .permissions import IsAdminOrSellerOrReadOnly  # importuj nową klasę
+from django.shortcuts import get_object_or_404
+
+from .models import Product, Category, CategoryGroup, Cart, CartItem, FavouriteItem, Order, OrderItem
 from .serializers import ProductSerializer, CategorySerializer, CategoryGroupSerializer, CartSerializer, CartItemSerializer
+
+# Tworzenie zamówienia na podstawie koszyka
+class CreateOrderAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        cart, _ = Cart.objects.get_or_create(user=request.user)
+        if not cart.items.exists():
+            return Response({'error': 'Koszyk jest pusty'}, status=status.HTTP_400_BAD_REQUEST)
+
+        order = Order.objects.create(user=request.user)
+        total_price = 0
+        for cart_item in cart.items.all():
+            OrderItem.objects.create(
+                order=order,
+                product=cart_item.product,
+                quantity=cart_item.quantity
+            )
+            total_price += cart_item.product.price * cart_item.quantity
+
+        # Opcjonalnie: wyczyść koszyk po utworzeniu zamówienia
+        cart.items.all().delete()
+
+        return Response({
+            'order_id': order.id,
+            'total_price': total_price,
+            'created_at': order.created_at,
+        }, status=status.HTTP_201_CREATED)
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response

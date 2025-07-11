@@ -144,7 +144,26 @@ export default function Cart() {
     </button>
     <button
       className={styles.checkoutButton}
-      onClick={() => navigate("/checkout")}
+      onClick={async () => {
+        try {
+          const res = await fetch("http://127.0.0.1:8000/api/store/order/create/", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${accessToken}`,
+            },
+          });
+          if (!res.ok) {
+            const err = await res.json();
+            alert("Błąd przy składaniu zamówienia: " + (err.error || res.status));
+            return;
+          }
+          // Zamówienie utworzone, przekieruj do Orders
+          navigate("/orders");
+        } catch (e) {
+          alert("Błąd sieci przy składaniu zamówienia");
+        }
+      }}
     >
       Przejdź do płatności
     </button>
