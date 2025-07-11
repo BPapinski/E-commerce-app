@@ -1,4 +1,5 @@
-import styles from "./styles/UserProducts.css";
+import styles from "./styles/UserProducts.module.css";
+
 import Header from "../Components/Header";
 import { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
@@ -94,37 +95,41 @@ export default function UserProducts() {
   return (
     <>
       <Header />
-      <div className="container user-products-container">
-        <h1 className="user-products-title">Twoje produkty</h1>
+
+      <div className={`${styles.container} ${styles['user-products-container']}`}> 
+        <h1 className={styles['user-products-title']}>Twoje produkty</h1>
 
         {loading ? (
-          <div className="loading">Ładowanie produktów...</div>
+          <div className={styles.loading}>Ładowanie produktów...</div>
         ) : (
-          <div className="products-list">
+          <div className={styles['products-list']}>
             <AddNewProduct/>
             {products && products.length > 0 ? (
               products.map((product) => (
                 <div
                   key={product.id}
-                  className={`product-card ${!product.available ? "deleted" : ""}`}
+                  className={`${styles['product-card']} ${!product.available ? styles.deleted : ''}`}
                 >
-                  <img
-                    src={`http://127.0.0.1:8000${product.image}`}
-                    alt={product.name}
-                    className="product-image"
-                  />
-                  <div className="product-info">
-                    <h2 className="product-name">{product.name}</h2>
-                    <p className="product-description">{product.description}</p>
-                    <p className="product-price">{product.price} zł</p>
-                    <div className="buttons">
+                  <div style={{ width: '100px', height: '100px', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+                    <img
+                      src={`http://127.0.0.1:8000${product.image}`}
+                      alt={product.name}
+                      className={styles['product-image']}
+                      style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                    />
+                  </div>
+                  <div className={styles['product-info']}>
+                    <h2 className={styles['product-name']}>{product.name}</h2>
+                    <p className={styles['product-description']}>{product.description}</p>
+                    <p className={styles['product-price']}>{product.price} zł</p>
+                    <div className={styles.buttons}>
                       {product.available ? (
                         <>
-                          <button className="btn edit" onClick={() => handleEditClick(product.id)}>Edytuj</button>
-                          <button className="btn delete" onClick={() => handleToggleClick(product.id, product.name)}>Usuń</button>
+                          <button className={`${styles.btn} ${styles.edit}`} onClick={() => handleEditClick(product.id)}>Edytuj</button>
+                          <button className={`${styles.btn} ${styles.delete}`} onClick={() => handleToggleClick(product.id, product.name)}>Usuń</button>
                         </>
                       ) : (
-                        <button className="btn restore" onClick={() => handleToggleClick(product.id, product.name)}>Przywróć</button>
+                        <button className={`${styles.btn} ${styles.restore}`} onClick={() => handleToggleClick(product.id, product.name)}>Przywróć</button>
                       )}
                     </div>
                   </div>

@@ -13,6 +13,7 @@ import NewProductForm from "./pages/NewProductForm";
 import Cart from "./pages/Cart";
 import EditProductForm from "./pages/editProductForm";
 import UserProducts from "./pages/UserProducts";
+import Orders from "./pages/Orders";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
@@ -34,6 +35,7 @@ root.render(
             <Route path="*" element={<Navigate to="/" replace />} />
             <Route path="/edit-product/:productId" element={<EditProductForm />} />
             <Route path="/myproducts" element={<UserProducts/>}/>
+            <Route path="/orders" element={<Orders/>}/>
           </Routes>
         </AuthProvider>
       </BrowserRouter>
