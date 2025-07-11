@@ -1,39 +1,54 @@
-import React, { useState, useEffect } from "react"; // Dodajemy useEffect
+
+import React, { useState, useEffect } from "react";
+import styles from "./styles/Orders.module.css";
 import Header from "../Components/Header";
 import ConfirmModal from "../Components/IndexPage/ConfirmModal";
 
 export default function Orders() {
   const [loading, setLoading] = useState(true);
-  const [orders, setOrders] = useState([]); // Zmieniamy 'products' na 'orders'
+  const [orders, setOrders] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [orderIdToToggle, setOrderIdToToggle] = useState(null); // Zmieniamy 'productIdToToggle'
-  const [orderNameToToggle, setOrderNameToToggle] = useState(""); // Zmieniamy 'productNameToToggle'
+  const [orderIdToToggle, setOrderIdToToggle] = useState(null);
+  const [orderNameToToggle, setOrderNameToToggle] = useState("");
+  const [expandedOrderId, setExpandedOrderId] = useState(null);
 
   // Placeholderowe dane dla zamówień
   const placeholderOrders = [
     {
       id: 1,
       name: "Zamówienie #12345",
-      description: "Produkt A, Produkt B",
+      description: "Zamówienie opłacone",
       price: 150.00,
-      image: "/media/product_images/placeholder1.jpg", // Placeholderowa ścieżka do obrazu
-      available: true, // Reprezentuje status zamówienia (np. aktywne/anulowane)
+      paid: true,
+      available: true,
+      products: [
+        { id: 101, name: "Produkt A", price: 50 },
+        { id: 102, name: "Produkt B", price: 100 },
+      ],
     },
     {
       id: 2,
       name: "Zamówienie #67890",
-      description: "Produkt C",
+      description: "Zamówienie anulowane",
       price: 75.50,
-      image: "/media/product_images/placeholder2.jpg",
-      available: false, // Oznacza, że zamówienie jest 'usunięte' / anulowane
+      paid: false,
+      available: false,
+      products: [
+        { id: 103, name: "Produkt C", price: 75.5 },
+      ],
     },
     {
       id: 3,
       name: "Zamówienie #11223",
-      description: "Produkt D, Produkt E, Produkt F",
+      description: "Oczekuje na opłatę",
       price: 300.00,
-      image: "/media/product_images/placeholder3.jpg",
+      paid: false,
       available: true,
+      products: [
+        { id: 104, name: "Produkt D", price: 100 },
+        { id: 105, name: "Produkt E", price: 100 },
+        { id: 106, name: "Produkt F", price: 100 },
+      ],
     },
   ];
 
@@ -59,11 +74,9 @@ export default function Orders() {
     return () => clearTimeout(timer);
   }, []);
 
-  // Funkcja do obsługi kliknięcia "Edytuj"
-  const handleEditClick = (orderId) => {
-    console.log(`Edytuj zamówienie o ID: ${orderId}`);
-    // Tutaj możesz przekierować użytkownika do strony edycji zamówienia
-    // np. history.push(`/orders/edit/${orderId}`);
+  // Funkcja do rozwijania/zamykania szczegółów zamówienia
+  const handleExpandClick = (orderId) => {
+    setExpandedOrderId(expandedOrderId === orderId ? null : orderId);
   };
 
   // Funkcja do otwierania modalu potwierdzenia dla przełączania statusu
@@ -101,57 +114,76 @@ export default function Orders() {
   return (
     <>
       <Header />
-      <div className="container user-orders-container"> {/* Zmieniona klasa */}
-        <h1 className="user-orders-title">Twoje zamówienia</h1> {/* Zmieniony tytuł */}
+
+      <div className={styles['user-orders-container']}>
+        <h1 className={styles['user-orders-title']}>Twoje zamówienia</h1>
 
         {loading ? (
-          <div className="loading">Ładowanie zamówień...</div>
+          <div className={styles.loading}>Ładowanie zamówień...</div>
         ) : (
-          <div className="orders-list"> {/* Zmieniona klasa */}
+          <div className={styles['orders-list']}>
             {orders && orders.length > 0 ? (
               orders.map((order) => (
                 <div
                   key={order.id}
-                  className={`order-card ${!order.available ? "cancelled" : ""}`} // Zmieniona klasa
+                  className={`${styles['order-card']} ${!order.available ? styles.cancelled : ''}`}
                 >
-                  <img
-                    src={`http://127.0.0.1:8000${order.image}`}
-                    alt={order.name}
-                    className="order-image"
-                  />
-                  <div className="order-info">
-                    <h2 className="order-name">{order.name}</h2>
-                    <p className="order-description">{order.description}</p>
-                    <p className="order-price">Kwota: {order.price} zł</p> {/* Zmieniony tekst */}
-                    <div className="buttons">
-                      {order.available ? (
+                  <div className={styles['order-info']}>
+                    <h2 className={styles['order-name']}>{order.name}</h2>
+                    <p className={styles['order-description']}>{order.description}</p>
+                    <p className={styles['order-price']}>Kwota: {order.price} zł</p>
+                    <div className={styles.buttons}>
+                      <button
+                        className={`${styles.btn}`}
+                        onClick={() => handleExpandClick(order.id)}
+                      >
+                        {expandedOrderId === order.id ? 'Ukryj produkty' : 'Pokaż produkty'}
+                      </button>
+                      {order.paid ? (
                         <>
                           <button
-                            className="btn edit"
-                            onClick={() => handleEditClick(order.id)}
-                          >
-                            Edytuj
-                          </button>
-                          <button
-                            className="btn cancel" // Zmieniona klasa
-                            onClick={() =>
-                              handleToggleClick(order.id, order.name)
-                            }
+                            className={`${styles.btn} ${styles.cancel}`}
+                            onClick={() => handleToggleClick(order.id, order.name)}
                           >
                             Anuluj
                           </button>
                         </>
+                      ) : order.available ? (
+                        <>
+                          <button
+                            className={`${styles.btn} ${styles.cancel}`}
+                            onClick={() => handleToggleClick(order.id, order.name)}
+                          >
+                            Anuluj
+                          </button>
+                          <button
+                            className={`${styles.btn} ${styles.pay}`}
+                            onClick={() => alert('Opłać zamówienie: ' + order.id)}
+                          >
+                            Opłać
+                          </button>
+                        </>
                       ) : (
                         <button
-                          className="btn restore"
-                          onClick={() =>
-                            handleToggleClick(order.id, order.name)
-                          }
+                          className={`${styles.btn} ${styles.restore}`}
+                          onClick={() => handleToggleClick(order.id, order.name)}
                         >
                           Aktywuj
                         </button>
                       )}
                     </div>
+                    {expandedOrderId === order.id && (
+                      <div style={{ marginTop: '1rem', background: 'rgba(0,0,0,0.05)', borderRadius: '0.5rem', padding: '0.5rem' }}>
+                        <strong>Produkty w zamówieniu:</strong>
+                        <ul style={{ margin: '0.5rem 0 0 0', padding: 0, listStyle: 'none' }}>
+                          {order.products.map(prod => (
+                            <li key={prod.id} style={{ padding: '0.2rem 0' }}>
+                              {prod.name} <span style={{ color: '#888' }}>({prod.price} zł)</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
                   </div>
                 </div>
               ))
