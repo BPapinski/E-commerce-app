@@ -1,8 +1,10 @@
 
+
 import React, { useState, useEffect } from "react";
 import styles from "./styles/Orders.module.css";
 import Header from "../Components/Header";
 import ConfirmModal from "../Components/IndexPage/ConfirmModal";
+import { useAuth } from "../contexts/AuthContext";
 
 export default function Orders() {
   const [loading, setLoading] = useState(true);
@@ -11,68 +13,27 @@ export default function Orders() {
   const [orderIdToToggle, setOrderIdToToggle] = useState(null);
   const [orderNameToToggle, setOrderNameToToggle] = useState("");
   const [expandedOrderId, setExpandedOrderId] = useState(null);
+  const { accessToken, isLoggedIn, loadingUser } = useAuth();
 
-  // Placeholderowe dane dla zamówień
-  const placeholderOrders = [
-    {
-      id: 1,
-      name: "Zamówienie #12345",
-      description: "Zamówienie opłacone",
-      price: 150.00,
-      paid: true,
-      available: true,
-      products: [
-        { id: 101, name: "Produkt A", price: 50 },
-        { id: 102, name: "Produkt B", price: 100 },
-      ],
-    },
-    {
-      id: 2,
-      name: "Zamówienie #67890",
-      description: "Zamówienie anulowane",
-      price: 75.50,
-      paid: false,
-      available: false,
-      products: [
-        { id: 103, name: "Produkt C", price: 75.5 },
-      ],
-    },
-    {
-      id: 3,
-      name: "Zamówienie #11223",
-      description: "Oczekuje na opłatę",
-      price: 300.00,
-      paid: false,
-      available: true,
-      products: [
-        { id: 104, name: "Produkt D", price: 100 },
-        { id: 105, name: "Produkt E", price: 100 },
-        { id: 106, name: "Produkt F", price: 100 },
-      ],
-    },
-  ];
-
-  // Symulacja ładowania danych
   useEffect(() => {
-    // W prawdziwej aplikacji tutaj wykonasz zapytanie do API
-    // np. fetch('http://127.0.0.1:8000/api/orders/')
-    // .then(response => response.json())
-    // .then(data => {
-    //    setOrders(data);
-    //    setLoading(false);
-    // })
-    // .catch(error => {
-    //    console.error("Błąd ładowania zamówień:", error);
-    //    setLoading(false);
-    // });
-
-    const timer = setTimeout(() => {
-      setOrders(placeholderOrders);
-      setLoading(false);
-    }, 1000); // Symulujemy 1 sekundę ładowania
-
-    return () => clearTimeout(timer);
-  }, []);
+    if (!accessToken || !isLoggedIn) return;
+    setLoading(true);
+    fetch("http://127.0.0.1:8000/api/store/orders/me/", {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        setOrders(data.orders || []);
+        setLoading(false);
+      })
+      .catch((err) => {
+        setLoading(false);
+        setOrders([]);
+      });
+  }, [accessToken, isLoggedIn]);
 
   // Funkcja do rozwijania/zamykania szczegółów zamówienia
   const handleExpandClick = (orderId) => {

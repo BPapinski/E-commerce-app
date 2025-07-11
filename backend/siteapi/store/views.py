@@ -1,11 +1,41 @@
-# products/views.py
-
 from rest_framework import generics, permissions, filters, status
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.exceptions import PermissionDenied
+
+# Widok zwracający zamówienia zalogowanego użytkownika
+class UserOrdersAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        orders = Order.objects.filter(user=request.user).order_by('-created_at')
+        data = []
+        for order in orders:
+            items = [
+                {
+                    "id": item.id,
+                    "name": item.product.name if item.product else "Produkt usunięty",
+                    "price": item.product.price if item.product else 0,
+                    "quantity": item.quantity,
+                }
+                for item in order.items.all()
+            ]
+            data.append({
+                "id": order.id,
+                "name": f"Zamówienie #{order.id}",
+                "description": "",
+                "price": sum(i["price"] * i["quantity"] for i in items),
+                "paid": order.is_paid,
+                "available": True,
+                "products": items,
+                "created_at": order.created_at,
+            })
+        return Response({"orders": data})
+# products/views.py
+
+
 from .permissions import IsAdminOrSellerOrReadOnly  # importuj nową klasę
 from django.shortcuts import get_object_or_404
 
