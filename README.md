@@ -25,12 +25,14 @@ Nowoczesna aplikacja e-commerce zbudowana w oparciu o **Django** oraz **React**.
 - ✅ Rejestracja i logowanie użytkownika
 - ✅ Przeglądanie produktów i kategorii
 - ✅ Filtry i wyszukiwarka
-- ✅ Koszyk zakupowy (w trakcie tworzenia)
-- ✅ Proces składania zamówienia (w trakcie tworzenia)
-- ✅ Panel administratora do zarządzania sklepem
-- ✅ System ocen i recenzji produktów (w trakcie tworzenia)
+-- ✅ Koszyk zakupowy (dodawanie, edycja, usuwanie, checkout)
+-- ✅ Proces składania zamówienia (tworzenie zamówienia z koszyka, historia zamówień)
+-- ✅ Ulubione produkty (dodawanie, usuwanie, lista ulubionych)
+-- ✅ Panel administratora/sprzedawcy do zarządzania produktami
+-- ✅ Panel użytkownika (moje produkty, moje zamówienia, moje ulubione)
+-- ✅ System ocen i recenzji produktów (w przygotowaniu)
+-- ✅ Responsywny, nowoczesny interfejs (CSS Modules, React Router)
 ---
-
 ## 🚀 Uruchomienie projektu lokalnie
 
 ### Backend (Django)
@@ -38,17 +40,48 @@ Nowoczesna aplikacja e-commerce zbudowana w oparciu o **Django** oraz **React**.
 ```bash
 # Stwórz i aktywuj środowisko wirtualne
 python -m venv venv
-source venv/bin/activate  # lub venv\Scripts\activate na Windows
+venv\Scripts\activate  # Windows
+# lub source venv/bin/activate na Linux/Mac
 
 # Instalacja zależności
 pip install -r requirements.txt
 
 # Migracje bazy danych i uruchomienie serwera
+cd backend/siteapi
 python manage.py migrate
 python manage.py runserver
+```
 
-# Instalacja zależności
+### Frontend (React)
+
+```bash
+cd ../../
 npm install
-
-# Uruchomienie serwera deweloperskiego
 npm start
+```
+
+Frontend dostępny pod: http://localhost:3000
+Backend API pod: http://127.0.0.1:8000
+
+---
+
+## 🔗 Najważniejsze endpointy API
+
+- `/api/store/products/` – lista produktów
+- `/api/store/product/<id>` – szczegóły produktu
+- `/api/store/cart/` – pobierz koszyk
+- `/api/store/cart/add/` – dodaj do koszyka
+- `/api/store/cart/item/<id>/` – edytuj/usuń pozycję w koszyku
+- `/api/store/order/create/` – utwórz zamówienie z koszyka
+- `/api/store/orders/me/` – moje zamówienia
+- `/api/store/favourite/list/` – lista ulubionych produktów
+- `/api/store/favourite/add/<product_id>/` – dodaj do ulubionych
+- `/api/store/favourite/remove/<product_id>/` – usuń z ulubionych
+- `/api/auth/register/` – rejestracja
+- `/api/auth/login/` – logowanie
+
+---
+
+## 📝 Opis projektu
+
+Platforma e-commerce z panelem użytkownika i sprzedawcy, obsługą koszyka, zamówień, ulubionych, JWT, nowoczesnym UI i pełną integracją backendu z frontendem. Projekt gotowy do rozbudowy o płatności, recenzje, powiadomienia i inne funkcje.
