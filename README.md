@@ -25,13 +25,13 @@ Nowoczesna aplikacja e-commerce zbudowana w oparciu o **Django** oraz **React**.
 - ✅ Rejestracja i logowanie użytkownika
 - ✅ Przeglądanie produktów i kategorii
 - ✅ Filtry i wyszukiwarka
--- ✅ Koszyk zakupowy (dodawanie, edycja, usuwanie, checkout)
--- ✅ Proces składania zamówienia (tworzenie zamówienia z koszyka, historia zamówień)
--- ✅ Ulubione produkty (dodawanie, usuwanie, lista ulubionych)
--- ✅ Panel administratora/sprzedawcy do zarządzania produktami
--- ✅ Panel użytkownika (moje produkty, moje zamówienia, moje ulubione)
--- ✅ System ocen i recenzji produktów (w przygotowaniu)
--- ✅ Responsywny, nowoczesny interfejs (CSS Modules, React Router)
+- ✅ Koszyk zakupowy (dodawanie, edycja, usuwanie, checkout)
+- ✅ Proces składania zamówienia (tworzenie zamówienia z koszyka, historia zamówień)
+- ✅ Ulubione produkty (dodawanie, usuwanie, lista ulubionych)
+- ✅ Panel administratora/sprzedawcy do zarządzania produktami
+- ✅ Panel użytkownika (moje produkty, moje zamówienia, moje ulubione)
+- ✅ System ocen i recenzji produktów (w przygotowaniu)
+- ✅ Responsywny, nowoczesny interfejs (CSS Modules, React Router)
 ---
 ## 🚀 Uruchomienie projektu lokalnie
 
