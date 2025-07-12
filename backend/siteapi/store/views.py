@@ -1,4 +1,11 @@
 import stripe
+import os
+from dotenv import load_dotenv
+load_dotenv(os.path.join(os.path.dirname(os.path.dirname(__file__)), '.env'))
+print('STRIPE_SECRET_KEY:', os.getenv('STRIPE_SECRET_KEY'))  # Sprawdź w konsoli czy klucz się ładuje
+import os
+from dotenv import load_dotenv
+load_dotenv(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), '.env'))
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -10,7 +17,7 @@ from .models import Order
 def stripe_webhook(request):
     payload = request.body
     sig_header = request.META.get('HTTP_STRIPE_SIGNATURE')
-    endpoint_secret = 'whsec_xxx'  # <-- wpisz swój klucz webhook secret z panelu Stripe
+    endpoint_secret = os.getenv('STRIPE_WEBHOOK_SECRET')
     event = None
     try:
         event = stripe.Webhook.construct_event(
@@ -367,7 +374,8 @@ class StripeCheckoutAPIView(APIView):
             order = Order.objects.filter(id=order_id, user=request.user).first()
             if not order:
                 return Response({"error": "Order not found"}, status=status.HTTP_404_NOT_FOUND)
-            stripe.api_key = "sk_test_51Rk5gOChIvQP9j9IdPvvrEH4pNJ3IJqhoVMIxskdTfEwL7D5u0ldqdTcZBIb5ZS5cATKVuwDO425LIWdk0oKhn6c00zxPzSwVZ"
+            stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
+            print('Używany STRIPE_SECRET_KEY:', stripe.api_key)  # Sprawdź czy jest ustawiony przed płatnością
 
             amount = sum(
                 (item.product.price if item.product else 0) * item.quantity
