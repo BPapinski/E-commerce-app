@@ -1,4 +1,39 @@
+import stripe
+from django.views.decorators.csrf import csrf_exempt
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from .models import Order
 
+# Stripe webhook endpoint
+@csrf_exempt
+def stripe_webhook(request):
+    payload = request.body
+    sig_header = request.META.get('HTTP_STRIPE_SIGNATURE')
+    endpoint_secret = 'whsec_xxx'  # <-- wpisz swój klucz webhook secret z panelu Stripe
+    event = None
+    try:
+        event = stripe.Webhook.construct_event(
+            payload, sig_header, endpoint_secret
+        )
+    except ValueError as e:
+        return Response({'error': 'Invalid payload'}, status=400)
+    except stripe.error.SignatureVerificationError as e:
+        return Response({'error': 'Invalid signature'}, status=400)
+
+    # Obsługa eventu płatności
+    if event['type'] == 'checkout.session.completed':
+        session = event['data']['object']
+        # Pobierz order_id z session.metadata (dodaj w StripeCheckoutAPIView)
+        order_id = session.get('metadata', {}).get('order_id')
+        if order_id:
+            order = Order.objects.filter(id=order_id).first()
+            if order:
+                order.is_paid = True
+                order.save(update_fields=['is_paid'])
+    return Response({'status': 'success'})
+
+import stripe
 from rest_framework import generics, permissions, filters, status
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
@@ -321,3 +356,54 @@ class IsFavouriteView(APIView):
         user = request.user
         is_fav = FavouriteItem.objects.filter(user=user, product_id=product_id, is_active=True).exists()
         return Response({"isFavourite": is_fav}, status=status.HTTP_200_OK)
+    
+# Stripe Checkout endpoint
+class StripeCheckoutAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        try:
+            order_id = request.data.get("order_id")
+            order = Order.objects.filter(id=order_id, user=request.user).first()
+            if not order:
+                return Response({"error": "Order not found"}, status=status.HTTP_404_NOT_FOUND)
+            stripe.api_key = "sk_test_51Rk5gOChIvQP9j9IdPvvrEH4pNJ3IJqhoVMIxskdTfEwL7D5u0ldqdTcZBIb5ZS5cATKVuwDO425LIWdk0oKhn6c00zxPzSwVZ"
+
+            amount = sum(
+                (item.product.price if item.product else 0) * item.quantity
+                for item in order.items.all()
+            )
+            amount = int(amount * 100)
+            session = stripe.checkout.Session.create(
+                payment_method_types=["card"],
+                line_items=[{
+                    "price_data": {
+                        "currency": "pln",
+                        "product_data": {
+                            "name": f"Zamówienie #{order.id}",
+                        },
+                        "unit_amount": amount,
+                    },
+                    "quantity": 1,
+                }],
+                mode="payment",
+                success_url="http://localhost:3000/orders?success=true",
+                cancel_url="http://localhost:3000/orders?cancel=true",
+                customer_email=request.user.email if request.user.email else None,
+                metadata={"order_id": str(order.id)},
+            )
+            return Response({"checkout_url": session.url})
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+class MarkOrderPaidAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        order_id = request.data.get("order_id")
+        order = Order.objects.filter(id=order_id, user=request.user).first()
+        if not order:
+            return Response({"error": "Order not found"}, status=status.HTTP_404_NOT_FOUND)
+        order.is_paid = True
+        order.save(update_fields=["is_paid"])
+        return Response({"success": True, "order_id": order.id, "is_paid": order.is_paid})

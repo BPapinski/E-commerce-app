@@ -1,7 +1,7 @@
 # products/urls.py
 
 from django.urls import path
-from .views import UserProductsListView, ProductAvailabilityToggle, IsFavouriteView, RemoveFromFavourite, AddToFavorites, ProductListCreateView, ProductDetailView, CategoryListView, CategoryGroupListView, ProductDetailView, ProductCreateAPIView, CartAPIView, AddToCartAPIView, UpdateCartItemAPIView, RemoveFromCartAPIView, ProductDeleteAPIView, CreateOrderAPIView, UserOrdersAPIView, FavouriteListAPIView
+from .views import MarkOrderPaidAPIView, UserProductsListView, ProductAvailabilityToggle, IsFavouriteView, RemoveFromFavourite, AddToFavorites, ProductListCreateView, ProductDetailView, CategoryListView, CategoryGroupListView, ProductDetailView, ProductCreateAPIView, CartAPIView, AddToCartAPIView, UpdateCartItemAPIView, RemoveFromCartAPIView, ProductDeleteAPIView, CreateOrderAPIView, UserOrdersAPIView, FavouriteListAPIView, StripeCheckoutAPIView, stripe_webhook
 
 
 
@@ -24,6 +24,9 @@ urlpatterns = [
     path('order/create/', CreateOrderAPIView.as_view(), name='order-create'),
     path('orders/me/', UserOrdersAPIView.as_view(), name='user-orders'),
     path('favourite/list/', FavouriteListAPIView.as_view(), name='favourite-list'),
+    path('orders/stripe_checkout/', StripeCheckoutAPIView.as_view(), name='stripe-checkout'),
+    path('orders/mark_paid/', MarkOrderPaidAPIView.as_view(), name='order-mark-paid'),
+    path('stripe/webhook/', stripe_webhook, name='stripe-webhook'),
 ]
 
 
