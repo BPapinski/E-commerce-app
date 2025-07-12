@@ -11,7 +11,8 @@
 .pay-panel-row {
   display: flex;
   gap: 0.7rem;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  align-items: center;
   margin-bottom: 0.7rem;
 }
 .pay-option-btn {

@@ -163,8 +163,13 @@ export default function Orders() {
   const [showPaypalBtnOrderId, setShowPaypalBtnOrderId] = useState(null);
 
   const handlePayPanel = (orderId) => {
-    setPayPanelOrderId(orderId);
-    setShowPaypalBtnOrderId(null);
+    if (payPanelOrderId === orderId) {
+      setPayPanelOrderId(null);
+      setShowPaypalBtnOrderId(null);
+    } else {
+      setPayPanelOrderId(orderId);
+      setShowPaypalBtnOrderId(null);
+    }
   };
   const handleClosePayPanel = () => {
     setPayPanelOrderId(null);
@@ -346,19 +351,16 @@ export default function Orders() {
                       {/* Panel płatności */}
                       {payPanelOrderId === order.id && order.available && !order.paid && (
                         <div className={styles['pay-panel']}>
-                          <div className={styles['pay-panel-row']}>
+                          <div className={styles['pay-panel-row']} style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
                             <button className={styles['pay-option-btn']} onClick={() => handleShowPaypalBtn(order.id)}>
                               <img src={EditIcon} alt="PayPal" style={{ width: 18, height: 18, marginRight: 6, verticalAlign: "middle" }} />
                               PayPal
                             </button>
                             <button className={styles['pay-option-btn']} onClick={() => handleStripePayment(order.id)}>
-                              Przelew
+                              Karta płatnicza
                             </button>
-                            <button className={styles['pay-option-btn']} onClick={() => handleStripePayment(order.id)}>
+                            <button className={styles['pay-option-btn']} disabled>
                               BLIK
-                            </button>
-                            <button className={styles['pay-option-btn']} onClick={handleClosePayPanel}>
-                              Anuluj
                             </button>
                           </div>
                           {showPaypalBtnOrderId === order.id && (

@@ -27,6 +27,7 @@ Nowoczesna aplikacja e-commerce zbudowana w oparciu o **Django** oraz **React**.
 - ✅ Filtry i wyszukiwarka
 - ✅ Koszyk zakupowy (dodawanie, edycja, usuwanie, checkout)
 - ✅ Proces składania zamówienia (tworzenie zamówienia z koszyka, historia zamówień)
+- ✅ Płatności online: PayPal, karta płatnicza, BLIK (integracja Stripe/PayPal, BLIK w przygotowaniu)
 - ✅ Ulubione produkty (dodawanie, usuwanie, lista ulubionych)
 - ✅ Panel administratora/sprzedawcy do zarządzania produktami
 - ✅ Panel użytkownika (moje produkty, moje zamówienia, moje ulubione)
