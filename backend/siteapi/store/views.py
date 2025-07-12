@@ -1,9 +1,29 @@
+
 from rest_framework import generics, permissions, filters, status
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.exceptions import PermissionDenied
+# Widok zwracający ulubione produkty zalogowanego użytkownika
+class FavouriteListAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        favourites = FavouriteItem.objects.filter(user=request.user, is_active=True)
+        products = []
+        for fav in favourites:
+            product = fav.product
+            if product:
+                products.append({
+                    "id": product.id,
+                    "name": product.name,
+                    "description": product.description,
+                    "price": product.price,
+                    "image": product.image.url if product.image else "",
+                })
+        return Response({"favourites": products})
+
 
 # Widok zwracający zamówienia zalogowanego użytkownika
 class UserOrdersAPIView(APIView):

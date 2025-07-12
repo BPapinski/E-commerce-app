@@ -14,6 +14,7 @@ import Cart from "./pages/Cart";
 import EditProductForm from "./pages/editProductForm";
 import UserProducts from "./pages/UserProducts";
 import Orders from "./pages/Orders";
+import Favourites from "./pages/Favourites";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
@@ -36,6 +37,7 @@ root.render(
             <Route path="/edit-product/:productId" element={<EditProductForm />} />
             <Route path="/myproducts" element={<UserProducts/>}/>
             <Route path="/orders" element={<Orders/>}/>
+            <Route path="/favourites" element={<Favourites/>}/>
           </Routes>
         </AuthProvider>
       </BrowserRouter>

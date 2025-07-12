@@ -1,7 +1,7 @@
 # products/urls.py
 
 from django.urls import path
-from .views import UserProductsListView, ProductAvailabilityToggle, IsFavouriteView, RemoveFromFavourite, AddToFavorites, ProductListCreateView, ProductDetailView, CategoryListView, CategoryGroupListView, ProductDetailView, ProductCreateAPIView, CartAPIView, AddToCartAPIView, UpdateCartItemAPIView, RemoveFromCartAPIView, ProductDeleteAPIView, CreateOrderAPIView, UserOrdersAPIView
+from .views import UserProductsListView, ProductAvailabilityToggle, IsFavouriteView, RemoveFromFavourite, AddToFavorites, ProductListCreateView, ProductDetailView, CategoryListView, CategoryGroupListView, ProductDetailView, ProductCreateAPIView, CartAPIView, AddToCartAPIView, UpdateCartItemAPIView, RemoveFromCartAPIView, ProductDeleteAPIView, CreateOrderAPIView, UserOrdersAPIView, FavouriteListAPIView
 
 
 
@@ -23,6 +23,7 @@ urlpatterns = [
     path("userproducts/<str:user_id>/", UserProductsListView.as_view(), name="user-products"),
     path('order/create/', CreateOrderAPIView.as_view(), name='order-create'),
     path('orders/me/', UserOrdersAPIView.as_view(), name='user-orders'),
+    path('favourite/list/', FavouriteListAPIView.as_view(), name='favourite-list'),
 ]
 
 

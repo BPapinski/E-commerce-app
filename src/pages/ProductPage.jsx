@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useAuth } from "../contexts/AuthContext";
 import Header from "../Components/Header";
 import Subheader from "../Components/Subheader";
 import { useParams } from "react-router-dom";
@@ -6,8 +7,9 @@ import "./styles/productPage.css";
 
 export default function ProductPage() {
   const { id } = useParams();
-
+  const { accessToken, isLoggedIn } = useAuth();
   const [productData, setProductData] = useState();
+  const [addError, setAddError] = useState("");
 
   useEffect(() => {
     fetch(`http://127.0.0.1:8000/api/store/product/${id}`, {
@@ -27,7 +29,7 @@ export default function ProductPage() {
       .catch((error) => {
         console.error("Błąd użytkownika:", error);
       });
-  }, []);
+  }, [id]);
 
   if (!productData) {
     return (
@@ -59,9 +61,40 @@ export default function ProductPage() {
           <p className="product-description">{productData.description}</p>
           <p className="product-price">{productData.price} zł</p>
           {productData.available ? (
-            <button className="buy-button">Dodaj do koszyka</button>
+            isLoggedIn ? (
+              <button
+                className="buy-button"
+                onClick={async () => {
+                  setAddError("");
+                  try {
+                    const res = await fetch("http://127.0.0.1:8000/api/store/cart/add/", {
+                      method: "POST",
+                      headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${accessToken}`,
+                      },
+                      body: JSON.stringify({ product_id: productData.id, quantity: 1 }),
+                    });
+                    if (!res.ok) {
+                      if (res.status === 401) throw new Error("Musisz być zalogowany, aby dodać do koszyka.");
+                      throw new Error("Nie udało się dodać do koszyka");
+                    }
+                    alert("Dodano do koszyka!");
+                  } catch (e) {
+                    setAddError(e.message);
+                  }
+                }}
+              >
+                Dodaj do koszyka
+              </button>
+            ) : (
+              <span className="product-unavailable">Zaloguj się, aby dodać do koszyka</span>
+            )
           ) : (
             <span className="product-unavailable">Produkt niedostępny</span>
+          )}
+          {addError && (
+            <div style={{ color: "#b94a4a", marginTop: "0.5rem" }}>{addError}</div>
           )}
         </div>
       </div>

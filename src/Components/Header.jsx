@@ -60,10 +60,10 @@ export default function Header() {
         <a href="/notifications">
           <img src={bellIcon} alt="Notifications" className="filter-pink" />
         </a>
-        <a href="/favorites">
+        <a href="/favourites">
           <img
             src={heartIcon}
-            alt="Favourites"
+            alt="Ulubione"
             className="filter-pink"
             style={{ height: "48px" }}
           />
