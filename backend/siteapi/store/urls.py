@@ -1,7 +1,7 @@
 # products/urls.py
 
 from django.urls import path
-from .views import MarkOrderPaidAPIView, UserProductsListView, ProductAvailabilityToggle, IsFavouriteView, RemoveFromFavourite, AddToFavorites, ProductListCreateView, ProductDetailView, CategoryListView, CategoryGroupListView, ProductDetailView, ProductCreateAPIView, CartAPIView, AddToCartAPIView, UpdateCartItemAPIView, RemoveFromCartAPIView, ProductDeleteAPIView, CreateOrderAPIView, UserOrdersAPIView, FavouriteListAPIView, StripeCheckoutAPIView, stripe_webhook
+from .views import MarkOrderPaidAPIView, UserProductsListView, ProductAvailabilityToggle, IsFavouriteView, RemoveFromFavourite, AddToFavorites, ProductListCreateView, ProductDetailView, CategoryListView, CategoryGroupListView, ProductCreateAPIView, CartAPIView, AddToCartAPIView, UpdateCartItemAPIView, RemoveFromCartAPIView, ProductDeleteAPIView, CreateOrderAPIView, UserOrdersAPIView, FavouriteListAPIView, StripeCheckoutAPIView, stripe_webhook
 
 
 
