@@ -152,10 +152,10 @@
   background: #2a1a1a;
 }
 .order-badge {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  z-index: 2;
+position: absolute;
+top: 1rem;
+right: 1rem;
+z-index: 1; /* Lower than Header */
 }
 .statusPending {
   background: #ffe066;
