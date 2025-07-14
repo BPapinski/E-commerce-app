@@ -91,3 +91,15 @@ class FavouriteItem(models.Model):
 
     def __str__(self):
         return f'Użytkownik {self.user.email} lubi produkt {self.product.name}'
+    
+class Notification(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    message = models.TextField()
+    is_read = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f'Powiadomienie dla {self.user.email}: {self.message[:50]}...'
+    
+    class Meta:
+        ordering = ['-created_at']  # Najnowsze powiadomienia na górze

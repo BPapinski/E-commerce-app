@@ -3,7 +3,7 @@ from django.contrib import admin
 from .models import (
     CategoryGroup, Category, Product,
     Cart, CartItem,
-    Order, OrderItem, FavouriteItem
+    Order, OrderItem, FavouriteItem,Notification
 )
 
 
@@ -74,4 +74,11 @@ class FavouriteItemAdmin(admin.ModelAdmin):
     search_fields = ['user__email', 'product__name']
     readonly_fields = ['created_at', 'updated_at']
 
+
+@admin.register(Notification)
+class NotificationAdmin(admin.ModelAdmin):
+    list_display = ['user', 'message', 'is_read', 'created_at']
+    list_filter = ['is_read', 'created_at', 'user']
+    search_fields = ['user__email', 'message']
+    readonly_fields = ['created_at']
 
