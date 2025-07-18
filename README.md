@@ -63,29 +63,25 @@ npm start
 Frontend dostępny pod: http://localhost:3000
 Backend API pod: http://127.0.0.1:8000
 
----
+## 🔗 Endpointy API
+```plaintext
+GET     /api/store/products/                # lista produktów
+GET     /api/store/product/<id>/            # szczegóły produktu
+GET     /api/store/cart/                    # pobierz koszyk
+POST    /api/store/cart/add/                # dodaj do koszyka
+PUT     /api/store/cart/item/<id>/          # edytuj pozycję w koszyku
+DELETE  /api/store/cart/item/<id>/          # usuń pozycję z koszyka
+POST    /api/store/order/create/            # utwórz zamówienie z koszyka
+GET     /api/store/orders/me/               # moje zamówienia
 
-## 🔗 Najważniejsze endpointy API
+GET     /api/store/favourite/list/          # lista ulubionych produktów
+POST    /api/store/favourite/add/<id>/      # dodaj do ulubionych
+DELETE  /api/store/favourite/remove/<id>/   # usuń z ulubionych
 
-GET     /api/store/products/               # lista produktów
-GET     /api/store/product/<id>/           # szczegóły produktu
-GET     /api/store/cart/                   # pobierz koszyk
-POST    /api/store/cart/add/               # dodaj do koszyka
-PUT     /api/store/cart/item/<id>/         # edytuj pozycję w koszyku
-DELETE  /api/store/cart/item/<id>/         # usuń pozycję z koszyka
-POST    /api/store/order/create/           # utwórz zamówienie z koszyka
-GET     /api/store/orders/me/              # moje zamówienia
+GET     /api/notifications/                 # powiadomienia użytkownika
 
-GET     /api/store/favourite/list/         # lista ulubionych produktów
-POST    /api/store/favourite/add/<id>/     # dodaj do ulubionych
-DELETE  /api/store/favourite/remove/<id>/  # usuń z ulubionych
-
-GET     /api/notifications/                # powiadomienia użytkownika
-
-POST    /api/auth/register/                # rejestracja
-POST    /api/auth/login/                   # logowanie
----
-
+POST    /api/auth/register/                 # rejestracja
+POST    /api/auth/login/                    # logowanie
 ## 📝 Opis projektu
 
 Platforma e-commerce z panelem użytkownika i sprzedawcy, obsługą koszyka, zamówień, ulubionych, JWT, nowoczesnym UI i pełną integracją backendu z frontendem. Projekt gotowy do rozbudowy o płatności, recenzje, powiadomienia i inne funkcje.
