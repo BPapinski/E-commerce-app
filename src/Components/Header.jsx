@@ -12,10 +12,13 @@ import "./styles/HeaderDropdown.css";
 import useApi from "../pages/utils/api";
 import { useAuth } from "../contexts/AuthContext";
 
+import useNotificationActions from "./Utils/Notifications.jsx";
+
 export default function Header() {
   const [searchValue, setSearchValue] = useState("");
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
+  const { markNotificationsAsRead } = useNotificationActions();
 
   const { token, isLoggedIn, loadingUser, logout } = useAuth();
   const { authFetch } = useApi();
@@ -41,8 +44,15 @@ export default function Header() {
       }
     };
 
+    // Natychmiastowe pobranie powiadomień przy montowaniu komponentu
     fetchNotifications();
-  }, [isLoggedIn]);
+
+    // Ustawienie interwału odświeżania (np. co 10 sekund = 10000 ms)
+    const intervalId = setInterval(fetchNotifications, 10000); // Odświeżanie co 10 sekund
+
+    // Czyszczenie interwału po odmontowaniu komponentu, aby uniknąć wycieków pamięci
+    return () => clearInterval(intervalId);
+  }, [isLoggedIn, authFetch]); // Dodajemy authFetch do zależności, jeśli jest stabilne
 
   function submitSearch(e) {
     e.preventDefault();
@@ -53,6 +63,18 @@ export default function Header() {
       params.delete("search");
     }
     navigate({ search: params.toString() });
+  }
+
+  function handleNotificationMouseEnter() {
+    markNotificationsAsRead();
+    setUnreadCount(0);
+  }
+
+  function handleNotificationMouseLeave() {
+    const updatedNotifications = notifications.map((n) =>
+      n.is_read ? n : { ...n, is_read: true }
+    );
+    setNotifications(updatedNotifications);
   }
 
   return (
@@ -83,7 +105,11 @@ export default function Header() {
           <img src={messageIcon} alt="Messages" className="filter-pink" />
         </a>
 
-        <div className="notification-dropdown-container">
+        <div
+          className="notification-dropdown-container"
+          onMouseEnter={handleNotificationMouseEnter}
+          onMouseLeave={handleNotificationMouseLeave}
+        >
           <a href="/notifications" className="notification-dropdown-toggle">
             <img
               src={bellIcon}
@@ -91,7 +117,9 @@ export default function Header() {
               className="filter-pink"
               style={{ height: "48px" }}
             />
-            {unreadCount > 0 && <span className="notification-badge">{unreadCount}</span>}
+            {unreadCount > 0 && (
+              <span className="notification-badge">{unreadCount}</span>
+            )}
           </a>
           <div className="notification-dropdown-menu">
             {notifications.map((n) => (
@@ -99,7 +127,12 @@ export default function Header() {
                 key={n.id}
                 className={`notification-item ${n.is_read ? "" : "unread"}`}
               >
-                <a href="#">{n.message}</a>
+                <a href="#">
+                  <span className="notification-message">{n.message}</span>
+                  <span className="notification-date">
+                    {new Date(n.created_at).toLocaleString()}
+                  </span>
+                </a>
               </div>
             ))}
           </div>

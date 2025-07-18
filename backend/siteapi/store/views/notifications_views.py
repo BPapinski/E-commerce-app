@@ -27,4 +27,15 @@ class NotificationListAPIView(APIView):
             'unread_count': unread_count,
             'notifications': serializer.data
         })
+        
+class ReadNotificationsAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        user = request.user
+        updated = Notification.objects.filter(user=user, is_read=False).update(is_read=True)
+        return Response(
+            {"message": f"{updated} notifications marked as read"},
+            status=200
+        )
 

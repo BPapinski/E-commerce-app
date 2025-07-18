@@ -3,7 +3,7 @@
 from django.urls import path
 from .views import MarkOrderPaidAPIView, UserProductsListView, ProductAvailabilityToggle, IsFavouriteView, RemoveFromFavourite, AddToFavorites, ProductListCreateView, ProductDetailView, CategoryListView, CategoryGroupListView, ProductCreateAPIView, CartAPIView, AddToCartAPIView, UpdateCartItemAPIView, RemoveFromCartAPIView, ProductDeleteAPIView, CreateOrderAPIView, UserOrdersAPIView, FavouriteListAPIView, StripeCheckoutAPIView, stripe_webhook
 
-from .views.notifications_views import NotificationListAPIView
+from .views.notifications_views import NotificationListAPIView, ReadNotificationsAPIView
 
 urlpatterns = [
     path('', ProductListCreateView.as_view(), name='product-list'),
@@ -28,6 +28,7 @@ urlpatterns = [
     path('orders/mark_paid/', MarkOrderPaidAPIView.as_view(), name='order-mark-paid'),
     path('stripe/webhook/', stripe_webhook, name='stripe-webhook'),
     path('notifications/', NotificationListAPIView.as_view(), name='notification-list'),
+    path('notifications/read/', ReadNotificationsAPIView.as_view(), name='read-notifications'),
 ]
 
 
