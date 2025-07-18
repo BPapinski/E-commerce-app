@@ -9,15 +9,40 @@ import loginIcon from "../icons/login.svg";
 import logoIcon from "../icons/logo.png";
 import personIcon from "../icons/person.svg";
 import "./styles/HeaderDropdown.css";
+import useApi from "../pages/utils/api";
 import { useAuth } from "../contexts/AuthContext";
 
 export default function Header() {
   const [searchValue, setSearchValue] = useState("");
+  const [notifications, setNotifications] = useState([]);
+  const [unreadCount, setUnreadCount] = useState(0);
 
   const { token, isLoggedIn, loadingUser, logout } = useAuth();
+  const { authFetch } = useApi();
 
   const navigate = useNavigate();
   const location = useLocation();
+
+  useEffect(() => {
+    const fetchNotifications = async () => {
+      if (!isLoggedIn) return;
+
+      try {
+        const res = await authFetch(
+          "http://127.0.0.1:8000/api/store/notifications/"
+        );
+        if (!res.ok) throw new Error("Błąd odpowiedzi serwera");
+
+        const data = await res.json();
+        setNotifications(data.notifications);
+        setUnreadCount(data.unread_count);
+      } catch (err) {
+        console.error("Błąd ładowania powiadomień:", err);
+      }
+    };
+
+    fetchNotifications();
+  }, [isLoggedIn]);
 
   function submitSearch(e) {
     e.preventDefault();
@@ -57,9 +82,29 @@ export default function Header() {
         <a href="/messages">
           <img src={messageIcon} alt="Messages" className="filter-pink" />
         </a>
-        <a href="/notifications">
-          <img src={bellIcon} alt="Notifications" className="filter-pink" />
-        </a>
+
+        <div className="notification-dropdown-container">
+          <a href="/notifications" className="notification-dropdown-toggle">
+            <img
+              src={bellIcon}
+              alt="Notifications"
+              className="filter-pink"
+              style={{ height: "48px" }}
+            />
+            {unreadCount > 0 && <span className="notification-badge">{unreadCount}</span>}
+          </a>
+          <div className="notification-dropdown-menu">
+            {notifications.map((n) => (
+              <div
+                key={n.id}
+                className={`notification-item ${n.is_read ? "" : "unread"}`}
+              >
+                <a href="#">{n.message}</a>
+              </div>
+            ))}
+          </div>
+        </div>
+
         <a href="/favourites">
           <img
             src={heartIcon}
@@ -71,8 +116,8 @@ export default function Header() {
         {isLoggedIn ? (
           <div className="dropdown-container">
             <a href="/profile" className="dropdown-toggle">
-              <img 
-                src={personIcon} 
+              <img
+                src={personIcon}
                 alt=""
                 className="filter-pink"
                 style={{ height: "48px" }}
@@ -83,7 +128,9 @@ export default function Header() {
               <a href="/settings">Ustawienia</a>
               <a href="/orders">Moje Zamówienia</a>
               <a href="/help">Pomoc</a>
-              <button onClick={logout} className="logout-button">Wyloguj</button>
+              <button onClick={logout} className="logout-button">
+                Wyloguj
+              </button>
             </div>
           </div>
         ) : (

@@ -52,3 +52,107 @@
 .dropdown-container:hover .dropdown-menu {
     display: block;
 }
+
+
+
+
+/* notifications dropdown */
+
+
+.notification-dropdown-menu {
+    display: none; /*do odkomentowania */
+    position: absolute; 
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+
+    background-color: #fff;
+    min-width: 250px;
+    box-shadow: 0px 10px 20px 0px rgba(0, 0, 0, 0.15);
+    padding: 5px 0;
+    border-radius: 8px;
+    z-index: 50;
+    border: 1px solid #eee;
+    height: 25vh;;
+    overflow-y: scroll;
+}
+
+.notification-dropdown-menu::-webkit-scrollbar {
+  display: none;
+}
+
+.notification-dropdown-menu {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+
+.notification-dropdown-menu a,
+.notification-dropdown-menu .logout-button { 
+    color: #333;
+    padding: 12px 20px;
+    text-decoration: none;
+    display: block;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 1rem;
+    transition: background-color 0.2s ease, color 0.2s ease;
+
+    background: none;
+    border: none;
+    text-align: left;
+    width: 100%;
+    cursor: pointer;
+
+    word-wrap: break-word;
+    word-break: break-word;
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
+
+
+.notification-dropdown-menu a:hover,
+.notification-dropdown-menu .logout-button:hover { 
+    background-color: #f0f0f0;
+    box-shadow: inset 3px 0 0 0 var(--hover-accent); 
+}
+
+.notification-dropdown-container {
+    position: relative;
+    display: inline-block;
+    z-index: 3;
+    height: inherit;
+}
+
+.notification-dropdown-container:hover .notification-dropdown-menu {
+    display: block;
+}
+
+
+.notification-item {
+  position: relative;
+}
+
+.notification-item.unread {
+  background-color: #ffe5e5; /* jasnoczerwone tło */
+}
+
+
+
+
+
+.notification-badge {
+  position: absolute;
+  top: 0.5em;
+  right: 0px;
+  background-color: red;
+  color: white;
+  font-size: 1rem;
+  font-weight: bolder;
+  padding: 4px 8px;
+  border-radius: 999px;
+  line-height: 1;
+  min-width: 20px;
+  min-height:20px;
+  text-align: center;
+  box-shadow: 0 0 0 2px red;
+}
