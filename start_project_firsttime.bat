@@ -1,8 +1,14 @@
 @echo off
 SETLOCAL ENABLEDELAYEDEXPANSION
 
-REM Przejście do folderu, gdzie znajduje się skrypt
 cd /d %~dp0
+
+echo ---------------------------
+echo TWORZENIE ŚRODOWISKA VENV (jeśli nie istnieje)
+echo ---------------------------
+IF NOT EXIST backend\venv (
+    python -m venv backend\venv
+)
 
 echo ---------------------------
 echo AKTYWACJA ŚRODOWISKA
@@ -12,6 +18,7 @@ call backend\venv\Scripts\activate.bat
 echo ---------------------------
 echo INSTALACJA DEPENDENCJI (pip)
 echo ---------------------------
+pip install --upgrade pip
 pip install -r backend\requirements.txt
 
 echo ---------------------------
